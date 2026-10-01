@@ -15,6 +15,9 @@ const isSensitiveKey = (key: string) => {
 const STANDARD_SCHEMA_KEYS = new Set((
   '$schema $id $anchor $dynamicAnchor $ref $dynamicRef $vocabulary $comment title description default deprecated readOnly writeOnly examples type enum const multipleOf maximum exclusiveMaximum minimum exclusiveMinimum maxLength minLength pattern maxItems minItems uniqueItems maxContains minContains maxProperties minProperties required properties patternProperties additionalProperties dependencies dependentRequired dependentSchemas propertyNames if then else allOf anyOf oneOf not items prefixItems contains unevaluatedItems unevaluatedProperties format contentMediaType contentEncoding contentSchema definitions $defs'
 ).split(/\s+/));
+const SCHEMA_MAP_KEYS = new Set(['properties','patternProperties','$defs','definitions','dependentSchemas']);
+const SCHEMA_ARRAY_KEYS = new Set(['allOf','anyOf','oneOf','prefixItems']);
+const SCHEMA_CHILD_KEYS = new Set(['additionalProperties','unevaluatedProperties','unevaluatedItems','items','contains','not','if','then','else','contentSchema','propertyNames']);
 
 type Obj = Record<string, unknown>;
 const isObject = (v: unknown): v is Obj => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -46,9 +49,6 @@ function inspectBounds(value: unknown): { bytes: number; nodes: number; deepest:
 function schemaFeatures(schema: unknown, at: string, diagnostics: Diagnostic[]): void {
   if (!isObject(schema)) return;
   const o = schema;
-  const schemaMapKeys = new Set(['properties','patternProperties','$defs','definitions','dependentSchemas']);
-  const schemaArrayKeys = new Set(['allOf','anyOf','oneOf','prefixItems']);
-  const schemaKeys = new Set(['additionalProperties','unevaluatedProperties','unevaluatedItems','items','contains','not','if','then','else','contentSchema','propertyNames']);
   for (const [key, value] of Object.entries(o)) {
     const here = `${at}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`;
     if (!STANDARD_SCHEMA_KEYS.has(key)) diagnostics.push({ code: 'MG005_UNSUPPORTED_SCHEMA_FEATURE', message: `Schema keyword "${key}" is outside the supported JSON Schema 2020-12 subset.`, pointer: here });
@@ -57,9 +57,73 @@ function schemaFeatures(schema: unknown, at: string, diagnostics: Diagnostic[]):
     if (key === 'format' && typeof value === 'string' && value !== 'date-time' && value !== 'date' && value !== 'time' && value !== 'email' && value !== 'hostname' && value !== 'ipv4' && value !== 'ipv6' && value !== 'uri' && value !== 'uri-reference' && value !== 'uuid' && value !== 'regex' && value !== 'json-pointer' && value !== 'relative-json-pointer' && value !== 'uri-template') {
       diagnostics.push({ code: 'MG005_UNSUPPORTED_SCHEMA_FEATURE', message: `Custom format "${value}" is not evaluated by this offline auditor.`, pointer: here });
     }
-    if (schemaMapKeys.has(key) && isObject(value)) for (const [name, child] of Object.entries(value)) schemaFeatures(child, `${here}/${name.replace(/~/g, '~0').replace(/\//g, '~1')}`, diagnostics);
-    else if (schemaArrayKeys.has(key) && Array.isArray(value)) value.forEach((child, i) => schemaFeatures(child, `${here}/${i}`, diagnostics));
-    else if (schemaKeys.has(key)) schemaFeatures(value, here, diagnostics);
+    if (SCHEMA_MAP_KEYS.has(key) && isObject(value)) for (const [name, child] of Object.entries(value)) schemaFeatures(child, `${here}/${name.replace(/~/g, '~0').replace(/\//g, '~1')}`, diagnostics);
+    else if (SCHEMA_ARRAY_KEYS.has(key) && Array.isArray(value)) value.forEach((child, i) => schemaFeatures(child, `${here}/${i}`, diagnostics));
+    else if (SCHEMA_CHILD_KEYS.has(key)) schemaFeatures(value, here, diagnostics);
+  }
+}
+
+type LocalRef = { ref: string; pointer: string; resource: unknown; resourcePath: string };
+function schemaChildren(schema: Obj): Array<[string[], unknown]> {
+  const children: Array<[string[], unknown]> = [];
+  for (const [key, value] of Object.entries(schema)) {
+    if (SCHEMA_MAP_KEYS.has(key) && isObject(value)) {
+      for (const [name, child] of Object.entries(value)) children.push([[key,name], child]);
+    } else if (SCHEMA_ARRAY_KEYS.has(key) && Array.isArray(value)) {
+      value.forEach((child, index) => children.push([[key,String(index)], child]));
+    } else if (SCHEMA_CHILD_KEYS.has(key)) children.push([[key], value]);
+  }
+  return children;
+}
+function pointerTarget(root: unknown, fragment: string): unknown {
+  if (fragment === '') return root;
+  if (!fragment.startsWith('/')) return undefined;
+  let current = root;
+  for (const raw of fragment.slice(1).split('/')) {
+    if (/~(?:[^01]|$)/.test(raw)) return undefined;
+    const part = raw.replace(/~1/g, '/').replace(/~0/g, '~');
+    if (Array.isArray(current)) {
+      if (!/^(0|[1-9]\d*)$/.test(part)) return undefined;
+      current = current[Number(part)];
+    } else if (isObject(current) && Object.hasOwn(current, part)) current = current[part];
+    else return undefined;
+    if (current === undefined) return undefined;
+  }
+  return current;
+}
+function checkLocalRefs(schema: Obj, at: string, diagnostics: Diagnostic[]): void {
+  const refs: LocalRef[] = [];
+  const anchors = new Map<string, Set<string>>();
+  const visit = (node: unknown, pointer: string, resource: unknown, resourcePath: string): void => {
+    if (!isObject(node)) return;
+    if (typeof node.$id === 'string' && pointer !== resourcePath) {
+      resource = node;
+      resourcePath = pointer;
+    }
+    for (const key of ['$anchor','$dynamicAnchor'] as const) {
+      const name = node[key];
+      if (typeof name === 'string') {
+        let names = anchors.get(resourcePath);
+        if (!names) anchors.set(resourcePath, names = new Set());
+        names.add(name);
+      }
+    }
+    if (typeof node.$ref === 'string' && node.$ref.startsWith('#')) refs.push({ref:node.$ref,pointer:`${pointer}/$ref`,resource,resourcePath});
+    for (const [childPath, child] of schemaChildren(node)) visit(child, `${pointer}/${childPath.map(part=>part.replace(/~/g,'~0').replace(/\//g,'~1')).join('/')}`, resource, resourcePath);
+  };
+  const initialResourcePath = typeof schema.$id === 'string' ? at : '';
+  visit(schema, at, schema, initialResourcePath);
+  for (const ref of refs) {
+    let fragment: string;
+    try { fragment = decodeURIComponent(ref.ref.slice(1)); }
+    catch { diagnostics.push({code:'MG005_UNRESOLVED_LOCAL_REF',message:'Local $ref has an invalid percent-encoded fragment.',pointer:ref.pointer}); continue; }
+    if (fragment === '') continue; // A fragment-only self-reference resolves to its current schema resource.
+    if (fragment.startsWith('/')) {
+      const target = pointerTarget(ref.resource, fragment);
+      if (!(isObject(target) || typeof target === 'boolean')) diagnostics.push({code:'MG005_UNRESOLVED_LOCAL_REF',message:'Local $ref JSON Pointer does not resolve to a JSON Schema object or boolean schema.',pointer:ref.pointer});
+    } else if (!anchors.get(ref.resourcePath)?.has(fragment)) {
+      diagnostics.push({code:'MG005_UNRESOLVED_LOCAL_REF',message:'Local $ref anchor is not declared in its schema resource.',pointer:ref.pointer});
+    }
   }
 }
 
@@ -151,6 +215,7 @@ export function auditInventory(value: unknown): AuditResult {
       }
       const featuresBefore = result.coverage.diagnostics.length;
       schemaFeatures(schema, `${base}/${field}`, result.coverage.diagnostics);
+      checkLocalRefs(schema, `${base}/${field}`, result.coverage.diagnostics);
       if (result.coverage.diagnostics.length > featuresBefore) result.coverage.complete = false;
       if (!validator.validateSchema(schema)) {
         const errors = validator.errors?.map(e => `${e.instancePath || base}/${field}: ${e.message || 'invalid schema'}`).join('; ') || 'schema failed JSON Schema 2020-12 meta-validation';

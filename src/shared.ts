@@ -21,6 +21,6 @@ export function redact(value: unknown, depth = 0): unknown {
 export const cleanTerminal = (text: string) => text.replace(/[\x00-\x08\x0b-\x1f\x7f-\x9f]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
 export function coverage(rules: string[]): Coverage { return {complete:true,inspected:[],excluded:[],failed:[],truncated:[],recognizedTools:0,unresolvedHandlers:0,rulesApplied:rules,diagnostics:[]}; }
 export function finding(input: Omit<Finding, 'fingerprint' | 'ruleVersion'>): Finding {
-  const safe = {...input, evidence: redactText(input.evidence), ruleVersion:'1.0.0'};
+  const safe = {...input, evidence: redactText(input.evidence), ruleVersion:'1.1.0'};
   return {...safe, fingerprint: hash({ruleId:safe.ruleId,locations:safe.locations,observed:safe.observed})};
 }

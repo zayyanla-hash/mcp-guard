@@ -8,7 +8,7 @@ const cli=path.resolve('dist/cli.js');
 const run=(...args)=>spawnSync(process.execPath,[cli,...args],{encoding:'utf8',timeout:15000});
 test('help and version identify the working CLI',()=>{
  const help=run('--help');assert.equal(help.status,0);assert.match(help.stdout,/audit <directory>/);assert.match(help.stdout,/never executes targets/);
- const version=run('--version');assert.equal(version.status,0);assert.equal(version.stdout.trim(),'0.1.0');
+ const version=run('--version');assert.equal(version.status,0);assert.equal(version.stdout.trim(),'0.2.0');
 });
 test('invalid commands and flags fail with exit 2',()=>{
  for(const args of [['bogus'],['audit'],['audit','fixtures/corrected','--policy','anything'],['audit','fixtures/corrected','--threshold','safe'],['snapshot','fixtures/inventories/valid.json']]){
@@ -36,4 +36,22 @@ test('outputs cannot mutate target or overwrite a baseline',async()=>{
 test('JSON and empty source errors never produce a successful clean result',async()=>{
  const temp=await mkdtemp(path.join(os.tmpdir(),'guard-empty-'));
  try{await mkdir(path.join(temp,'empty'));assert.equal(run('audit',path.join(temp,'empty')).status,3);assert.equal(run('inventory','missing.json').status,2);assert.equal(run('inventory','fixtures/inventories/unsupported.json').status,3);}finally{await rm(temp,{recursive:true,force:true});}
+});
+
+test('artifact success messages redact secret-looking output paths',async()=>{
+ const temp=await mkdtemp(path.join(os.tmpdir(),'guard-redact-path-'));
+ try{
+  const file=path.join(temp,'FAKE_SECRET_CANARY_PATH.json');const snapshot=run('snapshot','fixtures/inventories/valid.json','--out',file);
+  assert.equal(snapshot.status,0);assert.ok(!snapshot.stdout.includes('FAKE_SECRET_CANARY_PATH'));
+ }finally{await rm(temp,{recursive:true,force:true});}
+});
+
+test('demo cannot write through a symlinked output parent into fixtures',async()=>{
+ const temp=await mkdtemp(path.join(os.tmpdir(),'guard-demo-path-'));const {existsSync}=await import('node:fs');
+ try{
+  await symlink(path.resolve('fixtures'),path.join(temp,'linked'));
+  const output=path.join(temp,'linked','forbidden-demo-output');
+  const result=spawnSync(process.execPath,['dist/demo.js','--out',output],{encoding:'utf8',timeout:10000});
+  assert.equal(result.status,2);assert.equal(existsSync(output),false);
+ }finally{await rm(temp,{recursive:true,force:true});}
 });

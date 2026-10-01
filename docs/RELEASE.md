@@ -1,15 +1,14 @@
-# Release gate and scope
+# v0.2.0 release gate
 
-v0.1.0 is distributed as a GitHub archive in zayyanla-hash/mcp-guard. It is not an npm registry publication.
+Distribution: GitHub archive and checksum under zayyanla-hash/mcp-guard. Runtime transitive dependencies are locked by npm-shrinkwrap.json, which is included in the archive. The npm registry name belongs to another project.
 
-Release acceptance requires a pinned install, build, full offline test suite, demo, help/version/invalid-command checks, archive installation, and CI. All tests must run, with no skipped mandatory tests. A release checkpoint records actual results and commit identity. Production claims remain limited to supported offline operation with documented preconditions.
+Required gates: clean scoped diff, npm ci --ignore-scripts, offline test and validate commands, seeded demo, CLI help/version/invalid input, reviewed-fixture discovery under verified OS restrictions, denial probes, timeout/cancellation/PID cleanup, malicious-protocol fixtures, archive installation, independent public download checksum/install, and Linux/macOS Node24/26 CI. No skipped mandatory tests.
 
-Optional discovery and SARIF remain unavailable. No arbitrary server is started. Publishing this experimental release does not establish independent security assurance or general production readiness.
+No release claim implies universal vulnerability detection or security certification. Unrecognized syntax remains a documented analysis limit. Arbitrary discovery is blocked. SARIF is unavailable. Historical local harness trials remain distinct from cloud/Luna-assisted implementation.
 
-Official references inspected 2026-09-30:
-- https://modelcontextprotocol.io/specification/latest/server/tools (latest resolved to 2026-07-28)
-- https://modelcontextprotocol.io/specification/latest/basic/authorization
-- https://modelcontextprotocol.io/specification/latest/basic/security_best_practices
+Official references inspected 2026-10-01:
+- https://modelcontextprotocol.io/specification/2026-07-28/server/tools
 - https://github.com/modelcontextprotocol/typescript-sdk
+- https://ts.sdk.modelcontextprotocol.io/v2/migration/support-2026-07-28
 
-No installed MCP SDK or supported live transport is claimed. Source recognition covers the direct McpServer registerTool pattern, without executing or verifying SDK lifecycle. Future discovery must verify official SDK imports, transport, lifecycle and pagination first, and must enforce execution isolation rather than infer permission from metadata.
+Installed client and server packages: @modelcontextprotocol/client 2.2.0 and @modelcontextprotocol/server 2.2.0. Supported live protocol: 2026-07-28, explicitly negotiated modern era. Transport: official SDK serialization/read-buffer with a controlled stdio adapter; only tools/list pages are requested. SDK's no-cursor convenience aggregation is bypassed with an explicit initial empty cursor for this verified fixture so page bounds and cursor loops remain observable. Legacy/other protocol versions fail. No tool call, prompt fetch, resource read or remote metadata link is performed.

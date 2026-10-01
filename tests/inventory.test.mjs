@@ -45,6 +45,30 @@ test('remote refs are never fetched and produce incomplete coverage', async () =
   const r=auditInventory(await load('unsupported'));
   assert.equal(r.coverage.complete,false); assert.ok(r.coverage.diagnostics.some(d=>d.code==='MG005_UNRESOLVED_REMOTE_REF'));
 });
+test('local refs are checked offline and established pointers and anchors remain complete', () => {
+  const audit=inputSchema=>auditInventory({tools:[{name:'ref-test',inputSchema}]});
+  for (const inputSchema of [
+    {$ref:'#/$defs/missing'},
+    {$ref:'#/properties/missing'},
+    {$defs:{present:{type:'string'}},$ref:'#/$defs/present/type'},
+    {$ref:'#missing-anchor'}
+  ]) {
+    const r=audit(inputSchema);
+    assert.equal(r.coverage.complete,false,JSON.stringify(inputSchema));
+    assert.ok(r.coverage.diagnostics.some(d=>d.code==='MG005_UNRESOLVED_LOCAL_REF'));
+  }
+  for (const inputSchema of [
+    {$defs:{present:{type:'string'}},$ref:'#/$defs/present'},
+    {$defs:{'with/slash':{type:'string'}},$ref:'#/$defs/with~1slash'},
+    {$defs:{present:{$anchor:'present',type:'string'}},properties:{name:{$ref:'#present'}}},
+    {properties:{child:{$id:'urn:child',$defs:{value:{type:'string'}},$ref:'#/$defs/value'}}},
+    {$ref:'#'}
+  ]) {
+    const r=audit(inputSchema);
+    assert.equal(r.coverage.complete,true,JSON.stringify(inputSchema));
+    assert.deepEqual(r.coverage.diagnostics,[]);
+  }
+});
 test('unsupported advertised protocol version is surfaced', () => {
   const r=auditInventory({protocolVersion:'2099-01-01',tools:[]}); assert.equal(r.coverage.complete,false); assert.equal(r.coverage.diagnostics[0].code,'MG005_UNSUPPORTED_PROTOCOL_VERSION');
 });

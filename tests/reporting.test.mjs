@@ -68,6 +68,19 @@ test('malformed coverage is rejected rather than rendered as clean', () => {
   const r=result(); delete r.coverage.complete; assert.throws(()=>renderHtml(r),/coverage must include/);
   const bad=result(); bad.coverage.recognizedTools=-1; assert.throws(()=>validateResult(bad),/non-negative integer/);
 });
+test('coverage with unresolved handlers or a source scan with no recognized tools cannot be rendered complete', () => {
+  const unresolved=result({kind:'source',findings:[],coverage:{complete:true,inspected:['server.ts'],excluded:[],failed:[],truncated:[],recognizedTools:1,unresolvedHandlers:1,rulesApplied:['MG001'],diagnostics:[]}});
+  assert.equal(validateResult(unresolved).coverage.complete,false);
+  assert.match(renderHtml(unresolved),/class="coverage incomplete"/);
+  assert.match(renderTerminal(unresolved),/Coverage: incomplete/);
+
+  const noTools=result({kind:'source',findings:[],coverage:{complete:true,inspected:['server.ts'],excluded:[],failed:[],truncated:[],recognizedTools:0,unresolvedHandlers:0,rulesApplied:['MG001'],diagnostics:[]}});
+  assert.equal(validateResult(noTools).coverage.complete,false);
+
+  // An empty inventory is still a valid complete inventory audit.
+  const emptyInventory=result({kind:'inventory',findings:[],coverage:{complete:true,inspected:['inventory envelope','tool descriptors'],excluded:[],failed:[],truncated:[],recognizedTools:0,unresolvedHandlers:0,rulesApplied:['MG005'],diagnostics:[]}});
+  assert.equal(validateResult(emptyInventory).coverage.complete,true);
+});
 test('malformed change data and unsafe nested keys are rejected', () => {
   assert.throws(()=>validateResult(result({changes:[{}]})),/change requires/);
   const unsafe=JSON.parse('{"schemaVersion":1,"kind":"inventory","target":"x","findings":[],"coverage":{"complete":true,"inspected":[],"excluded":[],"failed":[],"truncated":[],"recognizedTools":0,"unresolvedHandlers":0,"rulesApplied":[],"diagnostics":[],"constructor":{}}}');

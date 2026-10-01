@@ -3,9 +3,11 @@ import { coverage, finding } from './shared.js';
 import type { AuditResult, Finding, Location } from './types.js';
 
 export const SOURCE_RULES = ['MG001','MG002','MG003','MG004','MG006'];
-type Value = {input:boolean; env:false|'whole'|'secret'; uncertain:boolean};
-const empty = (): Value => ({input:false,env:false,uncertain:false});
-const combine = (values: Value[]): Value => ({input:values.some(v=>v.input),env:values.some(v=>v.env==='whole')?'whole':values.some(v=>v.env==='secret')?'secret':false,uncertain:values.some(v=>v.uncertain)});
+type Value = {input:boolean; env:false|'whole'|'secret'; process:boolean; uncertain:boolean};
+const empty = (): Value => ({input:false,env:false,process:false,uncertain:false});
+const wholeEnvironment = (): Value => ({input:false,env:'whole',process:false,uncertain:false});
+const wholeProcess = (): Value => ({input:false,env:'whole',process:true,uncertain:false});
+const combine = (values: Value[]): Value => ({input:values.some(v=>v.input),env:values.some(v=>v.env==='whole')?'whole':values.some(v=>v.env==='secret')?'secret':false,process:values.some(v=>v.process),uncertain:values.some(v=>v.uncertain)});
 type Import = {module:string; name:string};
 const moduleName = (name:string) => name.replace(/^node:/,'');
 
@@ -44,11 +46,20 @@ export function analyzeSource(file:string, text:string): AuditResult {
     return undefined;
   };
   const global=(node:ts.Expression,name:string)=>ts.isIdentifier(node)&&node.text===name&&!symbol(node);
-  const environment=(expr:ts.Expression)=>(ts.isPropertyAccessExpression(expr)&&global(expr.expression,'process')&&expr.name.text==='env')||(ts.isElementAccessExpression(expr)&&global(expr.expression,'process')&&!!expr.argumentExpression&&ts.isStringLiteralLike(expr.argumentExpression)&&expr.argumentExpression.text==='env');
+  const importedProcess=(expr:ts.Expression):Import|undefined=>{if(!ts.isIdentifier(expr))return;const s=symbol(expr);const imported=s?imports.get(s):undefined;return imported?.module==='process'?imported:undefined;};
+  const isProcessObject=(expr:ts.Expression):boolean=>global(expr,'process')||importedProcess(expr)?.name==='*'||(ts.isIdentifier(expr)&&!!symbol(expr)&&values.get(symbol(expr)!)?.process===true);
+  const environment=(expr:ts.Expression):boolean=>{
+    if(ts.isIdentifier(expr)){const imported=importedProcess(expr);const s=symbol(expr);return imported?.name==='env'||(!!s&&values.get(s)?.env==='whole');}
+    if(ts.isPropertyAccessExpression(expr)&&expr.name.text==='env')return isProcessObject(expr.expression);
+    if(ts.isElementAccessExpression(expr)&&isProcessObject(expr.expression)&&expr.argumentExpression&&ts.isStringLiteralLike(expr.argumentExpression)&&expr.argumentExpression.text==='env')return true;
+    return false;
+  };
+  const secretEnvironmentName=(name:string)=>/(?:SECRET|TOKEN|PASSWORD|API_?KEY|PRIVATE_?KEY|ACCESS_?KEY|CREDENTIAL|DATABASE_?URL|DB_?URL|REDIS_?URL|DSN)/i.test(name);
   const evalValue=(expr:ts.Expression|undefined,depth=0):Value=>{
     if(!expr||depth>40)return {...empty(),uncertain:depth>40};
-    if(environment(expr))return {input:false,env:'whole',uncertain:false};
-    if(ts.isIdentifier(expr)){const s=symbol(expr);return s?values.get(s)??empty():empty();}
+    if(environment(expr))return wholeEnvironment();
+    if(global(expr,'process'))return wholeProcess();
+    if(ts.isIdentifier(expr)){const s=symbol(expr);const imported=s?imports.get(s):undefined;if(imported?.module==='process'){if(imported.name==='env')return wholeEnvironment();if(imported.name==='*')return wholeProcess();}return s?values.get(s)??empty():empty();}
     if(ts.isStringLiteralLike(expr)||ts.isNumericLiteral(expr)||expr.kind===ts.SyntaxKind.TrueKeyword||expr.kind===ts.SyntaxKind.FalseKeyword||expr.kind===ts.SyntaxKind.NullKeyword)return empty();
     if(ts.isParenthesizedExpression(expr)||ts.isAsExpression(expr)||ts.isNonNullExpression(expr)||ts.isTypeAssertionExpression(expr)||ts.isAwaitExpression(expr))return evalValue(expr.expression,depth+1);
     if(ts.isPropertyAccessExpression(expr)||ts.isElementAccessExpression(expr)){
@@ -56,7 +67,12 @@ export function analyzeSource(file:string, text:string): AuditResult {
       if(environment(base)){
         const name=ts.isPropertyAccessExpression(expr)?expr.name.text:expr.argumentExpression&&ts.isStringLiteral(expr.argumentExpression)?expr.argumentExpression.text:undefined;
         if(!name)return {...empty(),uncertain:true};
-        return {input:false,env:/(?:SECRET|TOKEN|PASSWORD|API_?KEY|PRIVATE_?KEY)/i.test(name)?'secret':false,uncertain:false};
+        return {input:false,env:secretEnvironmentName(name)?'secret':false,process:false,uncertain:false};
+      }
+      if(isProcessObject(base)){
+        const name=ts.isPropertyAccessExpression(expr)?expr.name.text:expr.argumentExpression&&ts.isStringLiteralLike(expr.argumentExpression)?expr.argumentExpression.text:undefined;
+        if(name==='env')return wholeEnvironment();
+        return {...empty(),uncertain:true};
       }
       if(ts.isElementAccessExpression(expr)) {
         const value=combine([evalValue(base,depth+1),evalValue(expr.argumentExpression,depth+1)]);
@@ -85,15 +101,23 @@ export function analyzeSource(file:string, text:string): AuditResult {
   };
   const bind=(name:ts.BindingName,val:Value)=>{
     if(ts.isIdentifier(name)){const s=symbol(name);if(s)values.set(s,val);}
-    else for(const el of name.elements)if(ts.isBindingElement(el))bind(el.name,val);
+    else for(const el of name.elements)if(ts.isBindingElement(el)){
+      if(ts.isObjectBindingPattern(name)&&val.process){
+        const key=el.propertyName??el.name;
+        const property=ts.isIdentifier(key)||ts.isStringLiteralLike(key)?key.text:undefined;
+        bind(el.name,property==='env'?wholeEnvironment():{...empty(),uncertain:true});
+      }else bind(el.name,val);
+    }
   };
   // Only top-level constants are carried into tool callbacks; no target module resolution occurs.
   for(const st of sf.statements)if(ts.isVariableStatement(st))for(const decl of st.declarationList.declarations){
-    if(!ts.isIdentifier(decl.name)||!decl.initializer)continue;
-    const s=symbol(decl.name);if(!s)continue;
-    if(st.declarationList.flags&ts.NodeFlags.Const){constants.set(s,decl.initializer);bind(decl.name,evalValue(decl.initializer));}
-    if(ts.isNewExpression(decl.initializer)){const ctor=api(decl.initializer.expression);if(ctor?.name==='McpServer'&&ctor.module==='@modelcontextprotocol/sdk/server/mcp.js'&&(st.declarationList.flags&ts.NodeFlags.Const))servers.add(s);}
+    if(!decl.initializer)continue;
+    const s=ts.isIdentifier(decl.name)?symbol(decl.name):undefined;
+    if(st.declarationList.flags&ts.NodeFlags.Const){if(s)constants.set(s,decl.initializer);bind(decl.name,evalValue(decl.initializer));}
+    if(s&&ts.isNewExpression(decl.initializer)){const ctor=api(decl.initializer.expression);if(ctor?.name==='McpServer'&&['@modelcontextprotocol/sdk/server/mcp.js','@modelcontextprotocol/server'].includes(ctor.module)&&(st.declarationList.flags&ts.NodeFlags.Const))servers.add(s);}
   }
+  let addedServerAlias=true;
+  while(addedServerAlias){addedServerAlias=false;for(const st of sf.statements)if(ts.isVariableStatement(st)&&(st.declarationList.flags&ts.NodeFlags.Const))for(const decl of st.declarationList.declarations){if(ts.isIdentifier(decl.name)&&decl.initializer&&ts.isIdentifier(decl.initializer)){const s=symbol(decl.name),source=symbol(decl.initializer);if(s&&source&&servers.has(source)&&!servers.has(s)){servers.add(s);addedServerAlias=true;}}}}
   const prop=(obj:ts.ObjectLiteralExpression,name:string)=>obj.properties.find(p=>ts.isPropertyAssignment(p)&&((ts.isIdentifier(p.name)||ts.isStringLiteral(p.name))&&p.name.text===name)) as ts.PropertyAssignment|undefined;
   const emit=(ruleId:string,n:ts.Node,tool:string,readonlyNode?:ts.Node)=>{
     const descriptions:Record<string,{title:string;observed:string;why:string;remediation:string;severity:Finding['severity']}>={
@@ -113,7 +137,21 @@ export function analyzeSource(file:string, text:string): AuditResult {
     if(ts.isIdentifier(expr)){const s=symbol(expr);for(const d of s?.declarations??[]){if(ts.isFunctionDeclaration(d))return d;if(ts.isVariableDeclaration(d)&&d.initializer&&(ts.isArrowFunction(d.initializer)||ts.isFunctionExpression(d.initializer)))return d.initializer;}}
   };
   const regs:ts.CallExpression[]=[];
-  const collect=(n:ts.Node)=>{if(ts.isCallExpression(n)&&ts.isElementAccessExpression(n.expression)&&ts.isIdentifier(n.expression.expression)&&servers.has(symbol(n.expression.expression)!))note('COMPUTED_REGISTRATION',n,'Computed server method registration is not assessed');if(ts.isCallExpression(n)&&ts.isPropertyAccessExpression(n.expression)&&['registerTool','tool'].includes(n.expression.name.text))regs.push(n);ts.forEachChild(n,collect);};collect(sf);
+  const serverMethod=(expr:ts.Expression):boolean=>{
+    if(ts.isPropertyAccessExpression(expr))return ['registerTool','tool'].includes(expr.name.text)&&ts.isIdentifier(expr.expression)&&!!symbol(expr.expression)&&servers.has(symbol(expr.expression)!);
+    if(ts.isElementAccessExpression(expr)&&expr.argumentExpression&&ts.isStringLiteralLike(expr.argumentExpression))return ['registerTool','tool'].includes(expr.argumentExpression.text)&&ts.isIdentifier(expr.expression)&&!!symbol(expr.expression)&&servers.has(symbol(expr.expression)!);
+    return false;
+  };
+  const collect=(n:ts.Node)=>{
+    if(ts.isCallExpression(n)&&ts.isElementAccessExpression(n.expression)&&ts.isIdentifier(n.expression.expression)&&symbol(n.expression.expression)&&servers.has(symbol(n.expression.expression)!))note('COMPUTED_REGISTRATION',n,'Computed server method registration is not assessed');
+    if(ts.isPropertyAccessExpression(n)&&serverMethod(n)&&!(ts.isCallExpression(n.parent)&&n.parent.expression===n))note('REGISTRATION_ALIAS',n,'Aliased server registration method is not assessed');
+    if(ts.isElementAccessExpression(n)&&serverMethod(n)&&!(ts.isCallExpression(n.parent)&&n.parent.expression===n))note('REGISTRATION_ALIAS',n,'Aliased server registration method is not assessed');
+    if(ts.isVariableDeclaration(n)&&ts.isObjectBindingPattern(n.name)&&n.initializer&&ts.isIdentifier(n.initializer)&&symbol(n.initializer)&&servers.has(symbol(n.initializer)!)){
+      for(const el of n.name.elements){const key=el.propertyName??el.name;if((ts.isIdentifier(key)||ts.isStringLiteralLike(key))&&['registerTool','tool'].includes(key.text))note('REGISTRATION_ALIAS',el,'Destructured server registration method is not assessed');}
+    }
+    if(ts.isCallExpression(n)&&ts.isPropertyAccessExpression(n.expression)&&['registerTool','tool'].includes(n.expression.name.text))regs.push(n);
+    ts.forEachChild(n,collect);
+  };collect(sf);
   for(const reg of regs){
     const method=reg.expression as ts.PropertyAccessExpression;
     const receiver=ts.isIdentifier(method.expression)?symbol(method.expression):undefined;
@@ -123,7 +161,7 @@ export function analyzeSource(file:string, text:string): AuditResult {
     if(!name||!ts.isStringLiteralLike(name)||!config||!ts.isObjectLiteralExpression(config)||!fn?.body){cov.unresolvedHandlers++;note('UNRESOLVED_HANDLER',reg,'Tool name/configuration/handler could not be mapped directly');continue;}
     if(config.properties.some(p=>ts.isSpreadAssignment(p)))note('UNRESOLVED_CONFIG_SPREAD',config,'Spread registration configuration is not fully assessed');
     const saved=new Map(values);
-    if(fn.parameters[0])bind(fn.parameters[0].name,{input:true,env:false,uncertain:false});
+    if(fn.parameters[0])bind(fn.parameters[0].name,{input:true,env:false,process:false,uncertain:false});
     const annotation=prop(config,'annotations');let readonly:ts.Node|undefined;
     if(annotation&&!ts.isObjectLiteralExpression(annotation.initializer))note('UNRESOLVED_ANNOTATIONS',annotation,'Annotation mapping is not assessed');
     if(annotation&&ts.isObjectLiteralExpression(annotation.initializer)){const p=prop(annotation.initializer,'readOnlyHint');if(p?.initializer.kind===ts.SyntaxKind.TrueKeyword)readonly=p;else if(p&&!([ts.SyntaxKind.TrueKeyword,ts.SyntaxKind.FalseKeyword].includes(p.initializer.kind)))note('UNRESOLVED_ANNOTATIONS',p,'Dynamic readOnlyHint is not assessed');if(annotation.initializer.properties.some(p=>ts.isSpreadAssignment(p)))note('UNRESOLVED_ANNOTATIONS',annotation,'Spread annotations are not assessed');}

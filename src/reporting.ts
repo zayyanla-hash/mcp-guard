@@ -76,7 +76,7 @@ function safeDiagnostic(value: unknown): Diagnostic {
   if (value.pointer !== undefined) { if (!string(value.pointer)) throw new Error('Malformed audit result: diagnostic.pointer must be a string.'); out.pointer=value.pointer; }
   return out;
 }
-function safeCoverage(value: unknown): Coverage {
+function safeCoverage(value: unknown, kind: AuditResult['kind']): Coverage {
   if (!isObject(value) || typeof value.complete !== 'boolean') throw new Error('Malformed audit result: coverage must include a boolean complete field.');
   for (const key of ['recognizedTools','unresolvedHandlers'] as const) if (!Number.isSafeInteger(value[key]) || (value[key] as number) < 0) throw new Error(`Malformed audit result: coverage.${key} must be a non-negative integer.`);
   if (!Array.isArray(value.diagnostics)) throw new Error('Malformed audit result: coverage.diagnostics must be an array.');
@@ -86,9 +86,11 @@ function safeCoverage(value: unknown): Coverage {
   const truncated = arrayOfStrings(value.truncated,'coverage.truncated');
   const diagnostics = value.diagnostics.map(safeDiagnostic);
   return {
-    // A producer cannot claim complete coverage while also reporting failed,
-    // truncated, or diagnostic coverage. Preserve that incomplete state.
-    complete:value.complete && failed.length === 0 && truncated.length === 0 && diagnostics.length === 0,
+    // A producer cannot claim complete coverage while analysis failed, a
+    // handler remains unresolved, or a source scan found no supported tool.
+    complete:value.complete && failed.length === 0 && truncated.length === 0 && diagnostics.length === 0
+      && (value.unresolvedHandlers as number) === 0
+      && !(kind === 'source' && (value.recognizedTools as number) === 0),
     inspected, excluded, failed, truncated,
     recognizedTools:value.recognizedTools as number, unresolvedHandlers:value.unresolvedHandlers as number,
     rulesApplied:arrayOfStrings(value.rulesApplied,'coverage.rulesApplied'), diagnostics
@@ -101,7 +103,7 @@ export function validateResult(value: unknown): AuditResult {
   if (!Array.isArray(value.findings)) throw new Error('Malformed audit result: findings must be an array.');
   const result: AuditResult = {
     schemaVersion:1,kind:value.kind as AuditResult['kind'],target:value.target as string,
-    findings:value.findings.map(safeFinding),coverage:safeCoverage(value.coverage)
+    findings:value.findings.map(safeFinding),coverage:safeCoverage(value.coverage,value.kind as AuditResult['kind'])
   };
   if (value.changes !== undefined) {
     if (!Array.isArray(value.changes)) throw new Error('Malformed audit result: changes must be an array.');

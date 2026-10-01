@@ -1,6 +1,6 @@
 # Contributing
 
-Use Node 24+ and npm. Run `npm ci --ignore-scripts`, `npm run validate`, and `npm run demo -- --out NEW-directory`. Keep dependencies pinned and the lockfile committed. Never install or execute code from an audit target.
+Use Node 24+ and npm. Run `npm ci --ignore-scripts`, `npm run validate`, and `npm run demo -- --out NEW-directory`. Keep dependencies pinned and the npm-shrinkwrap.json committed. Never install or execute code from an audit target. `npm run test:discovery` explicitly starts only the reviewed built-in fixture under verified macOS OS restrictions; this is separate from default offline validation.
 
 Extensions live in src/analyzer.ts (direct AST patterns), src/scanner.ts (walking/isolation), src/inventory.ts (data-only descriptors/diff), and src/reporting.ts (validated presentation). src/types.ts defines recorded contracts; src/policy.ts keeps coverage, severity and CI outcomes separate. Worker entrypoints enforce analysis deadlines.
 

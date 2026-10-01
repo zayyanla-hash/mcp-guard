@@ -1,4 +1,4 @@
-# Rule contracts (version 1.0.0)
+# Rule contracts (version 1.1.0)
 
 Every finding carries rule/version, severity, confidence, evidence type, source location or JSON pointer, redacted excerpt, observed pattern, rationale, assumptions, remediation, limitations, and a stable fingerprint. Fingerprints identify the recorded rule/location/pattern; moving a source line may change them. Inventory snapshots are separate artifacts.
 

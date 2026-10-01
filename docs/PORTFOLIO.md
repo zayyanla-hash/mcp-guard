@@ -14,10 +14,10 @@ Security review added conservative diagnostics for branch reassignment, nonliter
 
 **Evidence:** source and negative controls in tests/source.test.mjs; bounded scanner controls in tests/scanner.test.mjs; inventory/report/CLI suites; generated reports in examples/seeded; reproducible offline demo and least-privilege CI.
 
-**Boundaries:** experimental v0, limited registration/language support, no whole-program analysis, no live target execution, no independent real-world accuracy estimate, and no production-security certification. Luna-assisted implementation and historical local harness trials are disclosed separately. Test counts and release state should be read from the current checkpoint.
+**Boundaries:** scoped release, limited registration/language support, no whole-program analysis, reviewed-fixture discovery only on verified macOS isolation, no independent real-world accuracy estimate, and no security certification. Luna-assisted implementation and historical local harness trials are disclosed separately. Test counts and release state should be read from the current checkpoint.
 
 ## Next three experiments
 
 1. **Expand one dataflow boundary safely.** Add constant options and helper summaries for one reviewed filesystem containment pattern. Acceptance: positives, fixed-path negatives, traversal/absolute/prefix/symlink behavior controls and unresolved helper diagnostics; no clean result for unmodeled helper effects.
 2. **Evaluate on an authorized external corpus.** Define expected outcomes before tuning for at least 20 public, license-compatible reviewed tool handlers; preserve provenance and count detected/missed/unsupported outcomes. Acceptance: a reproducible report with denominators and disagreement notes, without executing targets or claiming independent holdout status after tuning.
-3. **Verify isolated SDK discovery.** Pin one official SDK generation and transport, implement reviewed project-owned fixture discovery only after isolation proof. Acceptance: bounded startup/pages/bytes, repeated-cursor rejection, unsupported-version diagnostics, unsolicited-request rejection, minimal environment, no tool calls, cancellation cleanup and no arbitrary-host fallback.
+3. **Add one independently verified Linux isolation backend.** Acceptance: filesystem/network/process denial controls, bounded resources, cancellation cleanup and official-SDK fixture discovery in Linux CI; unsupported platforms must remain blocked until these probes pass.

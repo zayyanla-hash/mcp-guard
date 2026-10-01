@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "inventory",
+  "target": "Project-owned reviewed fixture: isolated SDK discovery",
+  "findings": [],
+  "coverage": {
+    "complete": true,
+    "inspected": [
+      "inventory envelope",
+      "tool descriptors",
+      "input schemas",
+      "output schemas",
+      "protocol version"
+    ],
+    "excluded": [],
+    "failed": [],
+    "truncated": [],
+    "recognizedTools": 1,
+    "unresolvedHandlers": 0,
+    "rulesApplied": [
+      "MG005"
+    ],
+    "diagnostics": []
+  }
+}

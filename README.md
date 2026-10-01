@@ -2,7 +2,7 @@
 
 A local CLI for reviewing specific risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
 
-**Status: experimental v0.1.0.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
+**Status: v0.2.0, scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
 
 ## Try the recorded offline demonstration
 
@@ -29,12 +29,12 @@ These results measure seeded examples, not real-world detection accuracy. No fix
 Distribution is through the GitHub release archive. The registry package named `mcp-guard` belongs to someone else; do not install it as this project.
 
 ```sh
-npm install --global https://github.com/zayyanla-hash/mcp-guard/releases/download/v0.1.0/mcp-guard-0.1.0.tgz --ignore-scripts
+npm install --global https://github.com/zayyanla-hash/mcp-guard/releases/download/v0.2.0/mcp-guard-0.2.0.tgz --ignore-scripts
 mcp-guard --help
 mcp-guard --version
 ```
 
-The archive contains compiled code; installation does not require a build. Its pinned runtime dependencies are TypeScript (parser) and Ajv (schema meta-validation).
+The archive contains compiled code; installation does not require a build. Its runtime dependencies are locked by the packaged npm-shrinkwrap.json, including TypeScript (parser), Ajv (schema meta-validation), the official MCP SDK and Zod (reviewed fixture schemas).
 
 ## Commands
 
@@ -61,6 +61,21 @@ Outputs must be new files. Source audit output must be outside the selected targ
 
 Incomplete coverage takes priority over finding severity. A successful exit does not establish that a target is secure. A report-rendering exit only describes report generation.
 
+## Isolated local discovery (macOS)
+
+Explicitly approve only the reviewed built-in fixture:
+
+```sh
+npm run discovery:demo
+npm run guard -- discover --fixture reviewed --approve-execution --format json --inventory-out ../discovered-tools.json
+npm run guard -- snapshot ../discovered-tools.json --out ../discovered.snapshot.json
+npm run test:discovery
+```
+
+The exact executable/argument array is shown before startup. A runtime OS probe must prove that outside canary reads/writes, sockets and child spawning are denied. The server receives a minimal environment, no credential inheritance, bounded memory/stdio/time, and uses official SDK stdio framing with protocol 2026-07-28 pinned. Only tools/list is requested; no tools or resources are invoked. Arbitrary server/config/URL execution is blocked. Linux and other platforms fail closed for this command. See [discovery and isolation](docs/DISCOVERY.md).
+
+`npm run validate` remains offline and never starts a fixture server. `npm run validate:all` additionally opts into the reviewed fixture's isolation/discovery tests. Both gates run in CI; macOS verifies live success, while Linux verifies explicit blocking.
+
 ## Six core rules
 
 | Rule | Supported observation |
@@ -80,7 +95,7 @@ Offline JSON uses `{ "tools": [...] }`, with optional `protocolVersion`, `metada
 
 Snapshots preserve all meaningful content and array ordering, normalize object key ordering, and carry a SHA-256 hash. Description, schema, annotation, tool additions/removals, required-field removal, and context changes are explained. A change is a review observation, not evidence of a malicious rug pull. A stable snapshot says nothing about unseen implementation changes.
 
-JSON Schema 2020-12 meta-validation is supported. Remote references are never resolved. Unknown features, protocols, handlers, parse failures, traversal limits, and unsupported files can make coverage incomplete. Optional annotations are not required and do not enforce permissions.
+JSON Schema 2020-12 meta-validation is supported. Remote references are never resolved. Unknown features, protocols, handlers, parse failures, traversal limits, and unsupported files can make coverage incomplete. Optional annotations are not required and do not enforce permissions. Local JSON pointer/anchor references are checked offline; unresolved references make coverage incomplete.
 
 ## Release and contribution
 

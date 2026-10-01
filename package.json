@@ -1,6 +1,6 @@
 {
   "name": "mcp-guard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Offline, evidence-linked auditing and inventory drift for a documented subset of MCP servers",
   "type": "module",
   "private": true,
@@ -15,7 +15,8 @@
     "LICENSE",
     "docs",
     "examples",
-    "SECURITY.md"
+    "SECURITY.md",
+    "npm-shrinkwrap.json"
   ],
   "engines": {
     "node": ">=24"
@@ -23,14 +24,20 @@
   "scripts": {
     "build": "tsc",
     "guard": "node dist/cli.js",
-    "test": "npm run build && node --test tests/*.test.mjs",
+    "test": "npm run build && node --test tests/bounded-scan.test.mjs tests/cli.test.mjs tests/inventory.test.mjs tests/reporting.test.mjs tests/scanner.test.mjs tests/source.test.mjs",
     "validate": "npm test",
     "demo": "npm run build && node dist/demo.js",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "discovery:demo": "npm run build && node dist/cli.js discover --fixture reviewed --approve-execution --format json",
+    "test:discovery": "npm run build && node --test tests/isolation.test.mjs tests/discovery.test.mjs",
+    "validate:all": "npm run validate && npm run test:discovery"
   },
   "dependencies": {
+    "@modelcontextprotocol/client": "2.2.0",
+    "@modelcontextprotocol/server": "2.2.0",
     "ajv": "8.20.0",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@types/node": "26.0.0"

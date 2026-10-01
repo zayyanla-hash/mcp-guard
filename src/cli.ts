@@ -2,23 +2,33 @@
 import { promises as fs, constants } from 'node:fs';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
-import { scanSource, inside } from './scanner.js';
+import { inside } from './scanner.js';
 import { renderTerminal, validateResult } from './reporting.js';
 import { canonical, cleanTerminal, redactText } from './shared.js';
+import { scanSourceBounded } from './bounded-scan.js';
+import { VERSION } from './version.js';
+import { fileURLToPath } from 'node:url';
+import { discoverFixture, DiscoveryIncomplete } from './discovery.js';
+import { IsolationBlocked,describeFixtureLaunch } from './isolation.js';
 import { policyExit } from './policy.js';
 import type { AuditResult, Severity } from './types.js';
 
-const HELP=`MCP Guard 0.1.0 — bounded offline MCP audits
+const cancellation=new AbortController();
+process.once('SIGINT',()=>cancellation.abort());
+process.once('SIGTERM',()=>cancellation.abort());
+const HELP=`MCP Guard ${VERSION} — bounded offline MCP audits
 Usage: mcp-guard <command> [arguments] [options]
   audit <directory>                  Static source audit; never executes targets
   inventory <tools.json>             Validate offline inventory
   snapshot <tools.json> --out <file>  Create a new inventory baseline
   diff <before.json> <after.json>     Explain inventory drift
   report <scan.json> --out <file>     Render self-contained HTML
-  discover                          Blocked in this release
+  discover --fixture reviewed --approve-execution
+                                    Isolated reviewed local fixture (macOS only)
 Options:
   --format terminal|json             Audit/inventory/diff output (default terminal)
   --out <file>                       Write a NEW artifact; never overwrite
+  --inventory-out <file>             Discovery: preserve snapshot-ready inventory
   --threshold low|medium|high         Finding policy threshold (default medium)
   --help                            Show help
   --version                         Show version
@@ -55,38 +65,48 @@ async function artifact(operation:string,inputs:unknown[]):Promise<unknown> {
   });
 }
 async function main(argv:string[]):Promise<number> {
-  if(argv.length===1&&argv[0]==='--version'){console.log('0.1.0');return 0;}
+  if(argv.length===1&&argv[0]==='--version'){console.log(VERSION);return 0;}
   if(!argv.length||(argv.length===1&&argv[0]==='--help')){console.log(HELP);return 0;}
   const command=argv.shift()!;
   if(!['audit','inventory','snapshot','diff','report','discover'].includes(command))throw new Error('Unknown command: '+command);
-  if(command==='discover'){console.error('BLOCKED: live discovery is unavailable. No server was started.');return 3;}
   if(argv.length===1&&argv[0]==='--help'){console.log(HELP);return 0;}
   const positions:string[]=[],options=new Map<string,string>();
   for(let i=0;i<argv.length;i++){
     const value=argv[i]!;
     if(value.startsWith('--')){
-      if(!['--out','--format','--threshold'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
+      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
+      if(value==='--approve-execution'){options.set(value,'true');continue;}
       const next=argv[++i];if(!next||next.startsWith('--'))throw new Error('Missing value for '+value);options.set(value,next);
     }else if(value.startsWith('-'))throw new Error('Unknown option: '+value);else positions.push(value);
   }
-  if(positions.length!==(command==='diff'?2:1))throw new Error('Incorrect number of arguments for '+command);
+  if(positions.length!==(command==='diff'?2:command==='discover'?0:1))throw new Error('Incorrect number of arguments for '+command);
   const format=options.get('--format')??'terminal',threshold=options.get('--threshold')??'medium',out=options.get('--out');
   if(!['terminal','json'].includes(format))throw new Error('Invalid output format');
   if(!['low','medium','high'].includes(threshold))throw new Error('Invalid severity threshold');
+  if(command!=='discover'&&(options.has('--fixture')||options.has('--approve-execution')||options.has('--inventory-out')))throw new Error('Discovery options only apply to discover');
   if(['snapshot','report'].includes(command)){
     if(!out)throw new Error(command+' requires --out');
     if(options.has('--format')||options.has('--threshold'))throw new Error('Format/threshold options are not supported for '+command);
   }
   if(command==='snapshot'){
     const snapshot=await artifact('snapshot',[await readJson(positions[0]!)]);
-    await writeNew(out!,canonical(snapshot)+'\n');console.log('Snapshot written: '+cleanTerminal(out!));return 0;
+    await writeNew(out!,canonical(snapshot)+'\n');console.log('Snapshot written: '+cleanTerminal(redactText(out!)));return 0;
   }
   if(command==='report'){
     const html=await artifact('report',[await readJson(positions[0]!)]);
-    await writeNew(out!,String(html));console.log('Report written: '+cleanTerminal(out!));return 0;
+    await writeNew(out!,String(html));console.log('Report written: '+cleanTerminal(redactText(out!)));return 0;
   }
   let result:AuditResult;
-  if(command==='audit')result=await scanSource(positions[0]!);
+  if(command==='discover'){
+    if(options.get('--fixture')!=='reviewed'||!options.has('--approve-execution')){console.error('BLOCKED: use --fixture reviewed --approve-execution to explicitly authorize the isolated project-owned fixture.');return 3;}
+    const approvedFixture=fileURLToPath(new URL('../fixtures/discovery/reviewed.mjs',import.meta.url));
+    console.error('Approved executable/arguments: '+cleanTerminal(redactText(JSON.stringify(await describeFixtureLaunch(approvedFixture)))));
+    const acquired=await discoverFixture({approved:true,signal:cancellation.signal});
+    result=await artifact('inventory',[acquired.inventory]) as AuditResult;
+    result.target='Project-owned reviewed fixture: isolated SDK discovery';
+    if(options.has('--inventory-out')){const checked=await artifact('snapshot',[acquired.inventory]) as {payload:unknown};await writeNew(options.get('--inventory-out')!,canonical(checked.payload)+'\n',fileURLToPath(new URL('../fixtures',import.meta.url)));}
+  }
+  else if(command==='audit')result=await scanSourceBounded(positions[0]!,undefined,cancellation.signal);
   else if(command==='inventory')result=await artifact('inventory',[await readJson(positions[0]!)]) as AuditResult;
   else result=await artifact('diff',[await readJson(positions[0]!),await readJson(positions[1]!)]) as AuditResult;
   result=validateResult(result);
@@ -94,4 +114,4 @@ async function main(argv:string[]):Promise<number> {
   if(out)await writeNew(out,rendered,command==='audit'?positions[0]:undefined);else process.stdout.write(rendered);
   return policyExit(result,threshold as Severity);
 }
-main(process.argv.slice(2)).then(code=>{process.exitCode=code;}).catch(error=>{console.error('Error: '+cleanTerminal(redactText(error instanceof Error?error.message:String(error))));process.exitCode=2;});
+main(process.argv.slice(2)).then(code=>{process.exitCode=code;}).catch(error=>{console.error('Error: '+cleanTerminal(redactText(error instanceof Error?error.message:String(error))));process.exitCode=error instanceof IsolationBlocked||error instanceof DiscoveryIncomplete?3:2;});
