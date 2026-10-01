@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Added an explicit `audit --fixture-root` annotation for repositories containing seeded examples. JSON, terminal, and HTML reports identify operator-declared fixture paths while retaining every finding, coverage diagnostic, and policy exit. Paths are validated within the audit root; the declaration does not establish safety.
+- Preserved the vulnerable and ambiguous fixtures as positive and uncertainty controls.
+
 ## 0.2.0
 
 Added explicitly approved reviewed-fixture discovery through official SDK v2 under runtime-verified macOS OS restrictions. Added parent source-watchdog, cancellation/PID cleanup and adversarial protocol tests. Fixed registration/process aliases, credential sinks, local schema refs, contradictory coverage and output-path redaction. Packaged shrinkwrap locks transitive dependencies. Default validation remains offline; isolated discovery has a separate opt-in gate.

@@ -1,6 +1,6 @@
 {
   "name": "mcp-guard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Offline, evidence-linked auditing and inventory drift for a documented subset of MCP servers",
   "type": "module",
   "private": true,

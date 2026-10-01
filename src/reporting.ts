@@ -96,6 +96,13 @@ function safeCoverage(value: unknown, kind: AuditResult['kind']): Coverage {
     rulesApplied:arrayOfStrings(value.rulesApplied,'coverage.rulesApplied'), diagnostics
   };
 }
+function fixtureRoots(value: unknown, kind: AuditResult['kind']): string[] | undefined {
+  if (value === undefined) return undefined;
+  if (kind !== 'source' || !Array.isArray(value) || value.length === 0 || value.some(v =>
+    !string(v) || !v || v.startsWith('/') || v.includes('\\') || v.split('/').some(part => !part || part === '.' || part === '..')
+  )) throw new Error('Malformed audit result: declaredFixtureRoots must contain relative source directories.');
+  return [...new Set(value as string[])].sort();
+}
 export function validateResult(value: unknown): AuditResult {
   checkBounds(value);
   if (!isObject(value) || value.schemaVersion !== 1 || !['source','inventory','diff'].includes(String(value.kind))) throw new Error('Malformed audit result: unsupported schemaVersion or kind.');
@@ -105,6 +112,8 @@ export function validateResult(value: unknown): AuditResult {
     schemaVersion:1,kind:value.kind as AuditResult['kind'],target:value.target as string,
     findings:value.findings.map(safeFinding),coverage:safeCoverage(value.coverage,value.kind as AuditResult['kind'])
   };
+  const declaredRoots=fixtureRoots(value.declaredFixtureRoots,value.kind as AuditResult['kind']);
+  if(declaredRoots)result.declaredFixtureRoots=declaredRoots;
   if (value.changes !== undefined) {
     if (!Array.isArray(value.changes)) throw new Error('Malformed audit result: changes must be an array.');
     result.changes = value.changes.map(change => {
@@ -123,6 +132,10 @@ function esc(value: string): string {
   return value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 const safeText = (s: string) => esc(redactText(s));
+function declaredFixture(finding: Finding, roots: string[] | undefined): string | undefined {
+  if (!roots?.length || !finding.locations.length || finding.locations.some(location => !location.file)) return undefined;
+  return roots.find(root => finding.locations.every(location => location.file?.startsWith(root + '/')));
+}
 function json(value: unknown): string { return safeText(JSON.stringify(safeRedact(value), null, 2) ?? String(value)); }
 function locationText(location: Location): string {
   const source = location.file
@@ -140,18 +153,19 @@ function coverageDetails(coverage: Coverage, text: (value: string) => string): s
 
 export function renderHtml(input: AuditResult): string {
   const result = validateResult(input);
-  const findings = result.findings.map(f => `<article class="finding"><div class="meta"><span class="severity ${f.severity}">${safeText(f.severity)}</span><span>${safeText(f.ruleId)}</span><span>${safeText(f.category)}</span><span>Confidence: ${safeText(f.confidence)}</span></div><h2>${safeText(f.title)}</h2><p>${safeText(f.why)}</p><h3>Evidence</h3><pre>${safeText(f.evidence)}\nObserved: ${safeText(f.observed)}</pre><p><strong>Location:</strong> ${f.locations.map(l => safeText(locationText(l))).join(', ')}</p><p><strong>Assumptions:</strong> ${f.assumptions.length ? f.assumptions.map(safeText).join('; ') : 'None recorded.'}</p><p><strong>Remediation:</strong> ${safeText(f.remediation)}</p><p class="muted"><strong>Limitations:</strong> ${f.limitations.map(safeText).join('; ')}</p></article>`).join('\n');
+  const findings = result.findings.map(f => `<article class="finding"><div class="meta"><span class="severity ${f.severity}">${safeText(f.severity)}</span><span>${safeText(f.ruleId)}</span><span>${safeText(f.category)}</span><span>Confidence: ${safeText(f.confidence)}</span></div>${declaredFixture(f,result.declaredFixtureRoots) ? `<p class="muted">Operator-declared fixture path: ${safeText(declaredFixture(f,result.declaredFixtureRoots)!)}/. This does not dismiss the finding.</p>` : ''}<h2>${safeText(f.title)}</h2><p>${safeText(f.why)}</p><h3>Evidence</h3><pre>${safeText(f.evidence)}\nObserved: ${safeText(f.observed)}</pre><p><strong>Location:</strong> ${f.locations.map(l => safeText(locationText(l))).join(', ')}</p><p><strong>Assumptions:</strong> ${f.assumptions.length ? f.assumptions.map(safeText).join('; ') : 'None recorded.'}</p><p><strong>Remediation:</strong> ${safeText(f.remediation)}</p><p class="muted"><strong>Limitations:</strong> ${f.limitations.map(safeText).join('; ')}</p></article>`).join('\n');
   const changes = (result.changes ?? []).map(c => `<article class="change"><h2>${safeText(c.kind)}${c.tool ? ` · ${safeText(c.tool)}` : ''}</h2><p>${safeText(c.pointer ?? '')}</p>${c.before !== undefined ? `<h3>Before</h3><pre>${json(c.before)}</pre>` : ''}${c.after !== undefined ? `<h3>After</h3><pre>${json(c.after)}</pre>` : ''}</article>`).join('\n');
   const diagnostics = result.coverage.diagnostics.map(d => `<li><strong>${safeText(d.code)}:</strong> ${safeText(d.message)}${d.pointer ? ` <code>${safeText(d.pointer)}</code>` : ''}</li>`).join('');
   const summary = `<p class="coverage ${result.coverage.complete ? 'complete' : 'incomplete'}">Coverage: ${result.coverage.complete ? 'complete for declared checks' : 'incomplete'} · ${result.coverage.recognizedTools} recognized tools · ${result.coverage.unresolvedHandlers} unresolved handlers</p>`;
   const coverage = coverageDetails(result.coverage, safeText);
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MCP Guard report</title><style>body{font:16px/1.5 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#17212b;background:#f7f9fb}h1{font-size:1.8rem}.muted{color:#586674}.coverage,.finding,.change{background:white;border:1px solid #d7e0e8;border-radius:8px;padding:1rem;margin:1rem 0}.coverage.complete{border-left:5px solid #24845a}.coverage.incomplete{border-left:5px solid #bd7915}.meta{display:flex;gap:1rem;align-items:center;color:#465766;font-size:.9rem}.severity{font-weight:700;text-transform:uppercase}.severity.high{color:#a52222}.severity.medium{color:#9c6410}.severity.low{color:#386b9a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f4f7;padding:.8rem;border-radius:5px}code{overflow-wrap:anywhere}</style></head><body><h1>MCP Guard report</h1><p>${safeText(result.kind)} · ${safeText(result.target)}</p>${summary}<section><h2>Findings</h2>${findings || '<p>No findings recorded.</p>'}</section>${result.changes?.length ? `<section><h2>Changes</h2>${changes}</section>` : ''}<section><h2>Coverage details</h2>${coverage}</section><section><h2>Coverage diagnostics</h2>${diagnostics ? `<ul>${diagnostics}</ul>` : '<p>None.</p>'}</section></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MCP Guard report</title><style>body{font:16px/1.5 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#17212b;background:#f7f9fb}h1{font-size:1.8rem}.muted{color:#586674}.coverage,.finding,.change{background:white;border:1px solid #d7e0e8;border-radius:8px;padding:1rem;margin:1rem 0}.coverage.complete{border-left:5px solid #24845a}.coverage.incomplete{border-left:5px solid #bd7915}.meta{display:flex;gap:1rem;align-items:center;color:#465766;font-size:.9rem}.severity{font-weight:700;text-transform:uppercase}.severity.high{color:#a52222}.severity.medium{color:#9c6410}.severity.low{color:#386b9a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f4f7;padding:.8rem;border-radius:5px}code{overflow-wrap:anywhere}</style></head><body><h1>MCP Guard report</h1><p>${safeText(result.kind)} · ${safeText(result.target)}</p>${summary}${result.declaredFixtureRoots?.length ? `<p class="muted">Operator-declared fixture paths: ${result.declaredFixtureRoots.map(root=>safeText(root+'/')).join(', ')}. These paths are not verified as safe and findings remain actionable.</p>` : ''}<section><h2>Findings</h2>${findings || '<p>No findings recorded.</p>'}</section>${result.changes?.length ? `<section><h2>Changes</h2>${changes}</section>` : ''}<section><h2>Coverage details</h2>${coverage}</section><section><h2>Coverage diagnostics</h2>${diagnostics ? `<ul>${diagnostics}</ul>` : '<p>None.</p>'}</section></body></html>`;
 }
 
 export function renderTerminal(input: AuditResult): string {
   const result = validateResult(input);
   const lines = [`MCP Guard ${result.kind} report`, `Target: ${result.target}`, `Coverage: ${result.coverage.complete ? 'complete for declared checks' : 'incomplete'} (${result.coverage.recognizedTools} recognized tools; ${result.coverage.unresolvedHandlers} unresolved handlers)`, `Rules applied: ${result.coverage.rulesApplied.join(', ') || 'None recorded.'}`, `Inspected: ${result.coverage.inspected.join('; ') || 'None recorded.'}`, `Excluded: ${result.coverage.excluded.join('; ') || 'None recorded.'}`, `Failed: ${result.coverage.failed.join('; ') || 'None recorded.'}`, `Truncated: ${result.coverage.truncated.join('; ') || 'None recorded.'}`, ''];
-  for (const f of result.findings) lines.push(`[${f.severity.toUpperCase()}] ${f.ruleId} ${f.title} (confidence: ${f.confidence})`, `  Why: ${f.why}`, `  Evidence: ${f.evidence}`, `  Observed: ${f.observed}`, `  Location: ${f.locations.map(locationText).join(', ')}`, `  Assumptions: ${f.assumptions.join('; ') || 'None recorded.'}`, `  Remediation: ${f.remediation}`, '');
+  if (result.declaredFixtureRoots?.length) lines.push(`Operator-declared fixture paths: ${result.declaredFixtureRoots.map(root=>root+'/').join('; ')} (unverified; findings remain actionable)`, '');
+  for (const f of result.findings) lines.push(`[${f.severity.toUpperCase()}] ${f.ruleId} ${f.title} (confidence: ${f.confidence})`, ...(declaredFixture(f,result.declaredFixtureRoots) ? [`  Context: operator-declared fixture path ${declaredFixture(f,result.declaredFixtureRoots)!}/; finding retained`] : []), `  Why: ${f.why}`, `  Evidence: ${f.evidence}`, `  Observed: ${f.observed}`, `  Location: ${f.locations.map(locationText).join(', ')}`, `  Assumptions: ${f.assumptions.join('; ') || 'None recorded.'}`, `  Remediation: ${f.remediation}`, '');
   for (const change of result.changes ?? []) lines.push(`[CHANGE] ${change.kind}${change.tool ? ` ${change.tool}` : ''}${change.pointer ? ` at ${change.pointer}` : ''}`, ...(change.before === undefined ? [] : [`  Before: ${JSON.stringify(change.before)}`]), ...(change.after === undefined ? [] : [`  After: ${JSON.stringify(change.after)}`]));
   if (result.coverage.diagnostics.length) { lines.push('Diagnostics:'); for (const d of result.coverage.diagnostics) lines.push(`  ${d.code}: ${d.message}${d.pointer ? ` (${d.pointer})` : ''}`); }
   return cleanTerminal(redactText(lines.join('\n')));

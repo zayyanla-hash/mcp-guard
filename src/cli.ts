@@ -29,6 +29,7 @@ Options:
   --format terminal|json             Audit/inventory/diff output (default terminal)
   --out <file>                       Write a NEW artifact; never overwrite
   --inventory-out <file>             Discovery: preserve snapshot-ready inventory
+  --fixture-root <relative-directory> Audit: label operator-declared fixture paths
   --threshold low|medium|high         Finding policy threshold (default medium)
   --help                            Show help
   --version                         Show version
@@ -74,7 +75,7 @@ async function main(argv:string[]):Promise<number> {
   for(let i=0;i<argv.length;i++){
     const value=argv[i]!;
     if(value.startsWith('--')){
-      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
+      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
       if(value==='--approve-execution'){options.set(value,'true');continue;}
       const next=argv[++i];if(!next||next.startsWith('--'))throw new Error('Missing value for '+value);options.set(value,next);
     }else if(value.startsWith('-'))throw new Error('Unknown option: '+value);else positions.push(value);
@@ -84,6 +85,7 @@ async function main(argv:string[]):Promise<number> {
   if(!['terminal','json'].includes(format))throw new Error('Invalid output format');
   if(!['low','medium','high'].includes(threshold))throw new Error('Invalid severity threshold');
   if(command!=='discover'&&(options.has('--fixture')||options.has('--approve-execution')||options.has('--inventory-out')))throw new Error('Discovery options only apply to discover');
+  if(command!=='audit'&&options.has('--fixture-root'))throw new Error('--fixture-root only applies to audit');
   if(['snapshot','report'].includes(command)){
     if(!out)throw new Error(command+' requires --out');
     if(options.has('--format')||options.has('--threshold'))throw new Error('Format/threshold options are not supported for '+command);
@@ -106,7 +108,21 @@ async function main(argv:string[]):Promise<number> {
     result.target='Project-owned reviewed fixture: isolated SDK discovery';
     if(options.has('--inventory-out')){const checked=await artifact('snapshot',[acquired.inventory]) as {payload:unknown};await writeNew(options.get('--inventory-out')!,canonical(checked.payload)+'\n',fileURLToPath(new URL('../fixtures',import.meta.url)));}
   }
-  else if(command==='audit')result=await scanSourceBounded(positions[0]!,undefined,cancellation.signal);
+  else if(command==='audit'){
+    let declaredRoot:string|undefined;
+    if(options.has('--fixture-root')){
+      const relative=options.get('--fixture-root')!;
+      if(path.isAbsolute(relative)||relative.includes('\\')||relative.split('/').some(part=>!part||part==='.'||part==='..'))throw new Error('--fixture-root must be a relative directory within the audited root');
+      const auditRoot=await fs.realpath(positions[0]!);
+      const selected=path.resolve(auditRoot,relative),stat=await fs.lstat(selected);
+      if(!stat.isDirectory()||stat.isSymbolicLink())throw new Error('--fixture-root must identify a real directory');
+      const real=await fs.realpath(selected);
+      if(!inside(auditRoot,real))throw new Error('--fixture-root escapes the audited root');
+      declaredRoot=path.relative(auditRoot,real).split(path.sep).join('/');
+    }
+    result=await scanSourceBounded(positions[0]!,undefined,cancellation.signal);
+    if(declaredRoot)result.declaredFixtureRoots=[declaredRoot];
+  }
   else if(command==='inventory')result=await artifact('inventory',[await readJson(positions[0]!)]) as AuditResult;
   else result=await artifact('diff',[await readJson(positions[0]!),await readJson(positions[1]!)]) as AuditResult;
   result=validateResult(result);

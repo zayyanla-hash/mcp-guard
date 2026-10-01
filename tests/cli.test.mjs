@@ -8,7 +8,7 @@ const cli=path.resolve('dist/cli.js');
 const run=(...args)=>spawnSync(process.execPath,[cli,...args],{encoding:'utf8',timeout:15000});
 test('help and version identify the working CLI',()=>{
  const help=run('--help');assert.equal(help.status,0);assert.match(help.stdout,/audit <directory>/);assert.match(help.stdout,/never executes targets/);
- const version=run('--version');assert.equal(version.status,0);assert.equal(version.stdout.trim(),'0.2.0');
+ const version=run('--version');assert.equal(version.status,0);assert.equal(version.stdout.trim(),'0.2.1');
 });
 test('invalid commands and flags fail with exit 2',()=>{
  for(const args of [['bogus'],['audit'],['audit','fixtures/corrected','--policy','anything'],['audit','fixtures/corrected','--threshold','safe'],['snapshot','fixtures/inventories/valid.json']]){
@@ -19,6 +19,17 @@ test('source finding, corrected control and incomplete coverage have distinct ex
  assert.equal(run('audit','fixtures/corrected').status,0);
  assert.equal(run('audit','fixtures/ambiguous').status,3);
  assert.equal(run('discover').status,3);
+});
+test('operator fixture labeling preserves findings and incomplete coverage',()=>{
+ const baseline=run('audit','fixtures','--format','json');
+ const labeled=run('audit','fixtures','--format','json','--fixture-root','vulnerable');
+ assert.equal(labeled.status,baseline.status);
+ const original=JSON.parse(baseline.stdout),result=JSON.parse(labeled.stdout);
+ assert.deepEqual(result.findings,original.findings);
+ assert.deepEqual(result.coverage,original.coverage);
+ assert.deepEqual(result.declaredFixtureRoots,['vulnerable']);
+ assert.equal(run('audit','fixtures','--fixture-root','../src').status,2);
+ assert.equal(run('inventory','fixtures/inventories/valid.json','--fixture-root','vulnerable').status,2);
 });
 test('outputs cannot mutate target or overwrite a baseline',async()=>{
  const temp=await mkdtemp(path.join(os.tmpdir(),'guard-cli-'));

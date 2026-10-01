@@ -13,6 +13,7 @@ export interface Coverage {
 }
 export interface AuditResult {
   schemaVersion: 1; kind: 'source' | 'inventory' | 'diff'; target: string;
-  findings: Finding[]; coverage: Coverage; changes?: {kind: string; tool?: string; pointer?: string; before?: unknown; after?: unknown}[];
+  findings: Finding[]; coverage: Coverage; declaredFixtureRoots?: string[];
+  changes?: {kind: string; tool?: string; pointer?: string; before?: unknown; after?: unknown}[];
 }
 export interface Snapshot { schemaVersion: 1; kind: 'inventory-snapshot'; hash: string; payload: unknown }

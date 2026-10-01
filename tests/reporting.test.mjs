@@ -28,6 +28,20 @@ test('report validation redacts secret-bearing change metadata keys', () => {
 test('terminal report includes coverage and pointer evidence', () => {
   const text=renderTerminal(result()); assert.ok(text.includes('Coverage: incomplete')); assert.ok(text.includes('/tools/0/name')); assert.ok(text.includes('[REDACTED]'));
 });
+test('operator-declared fixture paths are visible without removing findings', () => {
+  const r=result({kind:'source',declaredFixtureRoots:['fixtures']});
+  r.findings[0].locations=[{file:'fixtures/vulnerable/server.ts',line:8}];
+  const other={...r.findings[0],locations:[{file:'src/server.ts',line:9}]};
+  r.findings.push(other);
+  const checked=validateResult(r),html=renderHtml(r),terminal=renderTerminal(r);
+  assert.equal(checked.findings.length,2);
+  assert.equal((html.match(/Operator-declared fixture path:/g)??[]).length,1);
+  assert.match(terminal,/Context: operator-declared fixture path fixtures\//);
+  assert.match(html,/src\/server.ts:9/);
+  assert.match(terminal,/Coverage: incomplete/);
+  assert.throws(()=>validateResult(result({kind:'source',declaredFixtureRoots:['../src']})),/declaredFixtureRoots/);
+  assert.throws(()=>validateResult(result({declaredFixtureRoots:['fixtures']})),/declaredFixtureRoots/);
+});
 test('reports retain source coordinates, confidence assumptions, rules, and complete coverage exclusions', () => {
   const r=result();
   r.findings[0].confidence='medium';

@@ -2,7 +2,7 @@
 
 A local CLI for reviewing specific risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
 
-**Status: v0.2.0, scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
+**Status: v0.2.1, scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
 
 ## Try the recorded offline demonstration
 
@@ -29,7 +29,7 @@ These results measure seeded examples, not real-world detection accuracy. No fix
 Distribution is through the GitHub release archive. The registry package named `mcp-guard` belongs to someone else; do not install it as this project.
 
 ```sh
-npm install --global https://github.com/zayyanla-hash/mcp-guard/releases/download/v0.2.0/mcp-guard-0.2.0.tgz --ignore-scripts
+npm install --global https://github.com/zayyanla-hash/mcp-guard/releases/download/v0.2.1/mcp-guard-0.2.1.tgz --ignore-scripts
 mcp-guard --help
 mcp-guard --version
 ```
@@ -49,6 +49,15 @@ npm run guard -- snapshot ./fixtures/inventories/drift.json --out ../after.json
 npm run guard -- diff ../before.json ../after.json
 npm run guard -- report ../scan.json --out ../report.html
 ```
+
+When scanning a repository that contains seeded test fixtures, the operator can label a fixture directory without suppressing findings:
+
+```sh
+npm run guard -- audit . --fixture-root fixtures --format json --out ../repository-scan.json
+npm run guard -- report ../repository-scan.json --out ../repository-scan.html
+```
+
+The report calls this an **operator-declared fixture path**. MCP Guard does not verify that code under the path is harmless. The label does not change findings, coverage, or CI exit codes. Use it only for an actual test-fixture directory within the selected source root.
 
 Outputs must be new files. Source audit output must be outside the selected target root. No baseline is overwritten automatically. `--threshold low|medium|high` sets the finding policy (default medium); descriptor drift requires review independently of severity. `--format terminal|json` applies to audit, inventory, and diff. There are no automatic suppressions or executable configuration plugins.
 
