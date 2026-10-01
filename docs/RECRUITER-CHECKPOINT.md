@@ -26,6 +26,14 @@ Add an inspectable browser demonstration, a reproducible external source coverag
 
 ## Publication gates and handoff
 
-At this checkpoint, local checks above are complete. Final root reproduction of the external runner, GitHub CI and Pages deployment are pending; final publication evidence is recorded in the session handoff outside this source tree. Publish only to `zayyanla-hash/mcp-guard`. Existing v0.2.1 release and tags remain unchanged.
+The implementation commit is `09fa84655b7a80c302bfe497473fb9e80336ad77`. Local validation and root reproduction passed. Four CI jobs passed on both the evidence branch and main (Linux/macOS, Node 24/26), including the external evaluator and site validator:
 
-Next: reproduce `npm run evaluate`, finish independent evidence review, publish the branch and fast-forward main after four CI jobs pass, then verify the deployed browser demonstration. No video has been recorded and no external reviewer has been contacted. Future engineering work should address factory-bound registrations with explicit unsupported controls rather than tune this corpus into an accuracy claim.
+- [Evidence branch CI](https://github.com/zayyanla-hash/mcp-guard/actions/runs/36839119338)
+- [Main CI](https://github.com/zayyanla-hash/mcp-guard/actions/runs/36839274836)
+- [Pages build and deployment](https://github.com/zayyanla-hash/mcp-guard/actions/runs/36839274667): both jobs passed.
+
+The [public demonstration](https://zayyanla-hash.github.io/mcp-guard/) returned HTTP 200 with the expected page markers. Root verified the deployed corrected-result tab and multiline copy action; no browser console errors were recorded. Both project-owned preview servers were stopped. The final documentation/formatting commit is identified by the containing Git history; the final session handoff outside the tree records its remote checks.
+
+Publication is confined to `zayyanla-hash/mcp-guard`. Existing v0.2.1 release assets and tags are unchanged. No scanner tuning was performed after the external expectations were frozen.
+
+Remaining: no video has been recorded and no external reviewer has been contacted. Next engineering experiment: support a reviewed subset of factory-bound registration mappings, define new positive/negative/unresolved controls before implementation, and rerun the unchanged external study without presenting it as an accuracy benchmark.
