@@ -1,0 +1,1038 @@
+{
+  "format_version": 2,
+  "generated_at": "2026-10-01T08:51:54.619Z",
+  "execution": "Offline source-text analysis. Vendored targets were read as UTF-8 data and passed to analyzeSource; target modules were not imported or executed. No installation, network request, test, configuration scan, or credential scan is performed by this runner.",
+  "provenance": {
+    "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+    "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+    "license_basis": "The repository LICENSE at this revision states a transition from MIT to Apache-2.0 for new contributions and preserves MIT for original contributions without relicensing consent; full upstream LICENSE is vendored unchanged. Source files are unmodified.",
+    "license_file": {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/LICENSE",
+      "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a",
+      "bytes": 12227
+    },
+    "source_files": [
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "0a4911f9f8fbef27cdad5e9e01f86d77e06c1f8da2fb83dea36c05bc9eb89c48",
+        "bytes": 2963
+      },
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "f38332ad27e1d2f0a2557fd042b074ebb676ccc56f2693dcc9127f3c6cd6d7eb",
+        "bytes": 6354
+      },
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "bf2d95add331baca092b4ed3409455a91574249a76ecb6129acd752235fa499a",
+        "bytes": 5823
+      },
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "4686429eb14d2152c96a6b6aebde203de75673c03b0d01bc18fb288114a190bf",
+        "bytes": 13175
+      },
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "536c877c46e2635548704ce0f6f8460260959486587ba6d15937c45e545e736a",
+        "bytes": 15457
+      },
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "c7e9bcedae1d3955bf60b68375a2a079d0184a74954bfad404ef95bf01705363",
+        "bytes": 2776
+      },
+      {
+        "path": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+        "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts",
+        "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+        "sha256": "c83a490723814bbafa21abd12ddee80715bf80c8bf98261f366e744f9de562e4",
+        "bytes": 5828
+      }
+    ],
+    "expectations_sha256": "6d3acbbff59eaab40e85a6ce356605eed562d5a2830aef2300b64eb0e877fce3",
+    "expectations_created_before_first_analyzer_run": true,
+    "baseline_implementation_commit": "ae5115ea07cdfb77436aba59f2f198ba1d448595",
+    "checkout_commit_at_run": "ae5115ea07cdfb77436aba59f2f198ba1d448595",
+    "analyzer_source_sha256": "3e85fc1ed01cdfe5bd2fa62a91e249c45efd2c94fb2f646f5f3c0879bb42042a",
+    "analyzer_distribution_sha256": "8e3cb35284692f66089e7d004faade054cdc7d1d66206622c9915f66d3eef8a0"
+  },
+  "scope": {
+    "repository_count": 1,
+    "source_file_count": 7,
+    "distinct_actual_tool_handlers": 24,
+    "source_rules": [
+      "MG001",
+      "MG002",
+      "MG003",
+      "MG004",
+      "MG006"
+    ],
+    "excluded_rules": {
+      "MG005": "Inventory/schema rule; these source snippets do not form a descriptor inventory."
+    },
+    "corpus_limitation": "Single-repository official SDK reference examples. Not an independent holdout and not representative of production MCP servers."
+  },
+  "counts": {
+    "handlers": 24,
+    "recognized_registration_count": 4,
+    "unrecognized_registration_count_by_file_count": 20,
+    "registration_count_matches": 7,
+    "coverage_incomplete_files": 7,
+    "parse_failures": 0,
+    "diagnostics": 27,
+    "findings": 0,
+    "positive_controls": 0,
+    "rule_handler_outcomes": 120
+  },
+  "per_rule": {
+    "MG001": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 0,
+      "false_flag_denominator": 0,
+      "manually_unsupported_handlers": 23,
+      "expected_but_unscored_due_incomplete_coverage": 1,
+      "expected_but_unscored_due_identity": 1,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": null,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 1,
+      "unscored_due_to_unattributed_handler_identity": 1,
+      "recall": null,
+      "false_flag_rate": null,
+      "interpretation": "No scorable supported positive controls in this corpus; recall/miss rate is not measurable."
+    },
+    "MG002": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 0,
+      "false_flag_denominator": 0,
+      "manually_unsupported_handlers": 23,
+      "expected_but_unscored_due_incomplete_coverage": 1,
+      "expected_but_unscored_due_identity": 1,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": null,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 1,
+      "unscored_due_to_unattributed_handler_identity": 1,
+      "recall": null,
+      "false_flag_rate": null,
+      "interpretation": "No scorable supported positive controls in this corpus; recall/miss rate is not measurable."
+    },
+    "MG003": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 0,
+      "false_flag_denominator": 0,
+      "manually_unsupported_handlers": 23,
+      "expected_but_unscored_due_incomplete_coverage": 1,
+      "expected_but_unscored_due_identity": 1,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": null,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 1,
+      "unscored_due_to_unattributed_handler_identity": 1,
+      "recall": null,
+      "false_flag_rate": null,
+      "interpretation": "No scorable supported positive controls in this corpus; recall/miss rate is not measurable."
+    },
+    "MG004": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 0,
+      "false_flag_denominator": 0,
+      "manually_unsupported_handlers": 23,
+      "expected_but_unscored_due_incomplete_coverage": 1,
+      "expected_but_unscored_due_identity": 1,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": null,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 1,
+      "unscored_due_to_unattributed_handler_identity": 1,
+      "recall": null,
+      "false_flag_rate": null,
+      "interpretation": "No scorable supported positive controls in this corpus; recall/miss rate is not measurable."
+    },
+    "MG006": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 0,
+      "false_flag_denominator": 0,
+      "manually_unsupported_handlers": 23,
+      "expected_but_unscored_due_incomplete_coverage": 1,
+      "expected_but_unscored_due_identity": 1,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": null,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 1,
+      "unscored_due_to_unattributed_handler_identity": 1,
+      "recall": null,
+      "false_flag_rate": null,
+      "interpretation": "No scorable supported positive controls in this corpus; recall/miss rate is not measurable."
+    }
+  },
+  "handlers": [
+    {
+      "id": "examples/tools/server.ts:calc",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "calc",
+      "registration_line": 21,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L21",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/tools/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "echo",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L45",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:search",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "search",
+      "registration_line": 27,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L27",
+      "manual_registration_shape": "top-level McpServer registration (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-details",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-details",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L45",
+      "manual_registration_shape": "top-level McpServer registration (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:clear-catalog",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "clear-catalog",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L65",
+      "manual_registration_shape": "top-level McpServer registration (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-card",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-card",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L84",
+      "manual_registration_shape": "top-level McpServer registration (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/stickynotes/server.ts:add_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "add_note",
+      "registration_line": 51,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L51",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_note",
+      "registration_line": 67,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L67",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_all",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_all",
+      "registration_line": 81,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L81",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "greet",
+      "registration_line": 49,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L49",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:multi-greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "multi-greet",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L65",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:collect-user-info",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "collect-user-info",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L84",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:start-notification-stream",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "start-notification-stream",
+      "registration_line": 146,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L146",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:add-resource",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "add-resource",
+      "registration_line": 167,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L167",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:list-files",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "list-files",
+      "registration_line": 182,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L182",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:register_user",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "register_user",
+      "registration_line": 74,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L74",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:plan_trip",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "plan_trip",
+      "registration_line": 114,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L114",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:link_account",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "link_account",
+      "registration_line": 170,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L170",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:confirm_payment",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "confirm_payment",
+      "registration_line": 223,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L223",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/gateway/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "echo",
+      "registration_line": 22,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L22",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/gateway/server.ts:uppercase",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "uppercase",
+      "registration_line": 26,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L26",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/gateway/server.ts:request_count",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "request_count",
+      "registration_line": 34,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L34",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-alerts",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-alerts",
+      "registration_line": 89,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L89",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-forecast",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-forecast",
+      "registration_line": 136,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L136",
+      "manual_registration_shape": "registration in local server factory (manual expectation)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    }
+  ],
+  "files": [
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "handlers": 2,
+      "recognized_registration_count": 0,
+      "expected_recognized_registration_count": 0,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 21)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 45)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 0,
+        "unresolvedHandlers": 2,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 21)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 45)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "handlers": 4,
+      "recognized_registration_count": 4,
+      "expected_recognized_registration_count": 4,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 37)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 38)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 38)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 53)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 54)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 91)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 92)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 4,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 37)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 38)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 38)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 53)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 54)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 91)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 92)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "handlers": 3,
+      "recognized_registration_count": 0,
+      "expected_recognized_registration_count": 0,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 51)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 67)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 81)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 0,
+        "unresolvedHandlers": 3,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 51)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 67)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 81)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "handlers": 6,
+      "recognized_registration_count": 0,
+      "expected_recognized_registration_count": 0,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 49)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 65)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 84)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 146)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 167)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 182)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 0,
+        "unresolvedHandlers": 6,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 49)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 65)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 84)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 146)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 167)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 182)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "handlers": 4,
+      "recognized_registration_count": 0,
+      "expected_recognized_registration_count": 0,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 74)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 114)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 170)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 223)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 0,
+        "unresolvedHandlers": 4,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 74)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 114)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 170)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 223)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "handlers": 3,
+      "recognized_registration_count": 0,
+      "expected_recognized_registration_count": 0,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 22)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 26)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 34)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 0,
+        "unresolvedHandlers": 3,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 22)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 26)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 34)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "handlers": 2,
+      "recognized_registration_count": 0,
+      "expected_recognized_registration_count": 0,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 89)"
+        },
+        {
+          "code": "UNSUPPORTED_REGISTRATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 136)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 0,
+        "unresolvedHandlers": 2,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 89)"
+          },
+          {
+            "code": "UNSUPPORTED_REGISTRATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Registration receiver or method is outside the supported direct McpServer.registerTool subset (line 136)"
+          }
+        ]
+      }
+    }
+  ],
+  "findings": []
+}

@@ -20,3 +20,7 @@ Independent skeptical review discovered missed aliased shell options, computed e
 Tests never execute scanned repositories. The reviewed containment behavior fixture is project-owned code executed deliberately against disposable files; it verifies traversal, absolute paths, prefix confusion and symlink escapes without claiming race safety. Network tests parse calls or schemas without contacting any service. Fake secret canaries check redaction and snapshot rejection.
 
 Run `npm run validate` for actual current counts. All checks must pass without skips. Passing seeded fixtures does not imply a real-world detection rate, zero false positives, or comparison with commercial tools.
+
+## External reference coverage
+
+The [external coverage study](EVALUATION-EXTERNAL.md) is separate from seeded controls. It preserves unchanged official SDK examples, immutable source checksums, and expectations frozen before the first analyzer run. Reproduce with `npm run evaluate`; incomplete and unsupported assessments remain unscored. This single-repository study is not an independent holdout or representative accuracy estimate.

@@ -4,6 +4,19 @@ A local CLI for reviewing specific risky MCP implementation patterns, validating
 
 **Status: v0.2.1, scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
 
+## Inspect the evidence
+
+[Interactive browser demo](https://zayyanla-hash.github.io/mcp-guard/) · [Engineering case study](docs/PORTFOLIO.md) · [Architecture](docs/ARCHITECTURE.md) · [External coverage study](docs/EVALUATION-EXTERNAL.md)
+
+The browser demo shows recorded project-owned seeded fixtures. It does not execute a server or scan visitor files. The separate external study uses 24 actual handlers across seven unchanged official SDK example files: the analyzer reported four recognized registrations in aggregate; manual review identified 20 factory-bound registrations outside the supported shape, and all seven files had incomplete coverage. Zero findings is not a clean assessment or an accuracy result.
+
+Reproduce the coverage study and check the browser data after installation:
+
+```sh
+npm run evaluate
+npm run validate:site
+```
+
 ## Try the recorded offline demonstration
 
 Requires Node.js 24 or newer and npm. No model credentials or external servers are needed.

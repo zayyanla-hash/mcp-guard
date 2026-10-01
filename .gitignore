@@ -3,3 +3,4 @@ dist/
 demo-output*/
 *.tgz
 .DS_Store
+artifacts/

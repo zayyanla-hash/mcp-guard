@@ -1,0 +1,263 @@
+{
+  "format_version": 1,
+  "dataset": "MCP Guard external public-source reference-example corpus",
+  "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+  "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+  "source_license_basis": "The repository LICENSE at this revision states a transition from MIT to Apache-2.0 for new contributions and preserves MIT for original contributions without relicensing consent; full upstream LICENSE is vendored unchanged. Source files are unmodified.",
+  "license_file": {
+    "path": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+    "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/LICENSE",
+    "sha256": "0382b0057770ca05e9c350a50aa3b1c1fea84da0bc81d723bf00b9aa841be58a",
+    "bytes": 12227
+  },
+  "files": [
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "0a4911f9f8fbef27cdad5e9e01f86d77e06c1f8da2fb83dea36c05bc9eb89c48",
+      "bytes": 2963,
+      "handler_count": 2
+    },
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "f38332ad27e1d2f0a2557fd042b074ebb676ccc56f2693dcc9127f3c6cd6d7eb",
+      "bytes": 6354,
+      "handler_count": 4
+    },
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "bf2d95add331baca092b4ed3409455a91574249a76ecb6129acd752235fa499a",
+      "bytes": 5823,
+      "handler_count": 3
+    },
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "4686429eb14d2152c96a6b6aebde203de75673c03b0d01bc18fb288114a190bf",
+      "bytes": 13175,
+      "handler_count": 6
+    },
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "536c877c46e2635548704ce0f6f8460260959486587ba6d15937c45e545e736a",
+      "bytes": 15457,
+      "handler_count": 4
+    },
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "c7e9bcedae1d3955bf60b68375a2a079d0184a74954bfad404ef95bf01705363",
+      "bytes": 2776,
+      "handler_count": 3
+    },
+    {
+      "path": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "upstream_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts",
+      "raw_url": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts",
+      "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "license_file": "vendor/modelcontextprotocol-typescript-sdk/LICENSE",
+      "sha256": "c83a490723814bbafa21abd12ddee80715bf80c8bf98261f366e744f9de562e4",
+      "bytes": 5828,
+      "handler_count": 2
+    }
+  ],
+  "handler_count": 24,
+  "handlers": [
+    {
+      "id": "examples/tools/server.ts:calc",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "calc",
+      "registration_line": 21,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L21"
+    },
+    {
+      "id": "examples/tools/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "echo",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L45"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:search",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "search",
+      "registration_line": 27,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L27"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-details",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-details",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L45"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:clear-catalog",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "clear-catalog",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L65"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-card",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-card",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L84"
+    },
+    {
+      "id": "examples/stickynotes/server.ts:add_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "add_note",
+      "registration_line": 51,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L51"
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_note",
+      "registration_line": 67,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L67"
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_all",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_all",
+      "registration_line": 81,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L81"
+    },
+    {
+      "id": "examples/repl/server.ts:greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "greet",
+      "registration_line": 49,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L49"
+    },
+    {
+      "id": "examples/repl/server.ts:multi-greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "multi-greet",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L65"
+    },
+    {
+      "id": "examples/repl/server.ts:collect-user-info",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "collect-user-info",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L84"
+    },
+    {
+      "id": "examples/repl/server.ts:start-notification-stream",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "start-notification-stream",
+      "registration_line": 146,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L146"
+    },
+    {
+      "id": "examples/repl/server.ts:add-resource",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "add-resource",
+      "registration_line": 167,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L167"
+    },
+    {
+      "id": "examples/repl/server.ts:list-files",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "list-files",
+      "registration_line": 182,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L182"
+    },
+    {
+      "id": "examples/elicitation/server.ts:register_user",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "register_user",
+      "registration_line": 74,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L74"
+    },
+    {
+      "id": "examples/elicitation/server.ts:plan_trip",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "plan_trip",
+      "registration_line": 114,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L114"
+    },
+    {
+      "id": "examples/elicitation/server.ts:link_account",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "link_account",
+      "registration_line": 170,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L170"
+    },
+    {
+      "id": "examples/elicitation/server.ts:confirm_payment",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "confirm_payment",
+      "registration_line": 223,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L223"
+    },
+    {
+      "id": "examples/gateway/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "echo",
+      "registration_line": 22,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L22"
+    },
+    {
+      "id": "examples/gateway/server.ts:uppercase",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "uppercase",
+      "registration_line": 26,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L26"
+    },
+    {
+      "id": "examples/gateway/server.ts:request_count",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "request_count",
+      "registration_line": 34,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L34"
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-alerts",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-alerts",
+      "registration_line": 89,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L89"
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-forecast",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-forecast",
+      "registration_line": 136,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L136"
+    }
+  ]
+}

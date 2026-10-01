@@ -1,0 +1,742 @@
+{
+  "format_version": 1,
+  "created_before_first_analyzer_run": true,
+  "corpus_scope": "Single-repository official SDK reference examples. Not an independent holdout and not representative of production MCP servers.",
+  "baseline_implementation": {
+    "baseline_commit": "ae5115ea07cdfb77436aba59f2f198ba1d448595",
+    "analyzer_source_sha256": "3e85fc1ed01cdfe5bd2fa62a91e249c45efd2c94fb2f646f5f3c0879bb42042a",
+    "analyzer_distribution_sha256": "8e3cb35284692f66089e7d004faade054cdc7d1d66206622c9915f66d3eef8a0"
+  },
+  "rules": [
+    "MG001",
+    "MG002",
+    "MG003",
+    "MG004",
+    "MG006"
+  ],
+  "handlers": [
+    {
+      "id": "examples/tools/server.ts:calc",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "calc",
+      "registration_line": 21,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L21",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/tools/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "echo",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L45",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:search",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "search",
+      "registration_line": 27,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L27",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler passes client input through nested filter/map callbacks; callback dataflow is outside the documented analyzer subset. Rule-specific outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler passes client input through nested filter/map callbacks; callback dataflow is outside the documented analyzer subset. Rule-specific outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler passes client input through nested filter/map callbacks; callback dataflow is outside the documented analyzer subset. Rule-specific outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler passes client input through nested filter/map callbacks; callback dataflow is outside the documented analyzer subset. Rule-specific outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler passes client input through nested filter/map callbacks; callback dataflow is outside the documented analyzer subset. Rule-specific outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "supported"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-details",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-details",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L45",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "supported"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:clear-catalog",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "clear-catalog",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L65",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "supported-negative",
+          "rationale": "The handler has no tool input or external capability call. It only clears an in-memory array; the annotation explicitly says readOnlyHint:false. Manual source review before analyzer execution."
+        },
+        "MG002": {
+          "status": "supported-negative",
+          "rationale": "The handler has no tool input or external capability call. It only clears an in-memory array; the annotation explicitly says readOnlyHint:false. Manual source review before analyzer execution."
+        },
+        "MG003": {
+          "status": "supported-negative",
+          "rationale": "The handler has no tool input or external capability call. It only clears an in-memory array; the annotation explicitly says readOnlyHint:false. Manual source review before analyzer execution."
+        },
+        "MG004": {
+          "status": "supported-negative",
+          "rationale": "The handler has no tool input or external capability call. It only clears an in-memory array; the annotation explicitly says readOnlyHint:false. Manual source review before analyzer execution."
+        },
+        "MG006": {
+          "status": "supported-negative",
+          "rationale": "The handler has no tool input or external capability call. It only clears an in-memory array; the annotation explicitly says readOnlyHint:false. Manual source review before analyzer execution."
+        }
+      },
+      "expected_registration_status": "supported"
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-card",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-card",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L84",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "Registration is direct, but the handler includes branch control flow and a nested find callback; this analyzer does not resolve those paths. Rule-specific outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "supported"
+    },
+    {
+      "id": "examples/stickynotes/server.ts:add_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "add_note",
+      "registration_line": 51,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L51",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_note",
+      "registration_line": 67,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L67",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_all",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_all",
+      "registration_line": 81,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L81",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/repl/server.ts:greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "greet",
+      "registration_line": 49,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L49",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/repl/server.ts:multi-greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "multi-greet",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L65",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/repl/server.ts:collect-user-info",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "collect-user-info",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L84",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/repl/server.ts:start-notification-stream",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "start-notification-stream",
+      "registration_line": 146,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L146",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/repl/server.ts:add-resource",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "add-resource",
+      "registration_line": 167,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L167",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/repl/server.ts:list-files",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "list-files",
+      "registration_line": 182,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L182",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/elicitation/server.ts:register_user",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "register_user",
+      "registration_line": 74,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L74",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/elicitation/server.ts:plan_trip",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "plan_trip",
+      "registration_line": 114,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L114",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/elicitation/server.ts:link_account",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "link_account",
+      "registration_line": 170,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L170",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/elicitation/server.ts:confirm_payment",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "confirm_payment",
+      "registration_line": 223,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L223",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/gateway/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "echo",
+      "registration_line": 22,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L22",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/gateway/server.ts:uppercase",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "uppercase",
+      "registration_line": 26,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L26",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/gateway/server.ts:request_count",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "request_count",
+      "registration_line": 34,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L34",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-alerts",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-alerts",
+      "registration_line": 89,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L89",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-forecast",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-forecast",
+      "registration_line": 136,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L136",
+      "expected_by_rule": {
+        "MG001": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG002": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG003": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG004": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        },
+        "MG006": {
+          "status": "unsupported",
+          "rationale": "The tool is registered on an McpServer constructed inside a local server factory. The analyzer source supports only a top-level const McpServer binding, so this handler is outside the registration subset; handler-specific rule outcomes are not scored."
+        }
+      },
+      "expected_registration_status": "unsupported"
+    }
+  ],
+  "expected_finding_count": 0,
+  "positive_controls": 0,
+  "expectation_method": "Manual review of each original registration and handler at the exact pinned source revision, with registration support and per-source-rule outcome plus rationale recorded before scanner execution. Public handlers were not executed or imported; source was not wrapped or normalized. No scanner output was consulted."
+}

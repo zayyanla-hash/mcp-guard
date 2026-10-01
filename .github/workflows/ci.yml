@@ -20,6 +20,8 @@ jobs:
       - run: npm run validate
       - run: npm run test:discovery
       - run: npm run demo
+      - run: npm run evaluate
+      - run: npm run validate:site
       - run: node dist/cli.js --help
       - run: node dist/cli.js --version
       - name: Invalid command must fail with exit 2

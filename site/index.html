@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2eb">
+  <meta name="description" content="An interactive, fixture-based walkthrough of MCP Guard's evidence, coverage boundaries, and descriptor drift review.">
+  <title>MCP Guard — offline MCP server review</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#demo">Skip to the evidence demo</a>
+  <header class="topbar">
+    <a class="wordmark" href="#top" aria-label="MCP Guard home"><span class="mark" aria-hidden="true">M</span><span>MCP GUARD</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#demo">Evidence demo</a>
+      <a href="#method">Method & limits</a>
+      <a class="nav-release" href="https://github.com/zayyanla-hash/mcp-guard/releases/tag/v0.2.1" target="_blank" rel="noreferrer">Release v0.2.1 <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">MCP GUARD / VERSION 0.2.1</p>
+        <h1 id="hero-title">Offline review for MCP server tools.</h1>
+        <p class="hero-lede">A small, local auditor for a documented slice of JavaScript and TypeScript MCP servers. It shows what it observed, where it looked, and what still needs a person.</p>
+        <div class="hero-actions">
+          <a class="button button-dark" href="#demo">Explore the seeded walkthrough <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="https://github.com/zayyanla-hash/mcp-guard" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="hero-note">The walkthrough uses project-owned seeded fixtures. The target files were parsed, never executed.</p>
+      </div>
+      <aside class="hero-record" aria-label="Official SDK reference-example evaluation summary">
+        <div class="record-top"><span>EXTERNAL SOURCE CHECK</span><span>01 OCT 2026</span></div>
+        <p class="record-source">Official TypeScript SDK examples</p>
+        <p class="record-scope">One pinned repository · <span data-evaluation-count="source_file_count">7</span> unchanged example files</p>
+        <dl class="record-stats">
+          <div><dt>Registrations, manual review</dt><dd data-evaluation-count="handlers">24</dd></div>
+          <div><dt>Recognized, analyzer total</dt><dd data-evaluation-count="recognized_registration_count">4</dd></div>
+          <div><dt>Factory-bound, manual review</dt><dd data-evaluation-count="unrecognized_registration_count_by_file_count">20</dd></div>
+        </dl>
+        <p class="record-conclusion">All <span data-evaluation-count="coverage_incomplete_files">7</span> files had incomplete coverage. The analyzer produced <span data-evaluation-count="diagnostics">27</span> coverage diagnostics, <span data-evaluation-count="parse_failures">0</span> parse failures, and <span data-evaluation-count="findings">0</span> findings. It reports recognized counts by file, without mapping handler identities. No handlers were eligible for scored positive or negative control results.</p>
+        <a href="https://github.com/zayyanla-hash/mcp-guard/blob/main/docs/EVALUATION-EXTERNAL.md" target="_blank" rel="noreferrer">Read the evaluation and source links <span aria-hidden="true">↗</span></a>
+      </aside>
+    </section>
+
+    <section class="trust-strip" aria-label="Scope facts">
+      <div><span class="strip-label">Scope</span><strong>Documented JS / TS subset</strong></div>
+      <div><span class="strip-label">Evidence</span><strong>Locations + assumptions</strong></div>
+      <div><span class="strip-label">Default mode</span><strong>Offline · no target execution</strong></div>
+      <div><span class="strip-label">Assessment</span><strong>Coverage stays visible</strong></div>
+    </section>
+
+    <section class="demo-section" id="demo" aria-labelledby="demo-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE RECORDED WALKTHROUGH</p><h2 id="demo-title">Four fixture outcomes</h2></div>
+        <p class="section-intro">Open each result to inspect its recorded evidence, rationale, limits, and suggested review step.</p>
+      </div>
+
+      <div class="demo-shell">
+        <div class="demo-topline"><div><span class="fixture-dot" aria-hidden="true"></span> PROJECT-OWNED SEEDED FIXTURES</div><span>LOCAL STATIC WALKTHROUGH <span aria-hidden="true">↗</span></span></div>
+        <div class="demo-layout">
+          <aside class="demo-sidebar" aria-label="Walkthrough steps">
+            <p class="sidebar-label">RUN SEQUENCE</p>
+            <div class="tab-list" role="tablist" aria-label="Fixture run sequence" aria-orientation="vertical">
+              <button class="step-tab is-active" id="tab-before" type="button" role="tab" aria-selected="true" aria-controls="panel-before" tabindex="0" data-panel="before"><span class="step-no">01</span><span><b>Source findings</b><small>Vulnerable fixture</small></span><span class="step-state">5</span></button>
+              <button class="step-tab" id="tab-after" type="button" role="tab" aria-selected="false" aria-controls="panel-after" tabindex="-1" data-panel="after"><span class="step-no">02</span><span><b>Supported-scope result</b><small>Corrected fixture</small></span><span class="step-state state-zero">0</span></button>
+              <button class="step-tab" id="tab-contract" type="button" role="tab" aria-selected="false" aria-controls="panel-contract" tabindex="-1" data-panel="contract"><span class="step-no">03</span><span><b>Descriptor check</b><small>MG005, separately</small></span><span class="step-state state-warn">1</span></button>
+              <button class="step-tab" id="tab-drift" type="button" role="tab" aria-selected="false" aria-controls="panel-drift" tabindex="-1" data-panel="drift"><span class="step-no">04</span><span><b>Change review</b><small>Snapshot comparison</small></span><span class="step-state state-warn">5</span></button>
+            </div>
+            <div class="sidebar-foot"><span class="mini-lock" aria-hidden="true">◈</span><p>No server started.<br>No tool invoked.</p></div>
+          </aside>
+
+          <div class="demo-content">
+            <p class="sr-only" id="tab-status" aria-live="polite"></p>
+            <section class="tab-panel" id="panel-before" role="tabpanel" aria-labelledby="tab-before" tabindex="0">
+              <div class="panel-heading"><div><p class="panel-kicker">01 / STATIC SOURCE REVIEW</p><h3>Five observations.<br><em>Each with a trail.</em></h3></div><span class="fixture-label">SEEDED FIXTURE</span></div>
+              <div class="result-banner banner-amber"><span class="result-symbol" aria-hidden="true">!</span><div><b>5 source-rule findings</b><p>MG001, MG002, MG003, MG004 and MG006. These describe supported patterns, not confirmed exploits.</p></div><span class="scope-complete">Coverage marked complete<br>within declared scope</span></div>
+              <div class="finding-list" id="source-findings" aria-label="Source findings"></div>
+              <div class="panel-footnote"><span aria-hidden="true">↳</span> Complete means the declared checks finished. Unrecognized patterns can still be missed.</div>
+            </section>
+            <section class="tab-panel" id="panel-after" role="tabpanel" aria-labelledby="tab-after" tabindex="0" hidden>
+              <div class="panel-heading"><div><p class="panel-kicker">02 / CORRECTED SOURCE CONTROL</p><h3>Zero findings in<br><em>the supported scope.</em></h3></div><span class="fixture-label">SEEDED FIXTURE</span></div>
+              <div class="result-banner banner-slate"><span class="result-symbol" aria-hidden="true">0</span><div><b>No findings in this recorded scan</b><p>The corrected fixture completed the same five source rules with complete declared-scope coverage.</p></div><span class="scope-complete">5 rules applied<br>5 tools recognized</span></div>
+              <div class="compare-card"><div class="compare-head"><span>BEFORE</span><span>AFTER</span></div><div class="compare-track"><div class="compare-value"><b>5</b><small>source findings</small><i class="bars five" aria-hidden="true"><u></u><u></u><u></u><u></u><u></u></i></div><div class="compare-arrow" aria-hidden="true">→</div><div class="compare-value"><b>0</b><small>source findings</small><i class="bars zero" aria-hidden="true"><u></u><u></u><u></u><u></u><u></u></i></div></div><p>Seeded positive fixture → seeded corrected control. This result says only that these checks found no supported pattern in this fixture.</p></div>
+              <details class="coverage-details"><summary>What the corrected scan recorded</summary><div class="coverage-body" id="corrected-coverage"></div></details>
+              <div class="panel-footnote"><span aria-hidden="true">↳</span> Zero supported-scope findings is not a security verdict or certification.</div>
+            </section>
+            <section class="tab-panel" id="panel-contract" role="tabpanel" aria-labelledby="tab-contract" tabindex="0" hidden>
+              <div class="panel-heading"><div><p class="panel-kicker">03 / OFFLINE INVENTORY REVIEW</p><h3>Declarations get<br><em>their own check.</em></h3></div><span class="fixture-label">SEEDED FIXTURE</span></div>
+              <div class="result-banner banner-amber"><span class="result-symbol" aria-hidden="true">!</span><div><b>MG005 — 1 invalid descriptor</b><p>Kept separate from the five source-pattern findings. The input schema is absent.</p></div><span class="scope-complete">Inventory<br>fixture only</span></div>
+              <div class="finding-list" id="inventory-findings" aria-label="Inventory findings"></div>
+              <div class="panel-footnote"><span aria-hidden="true">↳</span> Offline inventory review examines declarations. It cannot establish server runtime behavior.</div>
+            </section>
+            <section class="tab-panel" id="panel-drift" role="tabpanel" aria-labelledby="tab-drift" tabindex="0" hidden>
+              <div class="panel-heading"><div><p class="panel-kicker">04 / SNAPSHOT CHANGE REVIEW</p><h3>Five changes to<br><em>look at together.</em></h3></div><span class="fixture-label">SEEDED FIXTURE</span></div>
+              <div class="result-banner banner-blue"><span class="result-symbol" aria-hidden="true">↗</span><div><b>5 descriptor changes · review required</b><p>Two snapshots with equivalent declared context. Changes are observations, not proof of malicious intent.</p></div><span class="scope-complete">Hash-checked<br>offline snapshots</span></div>
+              <div class="snapshot-rail" id="snapshot-rail"></div>
+              <div class="drift-list" id="drift-changes" aria-label="Recorded descriptor changes"></div>
+              <div class="panel-footnote"><span aria-hidden="true">↳</span> A stable descriptor cannot show whether unseen implementation code changed.</div>
+            </section>
+          </div>
+        </div>
+        <div class="demo-bottomline"><span>RECORDED DATA · examples/seeded/</span><span>NO LIVE SERVER · NO LIVE NETWORK LOOKUP</span></div>
+      </div>
+      <div class="disclaimer-row"><span class="asterisk" aria-hidden="true">✳</span><p>All values above come from seeded project fixtures. This walkthrough is not a live scan, an independent benchmark, or evidence of real-world detection accuracy.</p></div>
+    </section>
+
+    <section class="install-section" aria-labelledby="install-title">
+      <div class="install-copy"><p class="eyebrow">TRY IT LOCALLY</p><h2 id="install-title">Keep the review<br><em>on your machine.</em></h2><p>The v0.2.1 archive runs as a local CLI. Install the release, then reproduce the offline seeded walkthrough.</p><a class="release-link" href="https://github.com/zayyanla-hash/mcp-guard/releases/tag/v0.2.1" target="_blank" rel="noreferrer">Release notes & archive <span aria-hidden="true">↗</span></a></div>
+      <div class="terminal-card"><div class="terminal-bar"><div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div><span>INSTALL / LOCAL MACHINE</span><span class="offline-tag">RELEASE v0.2.1</span></div><pre><code id="install-command">npm install --global https://github.com/zayyanla-hash/mcp-guard/releases/download/v0.2.1/mcp-guard-0.2.1.tgz --ignore-scripts
+mcp-guard --version</code></pre><button class="copy-button" id="copy-install" type="button" aria-label="Copy release install and version check commands"><span aria-hidden="true">▣</span> <span id="copy-label">Copy install steps</span></button><p class="copy-status sr-only" aria-live="polite" id="copy-status"></p></div>
+      <div class="demo-repro"><span class="method-index">RECREATE THE SEEDED DEMO FROM SOURCE</span><code>git clone https://github.com/zayyanla-hash/mcp-guard.git<br>cd mcp-guard &amp;&amp; npm ci --ignore-scripts &amp;&amp; npm run demo</code><button type="button" class="copy-demo" id="copy-demo" aria-label="Copy source demo reproduction commands">Copy demo commands</button><span class="sr-only" id="copy-demo-status" aria-live="polite"></span><p>Node.js 24+ required. Writes inspectable results to a new <code>demo-output/</code> directory.</p></div>
+      <div class="install-meta"><span>NODE.JS 24+</span><span>NO API KEY</span><span>RELEASE v0.2.1</span></div>
+    </section>
+
+    <section class="method-section" id="method" aria-labelledby="method-title">
+      <div class="method-title"><p class="eyebrow">READ THE BOUNDARY</p><h2 id="method-title">Scope and limits</h2></div>
+      <div class="method-grid">
+        <article><span class="method-index">A / LANGUAGE</span><h3>A documented subset</h3><p>Static analysis supports a narrow, direct-registration subset of JavaScript and TypeScript. Imported helpers, dynamic registrations, branches, and broader interprocedural flows can fall outside it.</p></article>
+        <article><span class="method-index">B / DISCOVERY</span><h3>Reviewed fixture only</h3><p>Optional live discovery is limited to one reviewed fixture on verified macOS isolation. Arbitrary targets and unsupported platforms are blocked. Default validation stays offline.</p></article>
+        <article><span class="method-index">C / INTERPRETATION</span><h3>No security score</h3><p>Findings preserve evidence, assumptions and limitations. MCP Guard is not a runtime firewall, exploit confirmation, or security certification.</p></article>
+      </div>
+      <div class="evaluation-card"><div><span class="method-index">EVALUATION / OFFICIAL REFERENCE EXAMPLES</span><h3>Coverage on a pinned external sample</h3><p>Across seven unchanged official SDK example files, the analyzer reported four recognized registrations in aggregate. Manual source review identified 20 factory-bound registrations outside the supported shape. Every file had incomplete coverage. Zero findings and zero parse failures do not support an accuracy estimate or a security verdict.</p></div><a href="https://github.com/zayyanla-hash/mcp-guard/blob/main/docs/EVALUATION-EXTERNAL.md" target="_blank" rel="noreferrer">Read full evaluation <span aria-hidden="true">↗</span></a></div>
+    </section>
+  </main>
+
+  <footer class="footer"><a class="wordmark" href="#top"><span class="mark" aria-hidden="true">M</span><span>MCP GUARD</span></a><span>Scoped developer release · v0.2.1</span><a href="https://github.com/zayyanla-hash/mcp-guard" target="_blank" rel="noreferrer">Open source <span aria-hidden="true">↗</span></a></footer>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
