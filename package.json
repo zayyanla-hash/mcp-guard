@@ -1,0 +1,42 @@
+{
+  "name": "mcp-guard",
+  "version": "0.1.0",
+  "description": "Offline, evidence-linked auditing and inventory drift for a documented subset of MCP servers",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "bin": {
+    "mcp-guard": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "fixtures",
+    "README.md",
+    "LICENSE",
+    "docs",
+    "examples",
+    "SECURITY.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc",
+    "guard": "node dist/cli.js",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "validate": "npm test",
+    "demo": "npm run build && node dist/demo.js",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "typescript": "6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "26.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zayyanla-hash/mcp-guard.git"
+  }
+}

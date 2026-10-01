@@ -1,0 +1,18 @@
+{
+  "protocolVersion": "2025-11-25",
+  "acquisitionContext": {"transport": "offline", "authorization": "none", "source": "project-owned seeded fixture"},
+  "metadata": {"source": "fixture"},
+  "tools": [
+    {
+      "name": "lookup",
+      "description": "Look up a record by identifier",
+      "inputSchema": {"type": "object", "properties": {"id": {"type": "string"}}, "required": []},
+      "annotations": {"readOnlyHint": true}
+    },
+    {
+      "name": "search",
+      "description": "Search records",
+      "inputSchema": {"type": "object", "properties": {"query": {"type": "string"}}}
+    }
+  ]
+}

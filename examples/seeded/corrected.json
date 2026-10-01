@@ -1,0 +1,1 @@
+{"coverage":{"complete":true,"diagnostics":[],"excluded":[],"failed":[],"inspected":["server.ts"],"recognizedTools":5,"rulesApplied":["MG001","MG002","MG003","MG004","MG006"],"truncated":[],"unresolvedHandlers":0},"findings":[],"kind":"source","schemaVersion":1,"target":"Project-owned seeded fixture: corrected"}

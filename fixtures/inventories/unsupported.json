@@ -1,0 +1,5 @@
+{
+  "tools": [
+    {"name": "remote", "inputSchema": {"type": "object", "$ref": "https://example.invalid/schema.json"}}
+  ]
+}

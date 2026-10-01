@@ -1,0 +1,1 @@
+{"descriptorDefects":1,"driftChanges":5,"evidenceCategory":"Project-owned seeded fixture","findingsAfter":0,"findingsBefore":5,"limitations":"Seeded results are not real-world detection rates. Targets were parsed, never executed.","outcomes":{"corrected":0,"correctedInventory":0,"drift":1,"inventory":1,"vulnerable":1},"sourceRules":["MG001","MG002","MG003","MG004","MG006"]}

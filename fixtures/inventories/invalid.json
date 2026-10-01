@@ -1,0 +1,6 @@
+{
+  "tools": [
+    {"name": "broken", "inputSchema": {"type": "nonsense"}},
+    {"name": "broken", "inputSchema": {"type": "object"}}
+  ]
+}

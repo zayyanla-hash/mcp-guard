@@ -1,0 +1,1 @@
+{"coverage":{"complete":true,"diagnostics":[],"excluded":[],"failed":[],"inspected":["inventory envelope","tool descriptors","input schemas","output schemas","protocol version"],"recognizedTools":1,"rulesApplied":["MG005"],"truncated":[],"unresolvedHandlers":0},"findings":[],"kind":"inventory","schemaVersion":1,"target":"Project-owned seeded fixture: corrected descriptor"}
