@@ -148,10 +148,12 @@ export function analyzeSource(file:string, text:string): AuditResult {
           if(['spawn','spawnSync','execFile','execFileSync'].includes(called.name)&&shellOption&&vals.slice(0,2).some(x=>x.input)){direct(vals.slice(0,2));emit('MG001',node,name.text);}
           if(node.arguments.some(a=>ts.isObjectLiteralExpression(a)&&prop(a,'shell')&&!([ts.SyntaxKind.TrueKeyword,ts.SyntaxKind.FalseKeyword].includes(prop(a,'shell')!.initializer.kind))))note('UNKNOWN_SHELL_OPTION',node,'Dynamic shell option is not assessed');
         }else if(called&&['fs','fs/promises'].includes(called.module)){
-          const mutations=['writeFile','writeFileSync','appendFile','appendFileSync','unlink','unlinkSync','rm','rmSync','rmdir','rmdirSync','mkdir','mkdirSync','rename','renameSync','copyFile','copyFileSync','truncate','truncateSync'];
+          const mutations=['writeFile','writeFileSync','appendFile','appendFileSync','unlink','unlinkSync','rm','rmSync','rmdir','rmdirSync','mkdir','mkdirSync','rename','renameSync','copyFile','copyFileSync','truncate','truncateSync','createWriteStream'];
           const paths=[...mutations,'readFile','readFileSync','readdir','readdirSync','open','openSync','stat','statSync','access','accessSync','createReadStream','createWriteStream'];
           if(paths.includes(called.name)&&first.input){direct([first]);emit('MG002',node,name.text);}
           if(['rename','renameSync','copyFile','copyFileSync'].includes(called.name)&&vals[1]?.input&&!first.input)emit('MG002',node,name.text);
+          if(readonly&&['open','openSync'].includes(called.name)){const flags=node.arguments[1];if(flags&&ts.isStringLiteralLike(flags)){if(/[wa+]/.test(flags.text))emit('MG006',node,name.text,readonly);}else note('UNRESOLVED_OPEN_FLAGS',node,'Filesystem open mutation flags are not assessed');}
+          if(!paths.includes(called.name))note('UNSUPPORTED_FILESYSTEM_API',node,'Filesystem API effect is outside the supported operation set');
           if(readonly&&mutations.includes(called.name))emit('MG006',node,name.text,readonly);
         }else if(global(node.expression,'fetch')&&first.input){direct([first]);emit('MG003',node,name.text);
         }else if(called&&['http','https'].includes(called.module)&&['get','request'].includes(called.name)&&first.input){direct([first]);emit('MG003',node,name.text);}

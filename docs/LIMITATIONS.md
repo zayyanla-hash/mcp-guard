@@ -13,3 +13,5 @@ Inventories are declarations. Context equivalence is caller supplied; it is not 
 Limits can reject legitimate very large/deep sources or reports. Source scans are limited to a responsive local immutable checkout. Resource bounds are best effort without an OS sandbox. Result JSON, inventories and snapshots accepted by CLI are limited to 1 MiB; use smaller scans when reports exceed this limit. Bounds errors are explicit non-success results.
 
 Evaluation is seeded and development fixtures were visible during implementation. There is no independent real-world accuracy estimate or comparison with commercial scanners. Public release readiness means a reproducible experimental CLI with evidence boundaries, not blanket production-security readiness.
+
+CI targets Linux and macOS on Node 24 and 26. Windows support has not been verified. Reserved JSON object keys (__proto__, prototype, constructor) are rejected as an input-hardening restriction, including in otherwise valid schemas; this is not a protocol vulnerability finding.

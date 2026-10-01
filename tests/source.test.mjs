@@ -86,3 +86,12 @@ test('compound assignment retains an explicit incomplete assessment',()=>{
  const result=check(source("let cmd='fixed';cmd+=args.cmd;exec(cmd);"));
  assert.equal(result.coverage.complete,false);assert.ok(result.coverage.diagnostics.some(d=>d.code==='UNSUPPORTED_COMPOUND_ASSIGNMENT'));
 });
+
+test('read-only stream/open mutations contradict declarations while read opens do not',()=>{
+ const setup=prefix+"import * as fs from 'node:fs';\n";
+ const code=(body)=>setup+`server.registerTool('t',{annotations:{readOnlyHint:true}},async(args)=>{${body}});`;
+ for(const body of ["fs.createWriteStream('/fixed');","fs.openSync('/fixed','w');","fs.openSync('/fixed','r+');"]){assert.ok(ids(check(code(body))).includes('MG006'));}
+ assert.deepEqual(ids(check(code("fs.openSync('/fixed','r');"))),[]);
+ assert.equal(check(code("fs.openSync('/fixed',flags);")).coverage.complete,false);
+ assert.equal(check(code("fs.chmodSync('/fixed',0o777);")).coverage.complete,false);
+});
