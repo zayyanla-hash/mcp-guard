@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { analyzeSource } from '../dist/analyzer.js';
+import { policyExit } from '../dist/policy.js';
 const prefix = `import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { exec, execFile, spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -131,4 +133,31 @@ test('common explicit connection and access credentials are reported while ordin
  for(const key of ['NODE_ENV','APP_ENV','DATABASE_NAME','AWS_REGION']){
   const result=check(source(`return process.env.${key};`));assert.deepEqual(ids(result),[],key);assert.equal(result.coverage.complete,true,key);
  }
+});
+
+test('1-level local factory positive, negative, and unresolved controls',()=>{
+ const posText=readFileSync(new URL('../fixtures/factory/positive/server.ts',import.meta.url),'utf8');
+ const pos=analyzeSource('fixtures/factory/positive/server.ts',posText);
+ assert.deepEqual(pos.findings.map(f=>f.ruleId),['MG001','MG002','MG003','MG004','MG006']);
+ assert.equal(pos.coverage.recognizedTools,5);
+ assert.equal(pos.coverage.complete,true);
+ assert.ok(pos.findings.every(f=>f.engine==='vambrace-ts'));
+
+ const negText=readFileSync(new URL('../fixtures/factory/negative/server.ts',import.meta.url),'utf8');
+ const neg=analyzeSource('fixtures/factory/negative/server.ts',negText);
+ assert.deepEqual(neg.findings,[]);
+ assert.equal(neg.coverage.recognizedTools,4);
+ assert.equal(neg.coverage.complete,true);
+ assert.equal(policyExit(neg),0);
+
+ const unresText=readFileSync(new URL('../fixtures/factory/unresolved/server.ts',import.meta.url),'utf8');
+ const unres=analyzeSource('fixtures/factory/unresolved/server.ts',unresText);
+ assert.deepEqual(unres.findings,[]);
+ assert.equal(unres.coverage.complete,false);
+ assert.ok(unres.coverage.diagnostics.some(d=>d.code==='UNRESOLVED_FACTORY'));
+ assert.equal(policyExit(unres),3);
+
+ const helperPassed=analyzeSource('helper-factory.ts',`import { McpServer } from '@modelcontextprotocol/server';\nfunction build() {\n  const server = new McpServer({name:'x',version:'1'});\n  server.registerTool('ok', {}, async () => ({content:[]}));\n  registerExtra(server);\n  return server;\n}`);
+ assert.equal(helperPassed.coverage.complete,false);
+ assert.ok(helperPassed.coverage.diagnostics.some(d=>d.code==='UNRESOLVED_FACTORY'));
 });

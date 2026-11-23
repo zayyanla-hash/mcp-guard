@@ -1,10 +1,13 @@
 export type Severity = 'low' | 'medium' | 'high';
 export interface Location { file?: string; line?: number; column?: number; pointer?: string }
+export interface OwaspMcpRef { id: string; title: string; url: string }
 export interface Finding {
   ruleId: string; ruleVersion: string; title: string; category: string;
   severity: Severity; confidence: 'high' | 'medium'; evidenceType: 'static-pattern' | 'metadata-observation';
   locations: Location[]; evidence: string; observed: string; why: string;
   assumptions: string[]; remediation: string; limitations: string[]; fingerprint: string;
+  engine?: string;
+  owaspMcpTop10?: OwaspMcpRef;
 }
 export interface Diagnostic { code: string; message: string; file?: string; pointer?: string }
 export interface Coverage {

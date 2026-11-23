@@ -54,3 +54,18 @@ jobs:
           npm ci --ignore-scripts
           npm run build
           node evaluation/v1/run.mjs
+  evaluate-v2-head:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - name: Compare HEAD against v2 reference evaluation
+        run: |
+          node evaluation/v2/run.mjs
+          node -e "const fs=require('fs');const ref=JSON.parse(fs.readFileSync('evaluation/v2/report.json','utf8'));const cur=JSON.parse(fs.readFileSync('evaluation/v2/artifacts/external-evaluation/report.json','utf8'));console.log('v2 HEAD delta:', JSON.stringify({recognized:[ref.counts.recognized_registration_count,cur.counts.recognized_registration_count],incomplete:[ref.counts.coverage_incomplete_files,cur.counts.coverage_incomplete_files],findings:[ref.counts.findings,cur.counts.findings]}));"

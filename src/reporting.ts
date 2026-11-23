@@ -61,12 +61,26 @@ function safeFinding(value: unknown): Finding {
   if (!['static-pattern','metadata-observation'].includes(String(value.evidenceType))) throw new Error('Malformed audit result: finding.evidenceType is invalid.');
   if (!Array.isArray(value.locations) || value.locations.length === 0) throw new Error('Malformed audit result: finding.locations must be a non-empty array.');
   if (!Array.isArray(value.assumptions) || value.assumptions.some(x => !string(x)) || !Array.isArray(value.limitations) || value.limitations.some(x => !string(x))) throw new Error('Malformed audit result: finding assumptions and limitations must be string arrays.');
-  return {
+  const out: Finding = {
     ruleId:value.ruleId as string, ruleVersion:value.ruleVersion as string, title:value.title as string, category:value.category as string,
     severity:value.severity as Finding['severity'], confidence:value.confidence as Finding['confidence'], evidenceType:value.evidenceType as Finding['evidenceType'],
     locations:value.locations.map(safeLocation), evidence:value.evidence as string, observed:value.observed as string, why:value.why as string,
     assumptions:value.assumptions as string[], remediation:value.remediation as string, limitations:value.limitations as string[], fingerprint:value.fingerprint as string
   };
+  if (value.engine !== undefined) {
+    if (!string(value.engine) || !value.engine) throw new Error('Malformed audit result: finding.engine must be a non-empty string.');
+    out.engine = value.engine;
+  }
+  if (value.owaspMcpTop10 !== undefined) {
+    if (!isObject(value.owaspMcpTop10)) throw new Error('Malformed audit result: finding.owaspMcpTop10 must be an object.');
+    requiredStrings(value.owaspMcpTop10, ['id', 'title', 'url'], 'finding.owaspMcpTop10');
+    out.owaspMcpTop10 = {
+      id: value.owaspMcpTop10.id as string,
+      title: value.owaspMcpTop10.title as string,
+      url: value.owaspMcpTop10.url as string,
+    };
+  }
+  return out;
 }
 function safeDiagnostic(value: unknown): Diagnostic {
   if (!isObject(value)) throw new Error('Malformed audit result: diagnostic must be an object.');

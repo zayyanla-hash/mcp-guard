@@ -154,7 +154,7 @@ export function auditInventory(value: unknown): AuditResult {
   const result: AuditResult = { schemaVersion: 1, kind: 'inventory', target: 'MCP inventory', findings: [], coverage: coverage(['MG005']) };
   result.coverage.inspected.push('inventory envelope', 'tool descriptors', 'input schemas', 'output schemas', 'protocol version');
   const invalid = (title: string, category: string, pointer: string, observed: string, why: string, remediation: string) => {
-    result.findings.push(finding({ ruleId:'MG005', title, category, severity:'medium', confidence:'high', evidenceType:'metadata-observation', locations:[{pointer}], evidence:`Observed ${observed} at ${pointer}.`, observed, why, assumptions:[], remediation, limitations:['Offline descriptor inspection cannot establish server runtime behavior.'] }));
+    result.findings.push(finding({ engine:'vambrace-inventory', ruleId:'MG005', title, category, severity:'medium', confidence:'high', evidenceType:'metadata-observation', locations:[{pointer}], evidence:`Observed ${observed} at ${pointer}.`, observed, why, assumptions:[], remediation, limitations:['Offline descriptor inspection cannot establish server runtime behavior.'] }));
   };
   const diag = (code: string, message: string, pointer?: string) => {
     result.coverage.diagnostics.push({ code, message: redactText(message), ...(pointer ? { pointer } : {}) });

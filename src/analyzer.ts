@@ -24,10 +24,15 @@ export function analyzeSource(file:string, text:string): AuditResult {
   const imports=new Map<ts.Symbol,Import>();
   const values=new Map<ts.Symbol,Value>();
   const servers=new Set<ts.Symbol>();
+  const supportedServerNewExprs=new Set<ts.NewExpression>();
+  const factoryBodies=new Set<ts.Block>();
+  const serverFactory=new Map<ts.Symbol,ts.Block>();
+  const factoryBindings=new Map<ts.Block,Array<{name:ts.BindingName;initializer:ts.Expression}>>();
   const constants=new Map<ts.Symbol,ts.Expression>();
   const diagnostics=new Set<string>();
   const loc=(n:ts.Node):Location=>{const p=sf.getLineAndCharacterOfPosition(n.getStart(sf));return {file,line:p.line+1,column:p.character+1};};
   const note=(code:string,n:ts.Node,message:string)=>{const key=code+':'+n.pos;if(diagnostics.has(key))return;diagnostics.add(key);cov.complete=false;cov.diagnostics.push({code,file,message:message+' (line '+loc(n).line+')'});};
+  const isMcpServerCtor=(expr:ts.NewExpression):boolean=>{const ctor=api(expr.expression);return ctor?.name==='McpServer'&&['@modelcontextprotocol/sdk/server/mcp.js','@modelcontextprotocol/server'].includes(ctor.module);};
   for(const st of sf.statements){
     if(ts.isImportDeclaration(st)&&ts.isStringLiteral(st.moduleSpecifier)){
       const mod=moduleName(st.moduleSpecifier.text), clause=st.importClause;
@@ -109,12 +114,31 @@ export function analyzeSource(file:string, text:string): AuditResult {
       }else bind(el.name,val);
     }
   };
-  // Only top-level constants are carried into tool callbacks; no target module resolution occurs.
-  for(const st of sf.statements)if(ts.isVariableStatement(st))for(const decl of st.declarationList.declarations){
-    if(!decl.initializer)continue;
-    const s=ts.isIdentifier(decl.name)?symbol(decl.name):undefined;
-    if(st.declarationList.flags&ts.NodeFlags.Const){if(s)constants.set(s,decl.initializer);bind(decl.name,evalValue(decl.initializer));}
-    if(s&&ts.isNewExpression(decl.initializer)){const ctor=api(decl.initializer.expression);if(ctor?.name==='McpServer'&&['@modelcontextprotocol/sdk/server/mcp.js','@modelcontextprotocol/server'].includes(ctor.module)&&(st.declarationList.flags&ts.NodeFlags.Const))servers.add(s);}
+  // Only top-level constants and 1-level local factory servers are carried into tool callbacks; no target module resolution occurs.
+  for(const st of sf.statements){
+    if(ts.isVariableStatement(st))for(const decl of st.declarationList.declarations){
+      if(!decl.initializer)continue;
+      const s=ts.isIdentifier(decl.name)?symbol(decl.name):undefined;
+      if(st.declarationList.flags&ts.NodeFlags.Const){
+        if(s)constants.set(s,decl.initializer);
+        bind(decl.name,evalValue(decl.initializer));
+        if((ts.isArrowFunction(decl.initializer)||ts.isFunctionExpression(decl.initializer))&&ts.isBlock(decl.initializer.body))factoryBodies.add(decl.initializer.body);
+      }
+      if(s&&ts.isNewExpression(decl.initializer)&&isMcpServerCtor(decl.initializer)&&(st.declarationList.flags&ts.NodeFlags.Const)){servers.add(s);supportedServerNewExprs.add(decl.initializer);}
+    }
+    if(ts.isFunctionDeclaration(st)&&st.body&&ts.isBlock(st.body))factoryBodies.add(st.body);
+  }
+  for(const body of factoryBodies){
+    const locals:Array<{name:ts.BindingName;initializer:ts.Expression}>=[];
+    for(const st of body.statements)if(ts.isVariableStatement(st)&&(st.declarationList.flags&ts.NodeFlags.Const))for(const decl of st.declarationList.declarations){
+      if(!decl.initializer)continue;
+      const s=ts.isIdentifier(decl.name)?symbol(decl.name):undefined;
+      if(s&&ts.isNewExpression(decl.initializer)&&isMcpServerCtor(decl.initializer)){servers.add(s);supportedServerNewExprs.add(decl.initializer);serverFactory.set(s,body);}
+      else locals.push({name:decl.name,initializer:decl.initializer});
+    }
+    let addedLocalAlias=true;
+    while(addedLocalAlias){addedLocalAlias=false;for(const st of body.statements)if(ts.isVariableStatement(st)&&(st.declarationList.flags&ts.NodeFlags.Const))for(const decl of st.declarationList.declarations){if(ts.isIdentifier(decl.name)&&decl.initializer&&ts.isIdentifier(decl.initializer)){const s=symbol(decl.name),source=symbol(decl.initializer);if(s&&source&&servers.has(source)&&!servers.has(s)){servers.add(s);serverFactory.set(s,body);addedLocalAlias=true;}}}}
+    factoryBindings.set(body,locals);
   }
   let addedServerAlias=true;
   while(addedServerAlias){addedServerAlias=false;for(const st of sf.statements)if(ts.isVariableStatement(st)&&(st.declarationList.flags&ts.NodeFlags.Const))for(const decl of st.declarationList.declarations){if(ts.isIdentifier(decl.name)&&decl.initializer&&ts.isIdentifier(decl.initializer)){const s=symbol(decl.name),source=symbol(decl.initializer);if(s&&source&&servers.has(source)&&!servers.has(s)){servers.add(s);addedServerAlias=true;}}}}
@@ -142,7 +166,23 @@ export function analyzeSource(file:string, text:string): AuditResult {
     if(ts.isElementAccessExpression(expr)&&expr.argumentExpression&&ts.isStringLiteralLike(expr.argumentExpression))return ['registerTool','tool'].includes(expr.argumentExpression.text)&&ts.isIdentifier(expr.expression)&&!!symbol(expr.expression)&&servers.has(symbol(expr.expression)!);
     return false;
   };
+  const isNestedFactoryReg=(reg:ts.CallExpression,receiver:ts.Symbol|undefined):boolean=>{
+    if(receiver){
+      for(const d of receiver.declarations??[]){
+        if(ts.isParameter(d))return true;
+        if(ts.isVariableDeclaration(d)&&d.initializer&&ts.isCallExpression(d.initializer))return true;
+      }
+    }
+    let cur:ts.Node|undefined=reg.parent;
+    while(cur&&cur!==sf){
+      if(ts.isFunctionLike(cur))return !('body' in cur&&cur.body&&ts.isBlock(cur.body)&&factoryBodies.has(cur.body));
+      cur=cur.parent;
+    }
+    return false;
+  };
   const collect=(n:ts.Node)=>{
+    if(ts.isNewExpression(n)&&isMcpServerCtor(n)&&!supportedServerNewExprs.has(n))note('UNRESOLVED_FACTORY',n,'McpServer constructed outside top-level or 1-level local factory scope is not assessed');
+    if(ts.isCallExpression(n)&&n.arguments.some(arg=>ts.isIdentifier(arg)&&!!symbol(arg)&&servers.has(symbol(arg)!)))note('UNRESOLVED_FACTORY',n,'McpServer instance passed to helper function; registrations outside local factory are not assessed');
     if(ts.isCallExpression(n)&&ts.isElementAccessExpression(n.expression)&&ts.isIdentifier(n.expression.expression)&&symbol(n.expression.expression)&&servers.has(symbol(n.expression.expression)!))note('COMPUTED_REGISTRATION',n,'Computed server method registration is not assessed');
     if(ts.isPropertyAccessExpression(n)&&serverMethod(n)&&!(ts.isCallExpression(n.parent)&&n.parent.expression===n))note('REGISTRATION_ALIAS',n,'Aliased server registration method is not assessed');
     if(ts.isElementAccessExpression(n)&&serverMethod(n)&&!(ts.isCallExpression(n.parent)&&n.parent.expression===n))note('REGISTRATION_ALIAS',n,'Aliased server registration method is not assessed');
@@ -155,12 +195,19 @@ export function analyzeSource(file:string, text:string): AuditResult {
   for(const reg of regs){
     const method=reg.expression as ts.PropertyAccessExpression;
     const receiver=ts.isIdentifier(method.expression)?symbol(method.expression):undefined;
-    if(method.name.text!=='registerTool'||!receiver||!servers.has(receiver)){cov.unresolvedHandlers++;note('UNSUPPORTED_REGISTRATION',reg,'Registration receiver or method is outside the supported direct McpServer.registerTool subset');continue;}
+    if(method.name.text!=='registerTool'||!receiver||!servers.has(receiver)){
+      cov.unresolvedHandlers++;
+      if(isNestedFactoryReg(reg,receiver))note('UNRESOLVED_FACTORY',reg,'Tool registration on an imported, nested, or dynamic factory server is outside the supported 1-level local factory subset');
+      else note('UNSUPPORTED_REGISTRATION',reg,'Registration receiver or method is outside the supported direct McpServer.registerTool subset');
+      continue;
+    }
     cov.recognizedTools++;
     const name=reg.arguments[0],config=reg.arguments[1],fn=handler(reg.arguments[2]);
     if(!name||!ts.isStringLiteralLike(name)||!config||!ts.isObjectLiteralExpression(config)||!fn?.body){cov.unresolvedHandlers++;note('UNRESOLVED_HANDLER',reg,'Tool name/configuration/handler could not be mapped directly');continue;}
     if(config.properties.some(p=>ts.isSpreadAssignment(p)))note('UNRESOLVED_CONFIG_SPREAD',config,'Spread registration configuration is not fully assessed');
     const saved=new Map(values);
+    const factoryBody=serverFactory.get(receiver);
+    if(factoryBody)for(const local of factoryBindings.get(factoryBody)??[])bind(local.name,evalValue(local.initializer));
     if(fn.parameters[0])bind(fn.parameters[0].name,{input:true,env:false,process:false,uncertain:false});
     const annotation=prop(config,'annotations');let readonly:ts.Node|undefined;
     if(annotation&&!ts.isObjectLiteralExpression(annotation.initializer))note('UNRESOLVED_ANNOTATIONS',annotation,'Annotation mapping is not assessed');

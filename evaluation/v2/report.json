@@ -1,0 +1,1475 @@
+{
+  "format_version": 2,
+  "study_version": "v2",
+  "generated_at": "2026-11-23T10:05:58.660Z",
+  "execution": "Offline source-text analysis with 1-level local factory support. Vendored targets were read as UTF-8 data and passed to analyzeSource; target modules were not imported or executed.",
+  "provenance": {
+    "repository": "https://github.com/modelcontextprotocol/typescript-sdk",
+    "revision": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+    "expectations_sha256": "703ee03a26bc8f4bc488947030777ddd50f3207e31b54d2a5cfdc6a12b08a17d",
+    "expectations_created_before_first_analyzer_run": true,
+    "pre_implementation_commit": "40d7e3e03ccdb3affb23d92556f4121fadbd4319",
+    "checkout_commit_at_run": "d5e9688e0b2f8a4ebe2a60670a71e7bb1550de93",
+    "analyzer_source_sha256": "0df0117ff75bfb58bcd251ae5e47bff90c7880900058b8f9ecf6d742b520c77d",
+    "analyzer_distribution_sha256": "e3f08c6815ee8f27e60c1ae62a1d386a1a8cbffd9bb0a297c5f1ee5087270ba8"
+  },
+  "scope": {
+    "repository_count": 1,
+    "source_file_count": 7,
+    "distinct_actual_tool_handlers": 24,
+    "source_rules": [
+      "MG001",
+      "MG002",
+      "MG003",
+      "MG004",
+      "MG006"
+    ],
+    "corpus_limitation": "Single-repository official SDK reference examples. Not an independent holdout and not representative of production MCP servers."
+  },
+  "counts": {
+    "handlers": 24,
+    "recognized_registration_count": 24,
+    "unrecognized_registration_count_by_file_count": 0,
+    "registration_count_matches": 7,
+    "coverage_incomplete_files": 5,
+    "parse_failures": 0,
+    "diagnostics": 77,
+    "findings": 0
+  },
+  "comparison_with_v1": {
+    "v1_recognized_registration_count": 4,
+    "v2_recognized_registration_count": 24,
+    "v1_coverage_incomplete_files": 7,
+    "v2_coverage_incomplete_files": 5,
+    "v1_findings": 0,
+    "v2_findings": 0
+  },
+  "per_rule": {
+    "MG001": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 5,
+      "false_flag_denominator": 5,
+      "manually_unsupported_handlers": 17,
+      "expected_but_unscored_due_incomplete_coverage": 2,
+      "expected_but_unscored_due_identity": 2,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": 0,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 2,
+      "unscored_due_to_unattributed_handler_identity": 2,
+      "recall": null,
+      "false_flag_rate": 0
+    },
+    "MG002": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 5,
+      "false_flag_denominator": 5,
+      "manually_unsupported_handlers": 17,
+      "expected_but_unscored_due_incomplete_coverage": 2,
+      "expected_but_unscored_due_identity": 2,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": 0,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 2,
+      "unscored_due_to_unattributed_handler_identity": 2,
+      "recall": null,
+      "false_flag_rate": 0
+    },
+    "MG003": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 5,
+      "false_flag_denominator": 5,
+      "manually_unsupported_handlers": 17,
+      "expected_but_unscored_due_incomplete_coverage": 2,
+      "expected_but_unscored_due_identity": 2,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": 0,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 2,
+      "unscored_due_to_unattributed_handler_identity": 2,
+      "recall": null,
+      "false_flag_rate": 0
+    },
+    "MG004": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 5,
+      "false_flag_denominator": 5,
+      "manually_unsupported_handlers": 17,
+      "expected_but_unscored_due_incomplete_coverage": 2,
+      "expected_but_unscored_due_identity": 2,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": 0,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 2,
+      "unscored_due_to_unattributed_handler_identity": 2,
+      "recall": null,
+      "false_flag_rate": 0
+    },
+    "MG006": {
+      "supported_positive_handlers": 0,
+      "positive_denominator": 0,
+      "supported_negative_handlers": 5,
+      "false_flag_denominator": 5,
+      "manually_unsupported_handlers": 17,
+      "expected_but_unscored_due_incomplete_coverage": 2,
+      "expected_but_unscored_due_identity": 2,
+      "observed_findings_on_scored_supported_handlers": 0,
+      "misses": null,
+      "false_flagged_negative_controls": 0,
+      "findings_on_rule_unsupported_handlers": 0,
+      "unscored_due_to_incomplete_coverage": 2,
+      "unscored_due_to_unattributed_handler_identity": 2,
+      "recall": null,
+      "false_flag_rate": 0
+    }
+  },
+  "handlers": [
+    {
+      "id": "examples/tools/server.ts:calc",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "calc",
+      "registration_line": 21,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L21",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/tools/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "name": "echo",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/tools/server.ts#L45",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:search",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "search",
+      "registration_line": 27,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L27",
+      "registration_shape": "top-level McpServer registration",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-details",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-details",
+      "registration_line": 45,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L45",
+      "registration_shape": "top-level McpServer registration",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:clear-catalog",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "clear-catalog",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L65",
+      "registration_shape": "top-level McpServer registration",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/guides/servers/tools.examples.ts:product-card",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "name": "product-card",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/guides/servers/tools.examples.ts#L84",
+      "registration_shape": "top-level McpServer registration",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/stickynotes/server.ts:add_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "add_note",
+      "registration_line": 51,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L51",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_note",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_note",
+      "registration_line": 67,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L67",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/stickynotes/server.ts:remove_all",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "name": "remove_all",
+      "registration_line": 81,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/stickynotes/server.ts#L81",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "greet",
+      "registration_line": 49,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L49",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:multi-greet",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "multi-greet",
+      "registration_line": 65,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L65",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:collect-user-info",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "collect-user-info",
+      "registration_line": 84,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L84",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:start-notification-stream",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "start-notification-stream",
+      "registration_line": 146,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L146",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:add-resource",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "add-resource",
+      "registration_line": 167,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L167",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/repl/server.ts:list-files",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "name": "list-files",
+      "registration_line": 182,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/repl/server.ts#L182",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:register_user",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "register_user",
+      "registration_line": 74,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L74",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:plan_trip",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "plan_trip",
+      "registration_line": 114,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L114",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:link_account",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "link_account",
+      "registration_line": 170,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L170",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/elicitation/server.ts:confirm_payment",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "name": "confirm_payment",
+      "registration_line": 223,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/elicitation/server.ts#L223",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/gateway/server.ts:echo",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "echo",
+      "registration_line": 22,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L22",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/gateway/server.ts:uppercase",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "uppercase",
+      "registration_line": 26,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L26",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/gateway/server.ts:request_count",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "name": "request_count",
+      "registration_line": 34,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/gateway/server.ts#L34",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-alerts",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-alerts",
+      "registration_line": 89,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L89",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    },
+    {
+      "id": "examples/server-quickstart/src/index.ts:get-forecast",
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "name": "get-forecast",
+      "registration_line": 136,
+      "upstream_line_url": "https://github.com/modelcontextprotocol/typescript-sdk/blob/433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0/examples/server-quickstart/src/index.ts#L136",
+      "registration_shape": "local server factory (1-level)",
+      "actual_findings_by_rule": {
+        "MG001": 0,
+        "MG002": 0,
+        "MG003": 0,
+        "MG004": 0,
+        "MG006": 0
+      }
+    }
+  ],
+  "files": [
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts",
+      "handlers": 2,
+      "recognized_registration_count": 2,
+      "expected_recognized_registration_count": 2,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [],
+      "coverage": {
+        "complete": true,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/tools/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 2,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": []
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+      "handlers": 4,
+      "recognized_registration_count": 4,
+      "expected_recognized_registration_count": 4,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 37)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 38)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 38)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 53)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 54)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 91)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 92)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 4,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 37)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 38)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 38)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 53)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 54)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 91)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/guides/servers/tools.examples.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 92)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+      "handlers": 3,
+      "recognized_registration_count": 3,
+      "expected_recognized_registration_count": 3,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_INPLACE_MUTATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "In-place mutation dataflow is not assessed (line 59)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 60)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 61)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Value passes through an unsupported transformation (line 75)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 75)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 76)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 76)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 88)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 101)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 104)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 107)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 3,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_INPLACE_MUTATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "In-place mutation dataflow is not assessed (line 59)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 60)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 61)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Value passes through an unsupported transformation (line 75)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 75)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 76)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 76)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 88)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 101)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 104)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 107)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+      "handlers": 6,
+      "recognized_registration_count": 6,
+      "expected_recognized_registration_count": 6,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 73)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 74)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 75)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 76)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 77)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 78)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Value passes through an unsupported transformation (line 131)"
+        },
+        {
+          "code": "UNRESOLVED_COMPUTED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Computed input/environment lookup requires review (line 131)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Value passes through an unsupported transformation (line 132)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 132)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 136)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 156)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 157)"
+        },
+        {
+          "code": "UNSUPPORTED_INPLACE_MUTATION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "In-place mutation dataflow is not assessed (line 157)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 159)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 175)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 193)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 6,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 73)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 74)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 75)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 76)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 77)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 78)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Value passes through an unsupported transformation (line 131)"
+          },
+          {
+            "code": "UNRESOLVED_COMPUTED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Computed input/environment lookup requires review (line 131)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Value passes through an unsupported transformation (line 132)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 132)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 136)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 156)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 157)"
+          },
+          {
+            "code": "UNSUPPORTED_INPLACE_MUTATION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "In-place mutation dataflow is not assessed (line 157)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 159)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 175)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/repl/server.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 193)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+      "handlers": 4,
+      "recognized_registration_count": 4,
+      "expected_recognized_registration_count": 4,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 78)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 86)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Value passes through an unsupported transformation (line 94)"
+        },
+        {
+          "code": "UNRESOLVED_COMPUTED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Computed input/environment lookup requires review (line 94)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 95)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Value passes through an unsupported transformation (line 105)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 105)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 106)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 123)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 131)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 134)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 139)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Value passes through an unsupported transformation (line 152)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 152)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Value passes through an unsupported transformation (line 153)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 155)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 156)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 159)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 160)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 162)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 162)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 177)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 190)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Value passes through an unsupported transformation (line 191)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 194)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Value passes through an unsupported transformation (line 197)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 197)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 204)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 205)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 207)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 209)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 234)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 4,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 78)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 86)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Value passes through an unsupported transformation (line 94)"
+          },
+          {
+            "code": "UNRESOLVED_COMPUTED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Computed input/environment lookup requires review (line 94)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 95)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Value passes through an unsupported transformation (line 105)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 105)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 106)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 123)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 131)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 134)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 139)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Value passes through an unsupported transformation (line 152)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 152)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Value passes through an unsupported transformation (line 153)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 155)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 156)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 159)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 160)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 162)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 162)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 177)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 190)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Value passes through an unsupported transformation (line 191)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 194)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Value passes through an unsupported transformation (line 197)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 197)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 204)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 205)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 207)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 209)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/elicitation/server.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 234)"
+          }
+        ]
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts",
+      "handlers": 3,
+      "recognized_registration_count": 3,
+      "expected_recognized_registration_count": 3,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [],
+      "coverage": {
+        "complete": true,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/gateway/server.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 3,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": []
+      }
+    },
+    {
+      "source": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+      "handlers": 2,
+      "recognized_registration_count": 2,
+      "expected_recognized_registration_count": 2,
+      "registration_count_matches_frozen_expectation": true,
+      "parse_failure": false,
+      "diagnostics": [
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Value passes through an unsupported transformation (line 102)"
+        },
+        {
+          "code": "UNRESOLVED_CALL",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Input or environment value reaches a call outside the supported API subset (line 102)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 104)"
+        },
+        {
+          "code": "UNRESOLVED_VALUE",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Value passes through an unsupported transformation (line 114)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 116)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 153)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 164)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 176)"
+        },
+        {
+          "code": "UNSUPPORTED_CONTROL_FLOW",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 187)"
+        },
+        {
+          "code": "NESTED_FUNCTION",
+          "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+          "message": "Nested functions and callbacks are not analyzed (line 197)"
+        }
+      ],
+      "coverage": {
+        "complete": false,
+        "inspected": [
+          "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts"
+        ],
+        "excluded": [],
+        "failed": [],
+        "truncated": [],
+        "recognizedTools": 2,
+        "unresolvedHandlers": 0,
+        "rulesApplied": [
+          "MG001",
+          "MG002",
+          "MG003",
+          "MG004",
+          "MG006"
+        ],
+        "diagnostics": [
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Value passes through an unsupported transformation (line 102)"
+          },
+          {
+            "code": "UNRESOLVED_CALL",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Input or environment value reaches a call outside the supported API subset (line 102)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 104)"
+          },
+          {
+            "code": "UNRESOLVED_VALUE",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Value passes through an unsupported transformation (line 114)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 116)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 153)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 164)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 176)"
+          },
+          {
+            "code": "UNSUPPORTED_CONTROL_FLOW",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Branch/loop/exception flow is not path-sensitive and requires review (line 187)"
+          },
+          {
+            "code": "NESTED_FUNCTION",
+            "file": "vendor/modelcontextprotocol-typescript-sdk/examples/server-quickstart/src/index.ts",
+            "message": "Nested functions and callbacks are not analyzed (line 197)"
+          }
+        ]
+      }
+    }
+  ],
+  "findings": []
+}

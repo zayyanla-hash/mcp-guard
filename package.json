@@ -34,7 +34,8 @@
     "discovery:demo": "npm run build && node dist/cli.js discover --fixture reviewed --approve-execution --format json",
     "test:discovery": "npm run build && node --test tests/isolation.test.mjs tests/discovery.test.mjs",
     "validate:all": "npm run validate && npm run test:discovery",
-    "evaluate": "npm run build && node evaluation/v1/run.mjs",
+    "evaluate": "npm run build && node evaluation/v2/run.mjs",
+    "evaluate:v2": "npm run build && node evaluation/v2/run.mjs",
     "validate:site": "node site/validate.mjs && node --check site/app.js && node --check site/data.js"
   },
   "dependencies": {
