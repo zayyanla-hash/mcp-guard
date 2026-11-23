@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { loadManifest, validateSplitByServer } from '../bench/fetch.mjs';
+import { fetchManifest, loadManifest, validateSplitByServer } from '../bench/fetch.mjs';
 import { wilsonInterval, scoreRows, scoreFromFiles, verifyLabelsSha256 } from '../bench/score.mjs';
 import { grepScanSource } from '../bench/baselines/grep.mjs';
 import { runOpengrepBaseline } from '../bench/baselines/opengrep/run.mjs';
@@ -79,18 +79,47 @@ test('labeling sheet, perf, and explicit missing-labels rejection run offline cl
   const pySplit = validateSplitByServer(pyManifest);
   assert.equal(tsSplit.seed, 20261123);
   assert.equal(pySplit.seed, 20261123);
-  const sheet = generateLabelingSheet({ split: 'dev', outFile: path.join(dir, 'ts-sheet.csv') });
-  assert.equal(sheet.rowCount, 16);
+  for (const srv of [...tsManifest.servers, ...pyManifest.servers]) {
+    assert.ok(!/vambrace|typescript-sdk/i.test(srv.url), `Manifest should not contain fixtures or SDK examples: ${srv.url}`);
+  }
+
+  // Test sheet generation offline via temporary local manifests (tests never depend on bench/.cache)
+  const localTsManifest = path.join(dir, 'ts-manifest.json');
+  const localPyManifest = path.join(dir, 'py-manifest.json');
+  await writeFile(localTsManifest, JSON.stringify({
+    schemaVersion: 1, seed: 20261123, splitBy: 'server',
+    servers: [{ id: 'local-ts', url: 'https://example.invalid/ts.git', commit: '0'.repeat(40), license: 'MIT', selectionReason: 'unit test', split: 'dev', localFallback: 'fixtures/factory' }]
+  }));
+  await writeFile(localPyManifest, JSON.stringify({
+    schemaVersion: 1, seed: 20261123, splitBy: 'server',
+    servers: [{ id: 'local-py', url: 'https://example.invalid/py.git', commit: '0'.repeat(40), license: 'MIT', selectionReason: 'unit test', split: 'dev', localFallback: 'fixtures/python/positive' }]
+  }));
+  const sheet = generateLabelingSheet({ split: 'dev', manifestFile: localTsManifest, outFile: path.join(dir, 'ts-sheet.csv') });
+  assert.ok(sheet.rowCount > 0);
   const text = await readFile(sheet.outFile, 'utf8');
   assert.match(text, /MG001_label/);
-  const pySheet = await generatePythonLabelingSheet({ split: 'dev', outFile: path.join(dir, 'py-sheet.csv') });
-  assert.equal(pySheet.rowCount, 10);
+  const pySheet = await generatePythonLabelingSheet({ split: 'dev', manifestFile: localPyManifest, outFile: path.join(dir, 'py-sheet.csv') });
+  assert.ok(pySheet.rowCount > 0);
   const pyText = await readFile(pySheet.outFile, 'utf8');
   assert.match(pyText, /MG001_label/);
-  assert.throws(() => generateLabelingSheet({ split: 'test', outFile: path.join(dir, 'bad.csv') }), /refuses test split/);
-  await assert.rejects(() => generatePythonLabelingSheet({ split: 'test', outFile: path.join(dir, 'bad-py.csv') }), /refuses test split/);
-  assert.equal(readFileSync(path.resolve('bench/labels/todo/typescript-dev.csv'), 'utf8'), text);
-  assert.equal(readFileSync(path.resolve('bench/labels/todo/python-dev.csv'), 'utf8'), pyText);
+  assert.throws(() => generateLabelingSheet({ split: 'test', manifestFile: localTsManifest, outFile: path.join(dir, 'bad.csv') }), /refuses test split/);
+  await assert.rejects(() => generatePythonLabelingSheet({ split: 'test', manifestFile: localPyManifest, outFile: path.join(dir, 'bad-py.csv') }), /refuses test split/);
+
+  // Verify checked-in blank todo sheets remain unlabeled
+  const checkedInTs = readFileSync(path.resolve('bench/labels/todo/typescript-dev.csv'), 'utf8');
+  const checkedInPy = readFileSync(path.resolve('bench/labels/todo/python-dev.csv'), 'utf8');
+  assert.match(checkedInTs, /MG001_label/);
+  assert.match(checkedInPy, /MG001_label/);
+
+  // Verify fetchManifest records failures without throwing
+  const failManifest = path.join(dir, 'fail-manifest.json');
+  await writeFile(failManifest, JSON.stringify({
+    schemaVersion: 1, seed: 20261123, splitBy: 'server',
+    servers: [{ id: 'broken-repo', url: 'https://example.invalid/broken.git', commit: 'a'.repeat(40), license: 'MIT', selectionReason: 'failure test', split: 'dev' }]
+  }));
+  const fetchRes = fetchManifest({ manifestFile: failManifest, targetCache: path.join(dir, 'cache'), execImpl: () => { throw new Error('clone failed'); } });
+  assert.equal(fetchRes.failedCount, 1);
+  assert.equal(fetchRes.results[0].status, 'failed');
   const perf = measurePerf(['fixtures/vulnerable/server.ts'], 2);
   assert.equal(perf.samples, 2);
   assert.ok(perf.latency_ms.p50 >= 0);

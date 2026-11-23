@@ -2,38 +2,54 @@
   "schemaVersion": 1,
   "seed": 20261123,
   "splitBy": "server",
-  "splitRatio": { "dev": 0.67, "test": 0.33 },
-  "note": "Python MCP server manifest partitioned strictly by server with fixed seed 20261123. Test-split entries list server metadata only; test-split labels remain outside this repository.",
+  "splitRatio": {
+    "dev": 0.6,
+    "test": 0.4
+  },
+  "samplingRule": "Sort active MCP Registry servers (npm/pypi, public GitHub, verified MIT or Apache-2.0, excluding Vambrace fixtures and typescript-sdk examples) ascending by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Take first N per language and assign first round(N * 0.6) servers to dev, remaining to test.",
+  "snapshotFile": "bench/registry-snapshot.json",
+  "snapshotFetchedAt": "2026-11-23T21:55:56.477Z",
+  "note": "Real-world Python MCP servers sampled from the official MCP Registry. Run node bench/fetch.mjs to clone pinned commits into bench/.cache/. Test-split labels remain outside this repository.",
   "servers": [
     {
-      "id": "python-positive-controls",
-      "url": "https://github.com/zayyanla-hash/vambrace.git",
-      "commit": "0000000000000000000000000000000000000000",
-      "subpath": "fixtures/python/positive",
-      "license": "MIT",
-      "selectionReason": "Seeded Python FastMCP server positive controls (MG001-MG004, MG006)",
-      "split": "dev",
-      "localFallback": "fixtures/python/positive"
+      "id": "software-as-content-software-as-content-sdk-ai-dynsoft-sac",
+      "url": "https://github.com/Software-As-Content/software-as-content-sdk.git",
+      "commit": "03d480724c56b470e72baff51b55fc550e7725f5",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 058261c88b85, verified Apache-2.0 license)",
+      "split": "dev"
     },
     {
-      "id": "python-negative-controls",
-      "url": "https://github.com/zayyanla-hash/vambrace.git",
-      "commit": "0000000000000000000000000000000000000000",
-      "subpath": "fixtures/python/negative",
+      "id": "alfonsoguv-deepdna-mcp-ai-deepdna-local",
+      "url": "https://github.com/alfonsoguv/deepdna-mcp.git",
+      "commit": "0fef341cd1ea45d2bc33244ffc74d8576c86355b",
       "license": "MIT",
-      "selectionReason": "Seeded Python FastMCP server negative controls (safe args, fixed paths/URLs, add_tool)",
-      "split": "dev",
-      "localFallback": "fixtures/python/negative"
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0ec7afce7fad, verified MIT license)",
+      "split": "dev"
     },
     {
-      "id": "python-unresolved-controls",
-      "url": "https://github.com/zayyanla-hash/vambrace.git",
-      "commit": "0000000000000000000000000000000000000000",
-      "subpath": "fixtures/python/unresolved",
+      "id": "dinglebear-ai-unraid-ai-dinglebear-unraid-mcp",
+      "url": "https://github.com/dinglebear-ai/unraid.git",
+      "commit": "1e86b294af8f3b10a8031290d98666c78a4a782c",
       "license": "MIT",
-      "selectionReason": "Seeded Python unresolved factory/nested server held out in test split",
-      "split": "test",
-      "localFallback": "fixtures/python/unresolved"
+      "selectionReason": "MCP Registry (py) seeded sample (rank 159c5ce4873d, verified MIT license)",
+      "split": "dev"
+    },
+    {
+      "id": "glassflow-tares-ai-glassflow-tares",
+      "url": "https://github.com/glassflow/tares.git",
+      "commit": "03c46fb92e47677edae35f8b71a6dcde418264ba",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 1f7956cfcf27, verified MIT license)",
+      "split": "test"
+    },
+    {
+      "id": "fortisil-gateco-sdk-python-ai-gateco-gateco",
+      "url": "https://github.com/fortisil/gateco-sdk-python.git",
+      "commit": "9fad58394822f23a9b44978e32d489d357e1f4ba",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 2d600d7faf43, verified MIT license)",
+      "split": "test"
     }
   ]
 }

@@ -2,58 +2,55 @@
   "schemaVersion": 1,
   "seed": 20261123,
   "splitBy": "server",
-  "splitRatio": { "dev": 0.6, "test": 0.4 },
-  "note": "TypeScript MCP server manifest partitioned strictly by server with fixed seed 20261123. Test-split entries list server metadata only; test-split labels remain outside this repository.",
+  "splitRatio": {
+    "dev": 0.6,
+    "test": 0.4
+  },
+  "samplingRule": "Sort active MCP Registry servers (npm/pypi, public GitHub, verified MIT or Apache-2.0, excluding Vambrace fixtures and typescript-sdk examples) ascending by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Take first N per language and assign first round(N * 0.6) servers to dev, remaining to test.",
+  "snapshotFile": "bench/registry-snapshot.json",
+  "snapshotFetchedAt": "2026-11-23T21:55:56.477Z",
+  "note": "Real-world TypeScript/JavaScript MCP servers sampled from the official MCP Registry. Run node bench/fetch.mjs to clone pinned commits into bench/.cache/. Test-split labels remain outside this repository.",
   "servers": [
     {
-      "id": "sdk-tools-example",
-      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
-      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
-      "subpath": "examples/tools",
-      "license": "MIT/Apache-2.0",
-      "selectionReason": "Official TypeScript SDK tools reference server (factory-bound, pinned in evaluation/v1)",
-      "split": "dev",
-      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/tools"
+      "id": "augmentevzero-fabric-verify-mcp-ai-augmentev-fabric-verify",
+      "url": "https://github.com/AugmentEVzero/fabric-verify-mcp.git",
+      "commit": "39ca1ba34fddd6a77187d81183d99e037c98d49c",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 009cba388ee2, verified Apache-2.0 license)",
+      "split": "dev"
     },
     {
-      "id": "sdk-gateway-example",
-      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
-      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
-      "subpath": "examples/gateway",
-      "license": "MIT/Apache-2.0",
-      "selectionReason": "Official TypeScript SDK gateway target example (factory-bound negative control)",
-      "split": "dev",
-      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/gateway"
-    },
-    {
-      "id": "sample-factory-controls",
-      "url": "https://github.com/zayyanla-hash/vambrace.git",
-      "commit": "0000000000000000000000000000000000000000",
-      "subpath": "fixtures/factory",
+      "id": "clawfetch-clawfetch-mcp-ai-clawfetch-mcp",
+      "url": "https://github.com/clawfetch/clawfetch-mcp.git",
+      "commit": "d29172e733819ee4832191ed4c11b6a81f3f5886",
       "license": "MIT",
-      "selectionReason": "Seeded 1-level factory positive and negative controls (local corpus baseline)",
-      "split": "dev",
-      "localFallback": "fixtures/factory"
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 0259894f7823, verified MIT license)",
+      "split": "dev"
     },
     {
-      "id": "sdk-elicitation-example",
-      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
-      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
-      "subpath": "examples/elicitation",
-      "license": "MIT/Apache-2.0",
-      "selectionReason": "Official TypeScript SDK elicitation example server held out in test split",
-      "split": "test",
-      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/elicitation"
+      "id": "haymon-ai-dbmcp-ai-haymon-dbmcp",
+      "url": "https://github.com/haymon-ai/dbmcp.git",
+      "commit": "1f322cad95905031666cb2660d8fbaa91a204a7e",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 045acbad5ed5, verified MIT license)",
+      "split": "dev"
     },
     {
-      "id": "sdk-stickynotes-example",
-      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
-      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
-      "subpath": "examples/stickynotes",
-      "license": "MIT/Apache-2.0",
-      "selectionReason": "Official TypeScript SDK sticky-notes example server held out in test split",
-      "split": "test",
-      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes"
+      "id": "elicitly-elicitly-ai-elicitly-elicitly",
+      "url": "https://github.com/elicitly/elicitly.git",
+      "commit": "43dd33793f5cb0b70c52b879b11167cbca390660",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 082f036fd0cd, verified Apache-2.0 license)",
+      "split": "test"
+    },
+    {
+      "id": "escro-ai-escro-ai-ai-escro-escro",
+      "url": "https://github.com/escro-ai/escro.ai.git",
+      "commit": "4095d18446a15ca6357816d7cd3630704f6cb60d",
+      "subpath": "packages/mcp",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 11dddd462647, verified MIT license)",
+      "split": "test"
     }
   ]
 }

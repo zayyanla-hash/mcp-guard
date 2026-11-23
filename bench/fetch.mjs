@@ -7,11 +7,12 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
 const cacheDir = path.join(here, '.cache');
 const manifestPath = path.join(here, 'manifest.json');
+const pythonManifestPath = path.join(here, 'python-manifest.json');
 
 export function loadManifest(file = manifestPath) {
   const manifest = JSON.parse(readFileSync(file, 'utf8'));
   if (!Array.isArray(manifest.servers) || manifest.servers.length === 0) {
-    throw new Error('bench/manifest.json must define a non-empty servers array.');
+    throw new Error(`${path.basename(file)} must define a non-empty servers array.`);
   }
   const seenIds = new Map();
   for (const server of manifest.servers) {
@@ -52,31 +53,52 @@ export function validateSplitByServer(manifest) {
   return { seed: manifest.seed, devServers, testServers };
 }
 
-export function fetchManifest({ manifestFile = manifestPath, targetCache = cacheDir, onlyRemote = true } = {}) {
+export function fetchManifest({ manifestFile = manifestPath, targetCache = cacheDir, onlyRemote = true, execImpl = execFileSync } = {}) {
   const manifest = loadManifest(manifestFile);
   mkdirSync(targetCache, { recursive: true });
   const results = [];
   for (const server of manifest.servers) {
     if (onlyRemote && /^0+$/.test(server.commit)) {
-      results.push({ id: server.id, status: 'local-only', path: path.resolve(root, server.localFallback ?? '.') });
+      results.push({ id: server.id, split: server.split ?? 'dev', status: 'local-only', path: path.resolve(root, server.localFallback ?? '.') });
       continue;
     }
     const dest = path.join(targetCache, server.id);
-    if (!existsSync(path.join(dest, '.git'))) {
-      execFileSync('git', ['clone', '--no-checkout', server.url, dest], { stdio: 'inherit' });
+    try {
+      if (!existsSync(path.join(dest, '.git'))) {
+        execImpl('git', ['clone', '--no-checkout', server.url, dest], { stdio: 'pipe', timeout: 60000 });
+      }
+      execImpl('git', ['-C', dest, 'fetch', '--depth', '1', 'origin', server.commit], { stdio: 'pipe', timeout: 60000 });
+      execImpl('git', ['-C', dest, 'checkout', '--detach', server.commit], { stdio: 'pipe', timeout: 30000 });
+      const head = execImpl('git', ['-C', dest, 'rev-parse', 'HEAD'], { encoding: 'utf8', timeout: 15000 }).trim();
+      if (head !== server.commit) {
+        throw new Error(`Pinned SHA mismatch for ${server.id}: expected ${server.commit}, got ${head}`);
+      }
+      const resolvedPath = server.subpath ? path.join(dest, server.subpath) : dest;
+      if (!existsSync(resolvedPath)) {
+        throw new Error(`Configured subpath missing after checkout: ${server.subpath}`);
+      }
+      results.push({ id: server.id, split: server.split ?? 'dev', status: 'fetched', commit: head, path: resolvedPath });
+    } catch (err) {
+      results.push({
+        id: server.id,
+        split: server.split ?? 'dev',
+        status: 'failed',
+        url: server.url,
+        commit: server.commit,
+        error: err instanceof Error ? err.message.split('\n')[0] : String(err)
+      });
     }
-    execFileSync('git', ['-C', dest, 'fetch', '--depth', '1', 'origin', server.commit], { stdio: 'inherit' });
-    execFileSync('git', ['-C', dest, 'checkout', '--detach', server.commit], { stdio: 'inherit' });
-    const head = execFileSync('git', ['-C', dest, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-    if (head !== server.commit) {
-      throw new Error(`Pinned SHA mismatch for ${server.id}: expected ${server.commit}, got ${head}`);
-    }
-    results.push({ id: server.id, status: 'fetched', commit: head, path: server.subpath ? path.join(dest, server.subpath) : dest });
   }
-  return results;
+  const fetched = results.filter(r => r.status === 'fetched');
+  const failed = results.filter(r => r.status === 'failed');
+  return { manifest: path.relative(root, manifestFile), fetchedCount: fetched.length, failedCount: failed.length, results };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const out = fetchManifest();
-  console.log(JSON.stringify(out, null, 2));
+  const args = process.argv.slice(2);
+  const idx = args.indexOf('--manifest');
+  const explicit = idx !== -1 ? args[idx + 1] : undefined;
+  const targets = explicit ? [path.resolve(explicit)] : [manifestPath, ...(existsSync(pythonManifestPath) ? [pythonManifestPath] : [])];
+  const outputs = targets.map(f => fetchManifest({ manifestFile: f }));
+  console.log(JSON.stringify(outputs, null, 2));
 }
