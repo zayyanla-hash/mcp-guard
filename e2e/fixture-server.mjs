@@ -34,6 +34,23 @@ const server = http.createServer((req, res) => {
   req.on('data', c => chunks.push(c));
   req.on('end', () => {
     const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+    if (body.id === undefined && typeof body.method === 'string' && body.method.startsWith('notifications/')) {
+      res.writeHead(202).end();
+      return;
+    }
+    if (body.method === 'initialize') {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({
+        jsonrpc: '2.0',
+        id: body.id,
+        result: {
+          protocolVersion: body.params?.protocolVersion ?? '2025-03-26',
+          capabilities: { tools: {} },
+          serverInfo: { name: 'vambrace-e2e-fixture', version: '1.1.0-rc1' }
+        }
+      }));
+      return;
+    }
     if (body.method === 'tools/list') {
       res.writeHead(200, { 'content-type': 'application/json' });
       res.end(JSON.stringify({ jsonrpc: '2.0', id: body.id, result: { tools } }));
