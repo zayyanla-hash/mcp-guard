@@ -4,3 +4,5 @@ demo-output*/
 *.tgz
 .DS_Store
 artifacts/
+bench/.cache/
+bench/artifacts/

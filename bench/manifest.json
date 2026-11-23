@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "seed": 20261123,
+  "splitRatio": { "dev": 0.6, "test": 0.4 },
+  "note": "3-server sample manifest for offline-capable dev benchmark execution. Run node bench/fetch.mjs manually to clone pinned commits into bench/.cache/.",
+  "servers": [
+    {
+      "id": "sdk-tools-example",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
+      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "subpath": "examples/tools",
+      "license": "MIT/Apache-2.0",
+      "selectionReason": "Official TypeScript SDK tools reference server (factory-bound, pinned in evaluation/v1)",
+      "split": "dev",
+      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/tools"
+    },
+    {
+      "id": "sdk-gateway-example",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
+      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "subpath": "examples/gateway",
+      "license": "MIT/Apache-2.0",
+      "selectionReason": "Official TypeScript SDK gateway target example (factory-bound negative control)",
+      "split": "dev",
+      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/gateway"
+    },
+    {
+      "id": "sample-factory-controls",
+      "url": "https://github.com/zayyanla-hash/vambrace.git",
+      "commit": "0000000000000000000000000000000000000000",
+      "subpath": "fixtures/factory",
+      "license": "MIT",
+      "selectionReason": "Seeded 1-level factory positive and negative controls (local corpus baseline)",
+      "split": "dev",
+      "localFallback": "fixtures/factory"
+    }
+  ]
+}

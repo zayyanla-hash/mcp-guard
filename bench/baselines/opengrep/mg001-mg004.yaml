@@ -1,0 +1,37 @@
+rules:
+  - id: vambrace-baseline-mg001-shell
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Potential shell command construction or shell execution sink (MG001 baseline).
+    pattern-either:
+      - pattern: exec(...)
+      - pattern: execSync(...)
+      - pattern: spawn(..., { ..., shell: true, ... })
+      - pattern: execFile(..., { ..., shell: true, ... })
+  - id: vambrace-baseline-mg002-path
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: Potential filesystem path sink (MG002 baseline).
+    pattern-either:
+      - pattern: readFile(...)
+      - pattern: readFileSync(...)
+      - pattern: writeFile(...)
+      - pattern: writeFileSync(...)
+  - id: vambrace-baseline-mg003-outbound
+    languages: [typescript, javascript]
+    severity: WARNING
+    message: Potential outbound network request sink (MG003 baseline).
+    pattern-either:
+      - pattern: fetch(...)
+      - pattern: http.get(...)
+      - pattern: https.get(...)
+      - pattern: http.request(...)
+      - pattern: https.request(...)
+  - id: vambrace-baseline-mg004-env
+    languages: [typescript, javascript]
+    severity: ERROR
+    message: Potential process environment access or exposure (MG004 baseline).
+    pattern-either:
+      - pattern: return process.env
+      - pattern: console.log(..., process.env, ...)
+      - pattern: process.env.$KEY
