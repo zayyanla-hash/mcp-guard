@@ -1,4 +1,5 @@
 const gatewayUrl = process.env.GATEWAY_URL ?? 'http://127.0.0.1:3000/mcp';
+const expectLookup = process.env.EXPECT_LOOKUP ?? 'allow';
 
 let sessionId = null;
 let nextId = 1;
@@ -70,7 +71,9 @@ console.log(JSON.stringify({ initialized, notifyStatus: notifyRes.status, allowe
 
 const initOk = initialized.status === 200 && !initialized.body?.error && Boolean(initialized.body?.result?.serverInfo);
 const notifyOk = notifyRes.status >= 200 && notifyRes.status < 300;
-const allowedOk = allowed.status === 200 && !allowed.body?.error && JSON.stringify(allowed.body).includes('called:lookup');
+const lookupAllowed = allowed.status === 200 && !allowed.body?.error && JSON.stringify(allowed.body).includes('called:lookup');
+const lookupBlocked = allowed.status !== 200 || Boolean(allowed.body?.error);
+const allowedOk = expectLookup === 'block' ? lookupBlocked : lookupAllowed;
 const blockedOk = blocked.status !== 200 || Boolean(blocked.body?.error);
 if (!initOk || !notifyOk || !allowedOk || !blockedOk) {
   process.exitCode = 1;
