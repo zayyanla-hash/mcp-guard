@@ -31,3 +31,26 @@ jobs:
           node dist/cli.js invalid-command
           status=$?
           test "$status" -eq 2
+  evaluate-v1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Build tag v0.2.1 and run v1 evaluation
+        run: |
+          mkdir -p /tmp/v021
+          git archive v0.2.1 | tar -x -C /tmp/v021
+          cp -r evaluation/v1 /tmp/v021/evaluation-v1
+          mkdir -p /tmp/v021/evaluation
+          mv /tmp/v021/evaluation-v1 /tmp/v021/evaluation/v1
+          cd /tmp/v021
+          git init -q && git config user.email "ci@example.invalid" && git config user.name "CI"
+          git add -A && git commit -q -m "v0.2.1 baseline"
+          npm ci --ignore-scripts
+          npm run build
+          node evaluation/v1/run.mjs

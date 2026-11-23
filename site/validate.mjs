@@ -35,7 +35,7 @@ assert.match(html, /src="data\.js"/);
 assert.match(html, /src="app\.js"/);
 assert.doesNotMatch(html, /<script[^>]+src="https?:/i, 'no remote scripts');
 assert.doesNotMatch(html, /fonts\.googleapis|googletagmanager|google-analytics/i, 'no remote font or analytics integration');
-const evaluation = JSON.parse(await readFile(path.join(root, 'evaluation/report.json'), 'utf8'));
+const evaluation = JSON.parse(await readFile(path.join(root, 'evaluation/v1/report.json'), 'utf8'));
 const externalCounts = {
   handlers: evaluation.counts.handlers,
   source_file_count: evaluation.scope.source_file_count,

@@ -3,10 +3,10 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { analyzeSource } from '../dist/analyzer.js';
+import { analyzeSource } from '../../dist/analyzer.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const project = path.resolve(here, '..');
+const project = path.resolve(here, '../..');
 const record = process.argv.includes('--record');
 if (process.argv.slice(2).some(arg => arg !== '--record')) throw new Error('Usage: node evaluation/run.mjs [--record]');
 const readJson = (name) => JSON.parse(readFileSync(path.join(here, name), 'utf8'));
@@ -256,7 +256,7 @@ writeFileSync(generatedMarkdownPath, reportLines.join('\n') + '\n');
 
 if (record) {
   writeFileSync(path.join(here, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-  writeFileSync(path.resolve(here, '../docs/EVALUATION-EXTERNAL.md'), reportLines.join('\n') + '\n');
+  writeFileSync(path.resolve(here, '../../docs/EVALUATION-EXTERNAL.md'), reportLines.join('\n') + '\n');
 } else {
   const reference = readJson('report.json');
   if (JSON.stringify(signature(report)) !== JSON.stringify(signature(reference))) {
