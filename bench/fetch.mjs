@@ -13,6 +13,7 @@ export function loadManifest(file = manifestPath) {
   if (!Array.isArray(manifest.servers) || manifest.servers.length === 0) {
     throw new Error('bench/manifest.json must define a non-empty servers array.');
   }
+  const seenIds = new Map();
   for (const server of manifest.servers) {
     if (!server.id || !server.url || !server.commit || !server.license || !server.selectionReason) {
       throw new Error(`Manifest entry ${server.id ?? '<unknown>'} missing required fields (url, commit, license, selectionReason).`);
@@ -20,8 +21,35 @@ export function loadManifest(file = manifestPath) {
     if (!/^[0-9a-f]{40}$/i.test(server.commit)) {
       throw new Error(`Manifest entry ${server.id} commit must be a 40-char hex SHA.`);
     }
+    const split = server.split ?? 'dev';
+    if (split !== 'dev' && split !== 'test') {
+      throw new Error(`Manifest entry ${server.id} has invalid split "${split}"; expected dev or test.`);
+    }
+    if (seenIds.has(server.id)) {
+      throw new Error(`Duplicate manifest server id "${server.id}"; splits must stay partitioned by server.`);
+    }
+    seenIds.set(server.id, split);
   }
   return manifest;
+}
+
+export function validateSplitByServer(manifest) {
+  if (!Number.isInteger(manifest.seed)) {
+    throw new Error('Manifest must declare an integer fixed seed.');
+  }
+  if (manifest.splitBy !== 'server') {
+    throw new Error('Manifest must declare splitBy: "server".');
+  }
+  const devServers = manifest.servers.filter(s => s.split === 'dev').map(s => s.id);
+  const testServers = manifest.servers.filter(s => s.split === 'test').map(s => s.id);
+  if (devServers.length === 0 || testServers.length === 0) {
+    throw new Error('Manifest must include non-empty dev and test server splits.');
+  }
+  const overlap = devServers.filter(id => testServers.includes(id));
+  if (overlap.length > 0) {
+    throw new Error(`Server split overlap detected: ${overlap.join(', ')}`);
+  }
+  return { seed: manifest.seed, devServers, testServers };
 }
 
 export function fetchManifest({ manifestFile = manifestPath, targetCache = cacheDir, onlyRemote = true } = {}) {

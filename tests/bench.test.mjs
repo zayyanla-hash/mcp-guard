@@ -1,15 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { loadManifest, validateSplitByServer } from '../bench/fetch.mjs';
 import { wilsonInterval, scoreRows, scoreFromFiles, verifyLabelsSha256 } from '../bench/score.mjs';
 import { grepScanSource } from '../bench/baselines/grep.mjs';
 import { runOpengrepBaseline } from '../bench/baselines/opengrep/run.mjs';
 import { runEvasionSuite } from '../bench/evasion/run.mjs';
-import { generateLabelingSheet } from '../bench/sheet.mjs';
+import { generateLabelingSheet, generatePythonLabelingSheet } from '../bench/sheet.mjs';
 import { measurePerf } from '../bench/perf.mjs';
 import { runBenchmark } from '../bench/run.mjs';
 
@@ -71,10 +73,24 @@ test('evasion suite generates AST variants with zero silent misses', () => {
 test('labeling sheet, perf, and explicit missing-labels rejection run offline cleanly', async t => {
   const dir = await mkdtemp(path.join(tmpdir(), 'vambrace-sheet-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
-  const sheet = generateLabelingSheet({ split: 'dev', outFile: path.join(dir, 'sheet.csv') });
+  const tsManifest = loadManifest(path.resolve('bench/manifest.json'));
+  const pyManifest = loadManifest(path.resolve('bench/python-manifest.json'));
+  const tsSplit = validateSplitByServer(tsManifest);
+  const pySplit = validateSplitByServer(pyManifest);
+  assert.equal(tsSplit.seed, 20261123);
+  assert.equal(pySplit.seed, 20261123);
+  const sheet = generateLabelingSheet({ split: 'dev', outFile: path.join(dir, 'ts-sheet.csv') });
   assert.equal(sheet.rowCount, 16);
   const text = await readFile(sheet.outFile, 'utf8');
   assert.match(text, /MG001_label/);
+  const pySheet = await generatePythonLabelingSheet({ split: 'dev', outFile: path.join(dir, 'py-sheet.csv') });
+  assert.equal(pySheet.rowCount, 10);
+  const pyText = await readFile(pySheet.outFile, 'utf8');
+  assert.match(pyText, /MG001_label/);
+  assert.throws(() => generateLabelingSheet({ split: 'test', outFile: path.join(dir, 'bad.csv') }), /refuses test split/);
+  await assert.rejects(() => generatePythonLabelingSheet({ split: 'test', outFile: path.join(dir, 'bad-py.csv') }), /refuses test split/);
+  assert.equal(readFileSync(path.resolve('bench/labels/todo/typescript-dev.csv'), 'utf8'), text);
+  assert.equal(readFileSync(path.resolve('bench/labels/todo/python-dev.csv'), 'utf8'), pyText);
   const perf = measurePerf(['fixtures/vulnerable/server.ts'], 2);
   assert.equal(perf.samples, 2);
   assert.ok(perf.latency_ms.p50 >= 0);

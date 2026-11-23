@@ -1,0 +1,11 @@
+server_id,split,file,handler_name,line,analyzer_complete,analyzer_diagnostics,MG001_detected,MG001_label,MG001_rationale,MG002_detected,MG002_label,MG002_rationale,MG003_detected,MG003_label,MG003_rationale,MG004_detected,MG004_label,MG004_rationale,MG006_detected,MG006_label,MG006_rationale
+python-positive-controls,dev,fixtures/python/positive/server.py,run_shell,11,true,,1,,,0,,,0,,,0,,,0,,
+python-positive-controls,dev,fixtures/python/positive/server.py,read_path,17,true,,0,,,1,,,0,,,0,,,0,,
+python-positive-controls,dev,fixtures/python/positive/server.py,fetch_url,22,true,,0,,,0,,,1,,,0,,,0,,
+python-positive-controls,dev,fixtures/python/positive/server.py,leak_env,27,true,,0,,,0,,,0,,,1,,,0,,
+python-positive-controls,dev,fixtures/python/positive/server.py,ro_mutation,32,true,,0,,,0,,,0,,,0,,,1,,
+python-negative-controls,dev,fixtures/python/negative/server.py,safe_echo,11,true,,0,,,0,,,0,,,0,,,0,,
+python-negative-controls,dev,fixtures/python/negative/server.py,fixed_read,17,true,,0,,,0,,,0,,,0,,,0,,
+python-negative-controls,dev,fixtures/python/negative/server.py,fixed_http,22,true,,0,,,0,,,0,,,0,,,0,,
+python-negative-controls,dev,fixtures/python/negative/server.py,node_env,27,true,,0,,,0,,,0,,,0,,,0,,
+python-negative-controls,dev,fixtures/python/negative/server.py,explicit_tool,35,true,,0,,,0,,,0,,,0,,,0,,

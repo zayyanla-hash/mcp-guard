@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "seed": 20261123,
+  "splitBy": "server",
+  "splitRatio": { "dev": 0.67, "test": 0.33 },
+  "note": "Python MCP server manifest partitioned strictly by server with fixed seed 20261123. Test-split entries list server metadata only; test-split labels remain outside this repository.",
+  "servers": [
+    {
+      "id": "python-positive-controls",
+      "url": "https://github.com/zayyanla-hash/vambrace.git",
+      "commit": "0000000000000000000000000000000000000000",
+      "subpath": "fixtures/python/positive",
+      "license": "MIT",
+      "selectionReason": "Seeded Python FastMCP server positive controls (MG001-MG004, MG006)",
+      "split": "dev",
+      "localFallback": "fixtures/python/positive"
+    },
+    {
+      "id": "python-negative-controls",
+      "url": "https://github.com/zayyanla-hash/vambrace.git",
+      "commit": "0000000000000000000000000000000000000000",
+      "subpath": "fixtures/python/negative",
+      "license": "MIT",
+      "selectionReason": "Seeded Python FastMCP server negative controls (safe args, fixed paths/URLs, add_tool)",
+      "split": "dev",
+      "localFallback": "fixtures/python/negative"
+    },
+    {
+      "id": "python-unresolved-controls",
+      "url": "https://github.com/zayyanla-hash/vambrace.git",
+      "commit": "0000000000000000000000000000000000000000",
+      "subpath": "fixtures/python/unresolved",
+      "license": "MIT",
+      "selectionReason": "Seeded Python unresolved factory/nested server held out in test split",
+      "split": "test",
+      "localFallback": "fixtures/python/unresolved"
+    }
+  ]
+}

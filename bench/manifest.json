@@ -1,8 +1,9 @@
 {
   "schemaVersion": 1,
   "seed": 20261123,
+  "splitBy": "server",
   "splitRatio": { "dev": 0.6, "test": 0.4 },
-  "note": "3-server sample manifest for offline-capable dev benchmark execution. Run node bench/fetch.mjs manually to clone pinned commits into bench/.cache/.",
+  "note": "TypeScript MCP server manifest partitioned strictly by server with fixed seed 20261123. Test-split entries list server metadata only; test-split labels remain outside this repository.",
   "servers": [
     {
       "id": "sdk-tools-example",
@@ -33,6 +34,26 @@
       "selectionReason": "Seeded 1-level factory positive and negative controls (local corpus baseline)",
       "split": "dev",
       "localFallback": "fixtures/factory"
+    },
+    {
+      "id": "sdk-elicitation-example",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
+      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "subpath": "examples/elicitation",
+      "license": "MIT/Apache-2.0",
+      "selectionReason": "Official TypeScript SDK elicitation example server held out in test split",
+      "split": "test",
+      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/elicitation"
+    },
+    {
+      "id": "sdk-stickynotes-example",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk.git",
+      "commit": "433eb413dc305ebeb93b8ebcde0095a8fc0d5fa0",
+      "subpath": "examples/stickynotes",
+      "license": "MIT/Apache-2.0",
+      "selectionReason": "Official TypeScript SDK sticky-notes example server held out in test split",
+      "split": "test",
+      "localFallback": "evaluation/v1/vendor/modelcontextprotocol-typescript-sdk/examples/stickynotes"
     }
   ]
 }
