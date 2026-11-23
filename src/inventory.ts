@@ -1,5 +1,6 @@
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { canonical, coverage, finding, hash, redactText } from './shared.js';
+import { auditDescriptions } from './injection.js';
 import type { AuditResult, Diagnostic, Snapshot } from './types.js';
 
 const MAX_BYTES = 1_048_576;
@@ -151,7 +152,7 @@ function secretInMetadata(value: unknown, path: string[] = []): string | undefin
 
 export function auditInventory(value: unknown): AuditResult {
   inspectBounds(value);
-  const result: AuditResult = { schemaVersion: 1, kind: 'inventory', target: 'MCP inventory', findings: [], coverage: coverage(['MG005']) };
+  const result: AuditResult = { schemaVersion: 1, kind: 'inventory', target: 'MCP inventory', findings: [], coverage: coverage(['MG005', 'MG007']) };
   result.coverage.inspected.push('inventory envelope', 'tool descriptors', 'input schemas', 'output schemas', 'protocol version');
   const invalid = (title: string, category: string, pointer: string, observed: string, why: string, remediation: string) => {
     result.findings.push(finding({ engine:'vambrace-inventory', ruleId:'MG005', title, category, severity:'medium', confidence:'high', evidenceType:'metadata-observation', locations:[{pointer}], evidence:`Observed ${observed} at ${pointer}.`, observed, why, assumptions:[], remediation, limitations:['Offline descriptor inspection cannot establish server runtime behavior.'] }));
@@ -223,6 +224,7 @@ export function auditInventory(value: unknown): AuditResult {
       }
     }
   }
+  result.findings.push(...auditDescriptions(root));
   return result;
 }
 
@@ -262,7 +264,11 @@ function validSnapshot(input: unknown, label: string): Snapshot {
   return input as unknown as Snapshot;
 }
 
-export function diffSnapshots(before: unknown, after: unknown): AuditResult {
+export interface DiffOptions {
+  ignoreOrder?: boolean;
+}
+
+export function diffSnapshots(before: unknown, after: unknown, options: DiffOptions = {}): AuditResult {
   const a = validSnapshot(before, 'Before');
   const b = validSnapshot(after, 'After');
   const av = a.payload as Obj, bv = b.payload as Obj;
@@ -280,7 +286,7 @@ export function diffSnapshots(before: unknown, after: unknown): AuditResult {
   const am = toolMap(av), bm = toolMap(bv);
   const beforeOrder = (av.tools as Obj[]).map(t => t.name as string);
   const afterOrder = (bv.tools as Obj[]).map(t => t.name as string);
-  if (canonical(beforeOrder) !== canonical(afterOrder)) result.changes!.push({kind:'tool-order-changed',pointer:'/tools',before:beforeOrder,after:afterOrder});
+  if (!options.ignoreOrder && canonical(beforeOrder) !== canonical(afterOrder)) result.changes!.push({kind:'tool-order-changed',pointer:'/tools',before:beforeOrder,after:afterOrder});
   for (const [name, tool] of bm) if (!am.has(name)) result.changes!.push({kind:'tool-added',tool:name, pointer:'/tools', after:redact(tool)});
   for (const [name, tool] of am) if (!bm.has(name)) result.changes!.push({kind:'tool-removed',tool:name, pointer:'/tools', before:redact(tool)});
   const fields = ['description','inputSchema','outputSchema','annotations'] as const;

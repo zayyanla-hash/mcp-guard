@@ -1,0 +1,23 @@
+{
+  "protocolVersion": "2026-07-28",
+  "instructions": "Standard read-only documentation assistant.",
+  "tools": [
+    {
+      "name": "lookup_record",
+      "description": "Look up a record by ID and return formatted fields.",
+      "inputSchema": {
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "search_records",
+      "description": "Search records matching a query string.",
+      "inputSchema": {
+        "type": "object",
+        "properties": { "query": { "type": "string" } }
+      }
+    }
+  ]
+}

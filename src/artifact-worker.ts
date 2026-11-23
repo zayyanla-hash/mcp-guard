@@ -8,7 +8,7 @@ try {
   switch(operation) {
     case 'inventory': result=auditInventory(inputs[0]);break;
     case 'snapshot': result=snapshotInventory(inputs[0]);break;
-    case 'diff': result=diffSnapshots(inputs[0],inputs[1]);break;
+    case 'diff': result=diffSnapshots(inputs[0],inputs[1],(inputs[2] as {ignoreOrder?:boolean}|undefined)??{});break;
     case 'config': result=auditClientConfig(inputs[0], String(inputs[1] ?? 'mcp.json'));break;
     case 'report': result=renderHtml(validateResult(inputs[0]));break;
     default: throw new Error('Unsupported artifact operation');

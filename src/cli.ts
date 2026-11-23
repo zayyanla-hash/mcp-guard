@@ -6,6 +6,8 @@ import { inside } from './scanner.js';
 import { renderTerminal, validateResult } from './reporting.js';
 import { renderSarif } from './sarif.js';
 import { scanDepsLockfile } from './deps.js';
+import { runCiscoYaraEngine, runPromptGuardEngine } from './engines.js';
+import { explainScanResult } from './explain.js';
 import { canonical, cleanTerminal, redactText } from './shared.js';
 import { scanSourceBounded } from './bounded-scan.js';
 import { VERSION } from './version.js';
@@ -27,6 +29,7 @@ Usage: vambrace <command> [arguments] [options]
   snapshot <tools.json> --out <file> Create a new inventory baseline
   diff <before.json> <after.json>    Explain inventory drift
   report <scan.json> --out <file>    Render self-contained HTML
+  explain <scan.json>                Advisory triage via local OpenAI-compatible model
   discover --fixture reviewed --approve-execution
                                      Isolated reviewed local fixture (macOS only)
 Options:
@@ -35,6 +38,10 @@ Options:
   --inventory-out <file>             Discovery: preserve snapshot-ready inventory
   --fixture-root <relative-directory> Audit: label operator-declared fixture paths
   --allow-network                    Deps: explicitly permit osv-scanner network queries
+  --ignore-order                     Diff: compare tools order-insensitively
+  --engine cisco-yara|promptguard    Inventory: optional external/sidecar metadata engine
+  --endpoint <url>                   Local OpenAI-compatible or Prompt Guard URL
+  --model <name>                     Explain: local model name (default foundation-sec-8b)
   --threshold low|medium|high        Finding policy threshold (default medium)
   --help                             Show help
   --version                          Show version
@@ -74,14 +81,14 @@ async function main(argv:string[]):Promise<number> {
   if(argv.length===1&&argv[0]==='--version'){console.log(VERSION);return 0;}
   if(!argv.length||(argv.length===1&&argv[0]==='--help')){console.log(HELP);return 0;}
   const command=argv.shift()!;
-  if(!['audit','inventory','config','deps','snapshot','diff','report','discover'].includes(command))throw new Error('Unknown command: '+command);
+  if(!['audit','inventory','config','deps','snapshot','diff','report','explain','discover'].includes(command))throw new Error('Unknown command: '+command);
   if(argv.length===1&&argv[0]==='--help'){console.log(HELP);return 0;}
   const positions:string[]=[],options=new Map<string,string>();
   for(let i=0;i<argv.length;i++){
     const value=argv[i]!;
     if(value.startsWith('--')){
-      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root','--allow-network'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
-      if(value==='--approve-execution'||value==='--allow-network'){options.set(value,'true');continue;}
+      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root','--allow-network','--ignore-order','--engine','--endpoint','--model'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
+      if(value==='--approve-execution'||value==='--allow-network'||value==='--ignore-order'){options.set(value,'true');continue;}
       const next=argv[++i];if(!next||next.startsWith('--'))throw new Error('Missing value for '+value);options.set(value,next);
     }else if(value.startsWith('-'))throw new Error('Unknown option: '+value);else positions.push(value);
   }
@@ -92,6 +99,17 @@ async function main(argv:string[]):Promise<number> {
   if(command!=='discover'&&(options.has('--fixture')||options.has('--approve-execution')||options.has('--inventory-out')))throw new Error('Discovery options only apply to discover');
   if(command!=='audit'&&options.has('--fixture-root'))throw new Error('--fixture-root only applies to audit');
   if(command!=='deps'&&options.has('--allow-network'))throw new Error('--allow-network only applies to deps');
+  if(command!=='diff'&&options.has('--ignore-order'))throw new Error('--ignore-order only applies to diff');
+  if(command!=='inventory'&&options.has('--engine'))throw new Error('--engine only applies to inventory');
+  if(command!=='explain'&&options.has('--model'))throw new Error('--model only applies to explain');
+  if(!['explain','inventory'].includes(command)&&options.has('--endpoint'))throw new Error('--endpoint only applies to explain or inventory');
+  if(options.has('--engine')&&!['cisco-yara','promptguard'].includes(options.get('--engine')!))throw new Error('Unsupported --engine; choose cisco-yara or promptguard');
+  if(command==='explain'){
+    const explained=await explainScanResult(await readJson(positions[0]!),{endpoint:options.get('--endpoint'),model:options.get('--model'),threshold:threshold as Severity});
+    const rendered=JSON.stringify(explained,null,2)+'\n';
+    if(out)await writeNew(out,rendered);else process.stdout.write(rendered);
+    return explained.policyExitCode;
+  }
   if(['snapshot','report'].includes(command)){
     if(!out)throw new Error(command+' requires --out');
     if(options.has('--format')||options.has('--threshold'))throw new Error('Format/threshold options are not supported for '+command);
@@ -129,10 +147,25 @@ async function main(argv:string[]):Promise<number> {
     result=await scanSourceBounded(positions[0]!,undefined,cancellation.signal);
     if(declaredRoot)result.declaredFixtureRoots=[declaredRoot];
   }
-  else if(command==='inventory')result=await artifact('inventory',[await readJson(positions[0]!)]) as AuditResult;
+  else if(command==='inventory'){
+    const invJson=await readJson(positions[0]!);
+    result=await artifact('inventory',[invJson]) as AuditResult;
+    const engine=options.get('--engine');
+    if(engine==='cisco-yara'){
+      const extra=await runCiscoYaraEngine(positions[0]!);
+      result.findings.push(...extra.findings);
+      result.coverage.diagnostics.push(...extra.diagnostics);
+      if(extra.incomplete)result.coverage.complete=false;
+    }else if(engine==='promptguard'&&invJson&&typeof invJson==='object'&&!Array.isArray(invJson)){
+      const extra=await runPromptGuardEngine(invJson as Record<string,unknown>,positions[0]!,{endpoint:options.get('--endpoint')});
+      result.findings.push(...extra.findings);
+      result.coverage.diagnostics.push(...extra.diagnostics);
+      if(extra.incomplete)result.coverage.complete=false;
+    }
+  }
   else if(command==='config')result=await artifact('config',[await readJson(positions[0]!),positions[0]!]) as AuditResult;
   else if(command==='deps')result=await scanDepsLockfile(positions[0]!,{allowNetwork:options.has('--allow-network')});
-  else result=await artifact('diff',[await readJson(positions[0]!),await readJson(positions[1]!)]) as AuditResult;
+  else result=await artifact('diff',[await readJson(positions[0]!),await readJson(positions[1]!),{ignoreOrder:options.has('--ignore-order')}]) as AuditResult;
   result=validateResult(result);
   const rendered=format==='json'?JSON.stringify(result,null,2)+'\n':format==='sarif'?renderSarif(result)+'\n':renderTerminal(result)+'\n';
   if(out)await writeNew(out,rendered,command==='audit'?positions[0]:undefined);else process.stdout.write(rendered);
