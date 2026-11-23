@@ -39,12 +39,20 @@ function fmtRate(v, ci) {
 
 export async function runBenchmark({
   split = 'dev',
-  labelsPath = path.join(here, 'dev-labels.csv'),
-  sha256Path = path.join(here, 'dev-labels.sha256'),
+  labelsPath,
+  sha256Path,
+  pyLabelsPath,
+  pySha256Path,
   writeOutputs = true
 } = {}) {
-  if (split === 'test' && labelsPath === path.join(here, 'dev-labels.csv')) {
-    throw new Error('Test-split labels are not stored in this repository. Provide external --labels and --sha256-file paths.');
+  if (!labelsPath) {
+    throw new Error('No labels file given. Benchmark pending human labels; pass --labels <csv> and --sha256-file <path>.');
+  }
+  if (!sha256Path) {
+    throw new Error('No SHA-256 file given. Pass --sha256-file <path>.');
+  }
+  if (split === 'test') {
+    // External path verified below; test-split labels remain outside the repository.
   }
   const manifest = loadManifest(path.join(here, 'manifest.json'));
   const servers = manifest.servers.filter(s => split === 'all' || (s.split ?? 'dev') === split);
@@ -83,29 +91,34 @@ export async function runBenchmark({
 
   const tsScores = scoreRows(scoredRows, RULES);
 
-  // Separate Python MCP server slice (v1.1)
-  const pyLabelsPath = path.join(here, 'python-dev-labels.csv');
-  const pyShaPath = path.join(here, 'python-dev-labels.sha256');
-  const pySha256 = verifyLabelsSha256(pyLabelsPath, readFileSync(pyShaPath, 'utf8'));
-  const pyRows = parseCsv(readFileSync(pyLabelsPath, 'utf8'));
-  const pyAnalysisCache = new Map();
-  for (const row of pyRows) {
-    if (!pyAnalysisCache.has(row.file)) {
-      pyAnalysisCache.set(row.file, await analyzePythonSource(row.file, readFileSync(path.resolve(root, row.file), 'utf8')));
+  // Separate Python MCP server slice (v1.1), scored only when human labels are provided
+  let pySha256 = null;
+  let pyScores = null;
+  if (pyLabelsPath) {
+    if (!pySha256Path) {
+      throw new Error('No Python SHA-256 file given. Pass --py-sha256-file <path> alongside --py-labels <csv>.');
     }
+    pySha256 = verifyLabelsSha256(pyLabelsPath, readFileSync(pySha256Path, 'utf8'));
+    const pyRows = parseCsv(readFileSync(pyLabelsPath, 'utf8'));
+    const pyAnalysisCache = new Map();
+    for (const row of pyRows) {
+      if (!pyAnalysisCache.has(row.file)) {
+        pyAnalysisCache.set(row.file, await analyzePythonSource(row.file, readFileSync(path.resolve(root, row.file), 'utf8')));
+      }
+    }
+    const pyScoredRows = pyRows.map(row => {
+      const analysis = pyAnalysisCache.get(row.file);
+      const toolFindings = analysis.findings.filter(f => f.observed.includes(`Tool: ${row.handler_name}`));
+      const out = {
+        ...row,
+        analyzer_complete: analysis.coverage.complete ? 'true' : 'false',
+        analyzer_diagnostics: analysis.coverage.diagnostics.map(d => d.code).join(';')
+      };
+      for (const rule of RULES) out[`${rule}_detected`] = toolFindings.some(f => f.ruleId === rule) ? '1' : '0';
+      return out;
+    });
+    pyScores = scoreRows(pyScoredRows, RULES);
   }
-  const pyScoredRows = pyRows.map(row => {
-    const analysis = pyAnalysisCache.get(row.file);
-    const toolFindings = analysis.findings.filter(f => f.observed.includes(`Tool: ${row.handler_name}`));
-    const out = {
-      ...row,
-      analyzer_complete: analysis.coverage.complete ? 'true' : 'false',
-      analyzer_diagnostics: analysis.coverage.diagnostics.map(d => d.code).join(';')
-    };
-    for (const rule of RULES) out[`${rule}_detected`] = toolFindings.some(f => f.ruleId === rule) ? '1' : '0';
-    return out;
-  });
-  const pyScores = scoreRows(pyScoredRows, RULES);
 
   const grepBaseline = runGrepBaseline(files);
   const opengrepBaseline = runOpengrepBaseline(files);
@@ -174,16 +187,18 @@ export async function runBenchmark({
     '',
     '## Python slice (separate v1.1 evaluation)',
     '',
-    `- **Frozen Python labels SHA-256:** \`${pySha256}\``,
-    `- **Handler coverage:** ${(pyScores.coverage * 100).toFixed(1)}% (${pyScores.covered_handlers}/${pyScores.total_handlers} handlers, 95% Wilson CI [${(pyScores.coverage_ci95.low * 100).toFixed(1)}%, ${(pyScores.coverage_ci95.high * 100).toFixed(1)}%])`,
-    `- **Silent misses:** **${pyScores.total_silent_misses}**`,
-    '',
-    '| Rule | TP | FP | FN | TN | Unsupported | Silent misses | Precision (95% Wilson CI) | Recall (95% Wilson CI) | F1 |',
-    '|---|---:|---:|---:|---:|---:|---:|---|---|---:|',
-    ...RULES.map(r => {
-      const s = pyScores.per_rule[r];
-      return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${fmtRate(s.precision, s.precision_ci95)} | ${fmtRate(s.recall, s.recall_ci95)} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
-    })
+    ...(pyScores ? [
+      `- **Frozen Python labels SHA-256:** \`${pySha256}\``,
+      `- **Handler coverage:** ${(pyScores.coverage * 100).toFixed(1)}% (${pyScores.covered_handlers}/${pyScores.total_handlers} handlers, 95% Wilson CI [${(pyScores.coverage_ci95.low * 100).toFixed(1)}%, ${(pyScores.coverage_ci95.high * 100).toFixed(1)}%])`,
+      `- **Silent misses:** **${pyScores.total_silent_misses}**`,
+      '',
+      '| Rule | TP | FP | FN | TN | Unsupported | Silent misses | Precision (95% Wilson CI) | Recall (95% Wilson CI) | F1 |',
+      '|---|---:|---:|---:|---:|---:|---:|---|---|---:|',
+      ...RULES.map(r => {
+        const s = pyScores.per_rule[r];
+        return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${fmtRate(s.precision, s.precision_ci95)} | ${fmtRate(s.recall, s.recall_ci95)} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
+      })
+    ] : ['Benchmark pending human labels.'])
   ];
 
   if (writeOutputs) {
@@ -196,18 +211,29 @@ export async function runBenchmark({
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
-  const get = (flag) => args.includes(flag) ? args[args.indexOf(flag) + 1] : undefined;
+  const get = (flag) => {
+    const idx = args.indexOf(flag);
+    const val = idx !== -1 ? args[idx + 1] : undefined;
+    return val && !val.startsWith('--') ? val : undefined;
+  };
   const split = get('--split') ?? 'dev';
   const labelsPath = get('--labels');
   const sha256Path = get('--sha256-file');
-  const out = await runBenchmark({ split, ...(labelsPath ? { labelsPath } : {}), ...(sha256Path ? { sha256Path } : {}) });
-  console.log(JSON.stringify({
-    split: out.split,
-    servers: out.server_count,
-    files: out.file_count,
-    typescript: { coverage: out.typescript.coverage, silent_misses: out.typescript.total_silent_misses },
-    python: { coverage: out.python.coverage, silent_misses: out.python.total_silent_misses },
-    evasion: out.evasion,
-    perf: out.perf
-  }, null, 2));
+  const pyLabelsPath = get('--py-labels');
+  const pySha256Path = get('--py-sha256-file');
+  try {
+    const out = await runBenchmark({ split, labelsPath, sha256Path, pyLabelsPath, pySha256Path });
+    console.log(JSON.stringify({
+      split: out.split,
+      servers: out.server_count,
+      files: out.file_count,
+      typescript: { coverage: out.typescript.coverage, silent_misses: out.typescript.total_silent_misses },
+      python: out.python ? { coverage: out.python.coverage, silent_misses: out.python.total_silent_misses } : null,
+      evasion: out.evasion,
+      perf: out.perf
+    }, null, 2));
+  } catch (err) {
+    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(2);
+  }
 }

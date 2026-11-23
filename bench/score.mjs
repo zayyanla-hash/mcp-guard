@@ -137,7 +137,13 @@ export function scoreRows(rows, rules = RULES) {
   };
 }
 
-export function scoreFromFiles({ labelsPath, sha256Path, expectedSha }) {
+export function scoreFromFiles({ labelsPath, sha256Path, expectedSha } = {}) {
+  if (!labelsPath) {
+    throw new Error('No labels file given. Provide --labels <csv> (human-authored benchmark labels required).');
+  }
+  if (!expectedSha && !sha256Path) {
+    throw new Error('No SHA-256 verification provided. Pass --sha256 <hex> or --sha256-file <path>.');
+  }
   const hashSpec = expectedSha ?? readFileSync(sha256Path, 'utf8');
   const sha256 = verifyLabelsSha256(labelsPath, hashSpec);
   const rows = parseCsv(readFileSync(labelsPath, 'utf8'));
@@ -146,12 +152,26 @@ export function scoreFromFiles({ labelsPath, sha256Path, expectedSha }) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
-  const get = (flag) => args.includes(flag) ? args[args.indexOf(flag) + 1] : undefined;
+  const get = (flag) => {
+    const idx = args.indexOf(flag);
+    const val = idx !== -1 ? args[idx + 1] : undefined;
+    return val && !val.startsWith('--') ? val : undefined;
+  };
   const labelsPath = get('--labels');
   const sha256Path = get('--sha256-file');
   const expectedSha = get('--sha256');
-  if (!labelsPath || (!sha256Path && !expectedSha)) {
-    throw new Error('Usage: node bench/score.mjs --labels <csv> (--sha256 <hex> | --sha256-file <path>)');
+  if (!labelsPath) {
+    console.error('Error: no labels file given. Benchmark pending human labels; provide --labels <csv> and (--sha256 <hex> | --sha256-file <path>).');
+    process.exit(2);
   }
-  console.log(JSON.stringify(scoreFromFiles({ labelsPath, sha256Path, expectedSha }), null, 2));
+  if (!sha256Path && !expectedSha) {
+    console.error('Error: no SHA-256 verification given. Provide --sha256 <hex> or --sha256-file <path>.');
+    process.exit(2);
+  }
+  try {
+    console.log(JSON.stringify(scoreFromFiles({ labelsPath, sha256Path, expectedSha }), null, 2));
+  } catch (err) {
+    console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(2);
+  }
 }

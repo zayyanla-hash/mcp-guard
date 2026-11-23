@@ -11,3 +11,4 @@
 9. Benchmark test-split labels are not in this repo. Never ask for them.
 10. Before finishing: npm run validate, npm run evaluate, npm run validate:site, then the phase gate. Paste the output.
 11. Stop and ask if a gate fails twice, a frozen file would change, a license is unclear, or the task grows past this phase.
+12. Agents never create, edit or infer benchmark labels or study expectations.

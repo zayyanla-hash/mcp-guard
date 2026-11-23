@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -67,7 +68,7 @@ test('evasion suite generates AST variants with zero silent misses', () => {
   assert.ok(ev.summary.detected > 0);
 });
 
-test('labeling sheet, perf, and dev benchmark run offline cleanly', async t => {
+test('labeling sheet, perf, and explicit missing-labels rejection run offline cleanly', async t => {
   const dir = await mkdtemp(path.join(tmpdir(), 'vambrace-sheet-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
   const sheet = generateLabelingSheet({ split: 'dev', outFile: path.join(dir, 'sheet.csv') });
@@ -77,9 +78,12 @@ test('labeling sheet, perf, and dev benchmark run offline cleanly', async t => {
   const perf = measurePerf(['fixtures/vulnerable/server.ts'], 2);
   assert.equal(perf.samples, 2);
   assert.ok(perf.latency_ms.p50 >= 0);
-  const bench = await runBenchmark({ split: 'dev', writeOutputs: false });
-  assert.equal(bench.typescript.total_silent_misses, 0);
-  assert.equal(bench.python.total_silent_misses, 0);
-  assert.equal(bench.evasion.silent_miss, 0);
-  await assert.rejects(() => runBenchmark({ split: 'test', writeOutputs: false }), /not stored/);
+  await assert.rejects(() => runBenchmark({ split: 'dev', writeOutputs: false }), /No labels file given/);
+  await assert.rejects(() => runBenchmark({ split: 'test', writeOutputs: false }), /No labels file given/);
+  const scoreRes = spawnSync(process.execPath, [path.resolve('bench/score.mjs')], { encoding: 'utf8', timeout: 15000 });
+  assert.notEqual(scoreRes.status, 0);
+  assert.match(scoreRes.stderr, /no labels file given/i);
+  const runRes = spawnSync(process.execPath, [path.resolve('bench/run.mjs')], { encoding: 'utf8', timeout: 15000 });
+  assert.notEqual(runRes.status, 0);
+  assert.match(runRes.stderr, /No labels file given/i);
 });

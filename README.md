@@ -8,6 +8,8 @@ Vambrace audits MCP servers without running them, and proves how well it works. 
 
 [Benchmark report (BENCHMARK.md)](BENCHMARK.md) · [Interactive browser demo](https://zayyanla-hash.github.io/vambrace/) · [Engineering case study](docs/PORTFOLIO.md) · [Architecture](docs/ARCHITECTURE.md) · [External coverage study v2](docs/EVALUATION-EXTERNAL-V2.md)
 
+**Benchmark status:** Benchmark pending human labels.
+
 The browser demo shows recorded project-owned seeded fixtures. It does not execute a server or scan visitor files. The separate external study uses 24 actual handlers across seven unchanged official SDK example files: the analyzer reported four recognized registrations in aggregate; manual review identified 20 factory-bound registrations outside the supported shape, and all seven files had incomplete coverage. Zero findings is not a clean assessment or an accuracy result.
 
 Reproduce the coverage study and check the browser data after installation:
