@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wrapped": {
+      "command": "sh",
+      "args": ["-c", "node dist/server.js"]
+    }
+  }
+}

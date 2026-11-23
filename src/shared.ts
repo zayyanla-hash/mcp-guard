@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { ruleMeta } from './rules.js';
 import type { Coverage, Finding } from './types.js';
 export function canonical(value: unknown): string {
   if (value === null || typeof value !== 'object') return JSON.stringify(value);
@@ -21,6 +22,7 @@ export function redact(value: unknown, depth = 0): unknown {
 export const cleanTerminal = (text: string) => text.replace(/[\x00-\x08\x0b-\x1f\x7f-\x9f]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
 export function coverage(rules: string[]): Coverage { return {complete:true,inspected:[],excluded:[],failed:[],truncated:[],recognizedTools:0,unresolvedHandlers:0,rulesApplied:rules,diagnostics:[]}; }
 export function finding(input: Omit<Finding, 'fingerprint' | 'ruleVersion'>): Finding {
-  const safe = {...input, engine: input.engine ?? 'vambrace-ts', evidence: redactText(input.evidence), ruleVersion:'1.1.0'};
+  const owasp = input.owaspMcpTop10 ?? ruleMeta(input.ruleId)?.owaspMcpTop10;
+  const safe = {...input, engine: input.engine ?? 'vambrace-ts', ...(owasp ? { owaspMcpTop10: owasp } : {}), evidence: redactText(input.evidence), ruleVersion:'1.1.0'};
   return {...safe, fingerprint: hash({ruleId:safe.ruleId,locations:safe.locations,observed:safe.observed})};
 }

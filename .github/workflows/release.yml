@@ -1,0 +1,68 @@
+name: release
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run validate
+      - run: npm run evaluate
+      - run: npm run validate:site
+
+      - name: Build tarball and checksums
+        id: pack
+        run: |
+          tarball=$(npm pack)
+          sha256sum "$tarball" > SHA256SUMS
+          echo "tarball=$tarball" >> "$GITHUB_OUTPUT"
+
+      - name: Install Syft and generate SBOM
+        uses: anchore/sbom-action/download-syft@v0
+      - run: syft "dir:." -o spdx-json=vambrace.sbom.spdx.json
+
+      - name: Install Sigstore Cosign and sign artifacts (keyless)
+        uses: sigstore/cosign-installer@v3
+      - name: Keyless sign tarball and SBOM
+        run: |
+          cosign sign-blob --yes --bundle "${{ steps.pack.outputs.tarball }}.sigstore.json" "${{ steps.pack.outputs.tarball }}"
+          cosign sign-blob --yes --bundle "vambrace.sbom.spdx.json.sigstore.json" "vambrace.sbom.spdx.json"
+
+      - name: Generate GitHub artifact provenance attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            ${{ steps.pack.outputs.tarball }}
+            vambrace.sbom.spdx.json
+
+      - name: Publish to npm with provenance
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public
+
+      - name: Attach release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.pack.outputs.tarball }}
+            ${{ steps.pack.outputs.tarball }}.sigstore.json
+            vambrace.sbom.spdx.json
+            vambrace.sbom.spdx.json.sigstore.json
+            SHA256SUMS

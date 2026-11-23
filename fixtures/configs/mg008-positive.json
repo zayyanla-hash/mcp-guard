@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "node",
+      "args": ["dist/server.js", "--token=FAKE_CANARY_TOKEN_VALUE"],
+      "env": {
+        "GITHUB_TOKEN": "FAKE_GITHUB_CANARY_SECRET"
+      }
+    }
+  }
+}

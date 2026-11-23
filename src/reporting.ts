@@ -119,7 +119,7 @@ function fixtureRoots(value: unknown, kind: AuditResult['kind']): string[] | und
 }
 export function validateResult(value: unknown): AuditResult {
   checkBounds(value);
-  if (!isObject(value) || value.schemaVersion !== 1 || !['source','inventory','diff'].includes(String(value.kind))) throw new Error('Malformed audit result: unsupported schemaVersion or kind.');
+  if (!isObject(value) || value.schemaVersion !== 1 || !['source','inventory','diff','deps','config'].includes(String(value.kind))) throw new Error('Malformed audit result: unsupported schemaVersion or kind.');
   requiredStrings(value,['target'],'result');
   if (!Array.isArray(value.findings)) throw new Error('Malformed audit result: findings must be an array.');
   const result: AuditResult = {

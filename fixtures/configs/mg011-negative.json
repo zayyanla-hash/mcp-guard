@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "files": {
+      "command": "node",
+      "args": ["dist/fs.js", "/workspace/allowed-subdir"]
+    }
+  }
+}

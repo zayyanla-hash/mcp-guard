@@ -1,5 +1,6 @@
 import { parentPort, workerData } from 'node:worker_threads';
 import { auditInventory, snapshotInventory, diffSnapshots } from './inventory.js';
+import { auditClientConfig } from './config-audit.js';
 import { renderHtml, validateResult } from './reporting.js';
 try {
   const {operation, inputs} = workerData as {operation:string;inputs:unknown[]};
@@ -8,6 +9,7 @@ try {
     case 'inventory': result=auditInventory(inputs[0]);break;
     case 'snapshot': result=snapshotInventory(inputs[0]);break;
     case 'diff': result=diffSnapshots(inputs[0],inputs[1]);break;
+    case 'config': result=auditClientConfig(inputs[0], String(inputs[1] ?? 'mcp.json'));break;
     case 'report': result=renderHtml(validateResult(inputs[0]));break;
     default: throw new Error('Unsupported artifact operation');
   }

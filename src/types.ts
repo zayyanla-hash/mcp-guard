@@ -15,7 +15,7 @@ export interface Coverage {
   recognizedTools: number; unresolvedHandlers: number; rulesApplied: string[]; diagnostics: Diagnostic[];
 }
 export interface AuditResult {
-  schemaVersion: 1; kind: 'source' | 'inventory' | 'diff'; target: string;
+  schemaVersion: 1; kind: 'source' | 'inventory' | 'diff' | 'deps' | 'config'; target: string;
   findings: Finding[]; coverage: Coverage; declaredFixtureRoots?: string[];
   changes?: {kind: string; tool?: string; pointer?: string; before?: unknown; after?: unknown}[];
 }

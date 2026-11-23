@@ -1,12 +1,34 @@
-# v0.3.0 release gate
+# Release verification and gates
 
-Distribution: release archive, checksum, and npm package `vambrace` under zayyanla-hash/vambrace (previously `mcp-guard`). Runtime transitive dependencies are locked by npm-shrinkwrap.json, which is included in the archive. The `mcp-guard` bin remains as a deprecated alias in v0.3.0 until v0.4.0.
+Distribution: GitHub release archive, Syft SPDX SBOM, Sigstore keyless bundles, GitHub artifact attestations, and npm package `vambrace` with provenance (`npm publish --provenance`). Runtime transitive dependencies are locked by `npm-shrinkwrap.json`, which is included in the archive.
 
-Required gates: clean scoped diff, npm ci --ignore-scripts, offline test and validate commands, seeded demo, CLI help/version/invalid input, reviewed-fixture discovery under verified OS restrictions, denial probes, timeout/cancellation/PID cleanup, malicious-protocol fixtures, archive installation, independent public download checksum/install, and Linux/macOS Node24/26 CI. No skipped mandatory tests.
+## Verify a release
 
-The v0.2.1 audit-context regression additionally requires that `audit --fixture-root fixtures` labels the declared fixture paths in JSON, terminal and HTML, while producing the same findings, coverage and exit as an unannotated scan. Invalid or escaping roots must fail.
+```sh
+# 1. Verify archive SHA-256
+sha256sum -c SHA256SUMS
 
-No release claim implies universal vulnerability detection or security certification. Unrecognized syntax remains a documented analysis limit. Arbitrary discovery is blocked. SARIF is unavailable. Historical local harness trials remain distinct from cloud/Luna-assisted implementation.
+# 2. Verify Sigstore keyless signature on tarball and SBOM
+cosign verify-blob \
+  --bundle vambrace-<version>.tgz.sigstore.json \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-identity-regexp "^https://github\.com/zayyanla-hash/vambrace/" \
+  vambrace-<version>.tgz
+
+cosign verify-blob \
+  --bundle vambrace.sbom.spdx.json.sigstore.json \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-identity-regexp "^https://github\.com/zayyanla-hash/vambrace/" \
+  vambrace.sbom.spdx.json
+
+# 3. Verify GitHub artifact build provenance attestation
+gh attestation verify vambrace-<version>.tgz --repo zayyanla-hash/vambrace
+
+# 4. Verify npm provenance signatures after install
+npm audit signatures
+```
+
+Required gates: clean scoped diff, `npm ci --ignore-scripts`, `npm run validate`, `npm run evaluate`, `npm run validate:site`, SARIF 2.1.0 schema compliance, and cross-OS Node 24/26 CI. No release claim implies universal vulnerability detection or security certification.
 
 Official references inspected 2026-10-01:
 - https://modelcontextprotocol.io/specification/2026-07-28/server/tools

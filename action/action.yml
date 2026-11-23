@@ -1,0 +1,77 @@
+name: 'Vambrace MCP Audit'
+description: 'Audit MCP server source or inventories offline without executing targets, and emit SARIF 2.1.0 for code scanning.'
+inputs:
+  target:
+    description: 'Directory or file to audit'
+    required: false
+    default: '.'
+  threshold:
+    description: 'Severity threshold (low, medium, high)'
+    required: false
+    default: 'medium'
+  version:
+    description: 'Pinned Vambrace version or git ref/archive URL'
+    required: false
+    default: '1.0.0'
+  archive-url:
+    description: 'Pinned release archive URL to install with --ignore-scripts'
+    required: false
+    default: ''
+  archive-sha256:
+    description: 'Expected SHA-256 hex checksum for archive-url'
+    required: false
+    default: ''
+  sarif-file:
+    description: 'Output SARIF 2.1.0 path (outside audited target root)'
+    required: false
+    default: '/tmp/vambrace.sarif'
+  upload-sarif:
+    description: 'Upload SARIF results to GitHub Code Scanning'
+    required: false
+    default: 'true'
+outputs:
+  exit-code:
+    description: 'Vambrace audit exit code (0=clean, 1=findings, 2=error, 3=incomplete)'
+    value: ${{ steps.run-audit.outputs.exit-code }}
+  sarif-file:
+    description: 'Generated SARIF file path'
+    value: ${{ inputs.sarif-file }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Install pinned Vambrace release
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.archive-url }}" ]; then
+          curl -fsSL "${{ inputs.archive-url }}" -o /tmp/vambrace-release.tgz
+          if [ -n "${{ inputs.archive-sha256 }}" ]; then
+            echo "${{ inputs.archive-sha256 }}  /tmp/vambrace-release.tgz" | sha256sum -c -
+          fi
+          npm install --global /tmp/vambrace-release.tgz --ignore-scripts
+        elif [ -f "${{ github.action_path }}/../dist/cli.js" ]; then
+          npm link --ignore-scripts "${{ github.action_path }}/.."
+        else
+          npm install --global "vambrace@${{ inputs.version }}" --ignore-scripts
+        fi
+
+    - name: Run Vambrace static audit
+      id: run-audit
+      shell: bash
+      run: |
+        set +e
+        rm -f "${{ inputs.sarif-file }}"
+        vambrace audit "${{ inputs.target }}" --threshold "${{ inputs.threshold }}" --format sarif --out "${{ inputs.sarif-file }}"
+        code=$?
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        exit 0
+
+    - name: Upload SARIF to GitHub Code Scanning
+      if: inputs.upload-sarif == 'true' && hashFiles(inputs.sarif-file) != ''
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: vambrace
+
+    - name: Enforce Vambrace exit code
+      shell: bash
+      run: exit "${{ steps.run-audit.outputs.exit-code }}"

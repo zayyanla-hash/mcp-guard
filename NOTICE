@@ -14,7 +14,8 @@ Runtime npm dependencies:
 Development npm dependencies:
 - @types/node (26.0.0) — MIT License
 
-Vendored evaluation data:
+Vendored schemas and evaluation data:
+- schemas/sarif-2.1.0.json — OASIS SARIF v2.1.0 JSON Schema
 - evaluation/**/vendor/modelcontextprotocol-typescript-sdk — MIT / Apache-2.0 transition (see vendored LICENSE)
 
 Optional external binaries and user-downloaded artifacts (not bundled in this package):

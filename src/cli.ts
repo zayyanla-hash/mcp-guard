@@ -4,6 +4,8 @@ import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { inside } from './scanner.js';
 import { renderTerminal, validateResult } from './reporting.js';
+import { renderSarif } from './sarif.js';
+import { scanDepsLockfile } from './deps.js';
 import { canonical, cleanTerminal, redactText } from './shared.js';
 import { scanSourceBounded } from './bounded-scan.js';
 import { VERSION } from './version.js';
@@ -20,19 +22,22 @@ const HELP=`Vambrace ${VERSION} — bounded offline MCP audits
 Usage: vambrace <command> [arguments] [options]
   audit <directory>                  Static source audit; never executes targets
   inventory <tools.json>             Validate offline inventory
-  snapshot <tools.json> --out <file>  Create a new inventory baseline
-  diff <before.json> <after.json>     Explain inventory drift
-  report <scan.json> --out <file>     Render self-contained HTML
+  config <mcp.json>                  Static MCP client configuration check
+  deps <lockfile>                    Run external osv-scanner (requires --allow-network)
+  snapshot <tools.json> --out <file> Create a new inventory baseline
+  diff <before.json> <after.json>    Explain inventory drift
+  report <scan.json> --out <file>    Render self-contained HTML
   discover --fixture reviewed --approve-execution
-                                    Isolated reviewed local fixture (macOS only)
+                                     Isolated reviewed local fixture (macOS only)
 Options:
-  --format terminal|json             Audit/inventory/diff output (default terminal)
+  --format terminal|json|sarif       Audit/inventory/diff/config/deps output (default terminal)
   --out <file>                       Write a NEW artifact; never overwrite
   --inventory-out <file>             Discovery: preserve snapshot-ready inventory
   --fixture-root <relative-directory> Audit: label operator-declared fixture paths
-  --threshold low|medium|high         Finding policy threshold (default medium)
-  --help                            Show help
-  --version                         Show version
+  --allow-network                    Deps: explicitly permit osv-scanner network queries
+  --threshold low|medium|high        Finding policy threshold (default medium)
+  --help                             Show help
+  --version                          Show version
 Exits: 0 complete below threshold; 1 findings/drift; 2 invalid input/error;
        3 required coverage incomplete or discovery blocked.
 No findings does not establish safety. See docs/LIMITATIONS.md.
@@ -69,23 +74,24 @@ async function main(argv:string[]):Promise<number> {
   if(argv.length===1&&argv[0]==='--version'){console.log(VERSION);return 0;}
   if(!argv.length||(argv.length===1&&argv[0]==='--help')){console.log(HELP);return 0;}
   const command=argv.shift()!;
-  if(!['audit','inventory','snapshot','diff','report','discover'].includes(command))throw new Error('Unknown command: '+command);
+  if(!['audit','inventory','config','deps','snapshot','diff','report','discover'].includes(command))throw new Error('Unknown command: '+command);
   if(argv.length===1&&argv[0]==='--help'){console.log(HELP);return 0;}
   const positions:string[]=[],options=new Map<string,string>();
   for(let i=0;i<argv.length;i++){
     const value=argv[i]!;
     if(value.startsWith('--')){
-      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
-      if(value==='--approve-execution'){options.set(value,'true');continue;}
+      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root','--allow-network'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
+      if(value==='--approve-execution'||value==='--allow-network'){options.set(value,'true');continue;}
       const next=argv[++i];if(!next||next.startsWith('--'))throw new Error('Missing value for '+value);options.set(value,next);
     }else if(value.startsWith('-'))throw new Error('Unknown option: '+value);else positions.push(value);
   }
   if(positions.length!==(command==='diff'?2:command==='discover'?0:1))throw new Error('Incorrect number of arguments for '+command);
   const format=options.get('--format')??'terminal',threshold=options.get('--threshold')??'medium',out=options.get('--out');
-  if(!['terminal','json'].includes(format))throw new Error('Invalid output format');
+  if(!['terminal','json','sarif'].includes(format))throw new Error('Invalid output format');
   if(!['low','medium','high'].includes(threshold))throw new Error('Invalid severity threshold');
   if(command!=='discover'&&(options.has('--fixture')||options.has('--approve-execution')||options.has('--inventory-out')))throw new Error('Discovery options only apply to discover');
   if(command!=='audit'&&options.has('--fixture-root'))throw new Error('--fixture-root only applies to audit');
+  if(command!=='deps'&&options.has('--allow-network'))throw new Error('--allow-network only applies to deps');
   if(['snapshot','report'].includes(command)){
     if(!out)throw new Error(command+' requires --out');
     if(options.has('--format')||options.has('--threshold'))throw new Error('Format/threshold options are not supported for '+command);
@@ -124,9 +130,11 @@ async function main(argv:string[]):Promise<number> {
     if(declaredRoot)result.declaredFixtureRoots=[declaredRoot];
   }
   else if(command==='inventory')result=await artifact('inventory',[await readJson(positions[0]!)]) as AuditResult;
+  else if(command==='config')result=await artifact('config',[await readJson(positions[0]!),positions[0]!]) as AuditResult;
+  else if(command==='deps')result=await scanDepsLockfile(positions[0]!,{allowNetwork:options.has('--allow-network')});
   else result=await artifact('diff',[await readJson(positions[0]!),await readJson(positions[1]!)]) as AuditResult;
   result=validateResult(result);
-  const rendered=format==='json'?JSON.stringify(result,null,2)+'\n':renderTerminal(result)+'\n';
+  const rendered=format==='json'?JSON.stringify(result,null,2)+'\n':format==='sarif'?renderSarif(result)+'\n':renderTerminal(result)+'\n';
   if(out)await writeNew(out,rendered,command==='audit'?positions[0]:undefined);else process.stdout.write(rendered);
   return policyExit(result,threshold as Severity);
 }
