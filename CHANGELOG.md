@@ -1,12 +1,13 @@
 # Changelog
 
-## 1.1.0
+## 1.1.0-rc1 (Release Candidate)
 
-- Phase 6: Added Python MCP server support via WASM `web-tree-sitter` and `tree-sitter-python` (MIT, zero native builds) under `engine: 'vambrace-py'`.
+- Release candidate for Python MCP server support via WASM `web-tree-sitter` and `tree-sitter-python` (MIT, zero native builds) under `engine: 'vambrace-py'`.
 - Recognizes FastMCP/Server `@mcp.tool()` decorators and `add_tool` calls, porting `MG001`–`MG004` and `MG006` to Python sinks (`subprocess`, `os.system`, `open`/`pathlib`, `requests`/`httpx`, `os.environ`) with explicit `UNRESOLVED_*` diagnostics.
-- Added Python controls (`fixtures/python/`) and a separate Python benchmark slice in `BENCHMARK.md` while keeping TypeScript benchmark numbers unchanged.
+- Added Python controls (`fixtures/python/`) and benchmark scaffolding in `BENCHMARK.md` while keeping TypeScript analysis behavior isolated from Python scanning.
+- Retagged pre-release work as `v1.0.0-rc1` / `v1.1.0-rc1` release candidates and updated the deprecated `mcp-guard` CLI alias notice to target removal in `v2.0.0`.
 
-## 1.0.0
+## 1.0.0-rc1 (Release Candidate)
 
 - Phase 1: Added 1-level local server factory support in `src/analyzer.ts` (`UNRESOLVED_FACTORY` diagnostics for deeper/imported/dynamic factories) and pre-registered `evaluation/v2/` (24/24 SDK example registrations recognized).
 - Phase 2: Added benchmark infrastructure (`bench/`), Wilson 95% confidence intervals, AST evasion suite, grep/Opengrep baselines, performance tracking, and auto-generated `BENCHMARK.md`.

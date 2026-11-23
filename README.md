@@ -2,7 +2,7 @@
 
 Vambrace audits MCP servers without running them, and proves how well it works. A local CLI for reviewing risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
 
-**Status: v1.1.0 (renamed from MCP Guard).** Static analysis supports documented TypeScript/JavaScript and Python MCP server subsets (via WASM `web-tree-sitter`), SARIF 2.1.0, client config checks (`MG008`–`MG012`), tool-poisoning checks (`MG007`), unified `vambrace.policy.yaml` + `agentgateway` policy compilation, and optional local advisory triage (`vambrace explain`). Findings include evidence and assumptions; incomplete assessments are visible.
+**Status: v1.1.0-rc1 release candidate (renamed from MCP Guard).** Static analysis supports documented TypeScript/JavaScript and Python MCP server subsets (via WASM `web-tree-sitter`), SARIF 2.1.0, client config checks (`MG008`–`MG012`), tool-poisoning checks (`MG007`), unified `vambrace.policy.yaml` + `agentgateway` policy compilation, and optional local advisory triage (`vambrace explain`). Findings include evidence and assumptions; incomplete assessments are visible.
 
 ## Inspect the evidence
 
@@ -37,12 +37,14 @@ npm run demo -- --out demo-output-2
 
 These results measure seeded examples, not real-world detection accuracy. No fixture server is started.
 
-## Install the release
+## Install the release candidate
 
-Distribution is through the release archive (and npm package `vambrace`). `mcp-guard` remains as a deprecated CLI alias in v0.3.0 and will be removed in v0.4.0.
+This repository currently builds a release candidate archive (`v1.1.0-rc1`), not a published release. `mcp-guard` remains as a deprecated CLI alias and will be removed in v2.0.0.
 
 ```sh
-npm install --global https://github.com/zayyanla-hash/vambrace/releases/download/v0.3.0/vambrace-0.3.0.tgz --ignore-scripts
+npm run build
+npm pack
+npm install --global ./vambrace-1.1.0-rc1.tgz --ignore-scripts
 vambrace --help
 vambrace --version
 ```
@@ -123,4 +125,4 @@ JSON Schema 2020-12 meta-validation is supported. Remote references are never re
 
 [Evaluation](docs/EVALUATION.md) describes tests and denominators. [Contributor guide](docs/CONTRIBUTING.md), [security reporting](SECURITY.md), and [release scope](docs/RELEASE.md) define maintenance and evidence boundaries. [CI](.github/workflows/ci.yml) uses no secrets and never executes audit targets.
 
-This release was integrated using Codex with Luna assisting inventory/report work and review. Historical local-worker bootstrap trials are distinct from the cloud-assisted product implementation; [the evidence note](docs/LOCAL-HARNESS-EVIDENCE.md) explains that boundary.
+This release candidate was integrated using Codex with Luna assisting inventory/report work and review. Historical local-worker bootstrap trials are distinct from the cloud-assisted product implementation; [the evidence note](docs/LOCAL-HARNESS-EVIDENCE.md) explains that boundary.
