@@ -77,8 +77,9 @@ test('labeling sheet, perf, and dev benchmark run offline cleanly', async t => {
   const perf = measurePerf(['fixtures/vulnerable/server.ts'], 2);
   assert.equal(perf.samples, 2);
   assert.ok(perf.latency_ms.p50 >= 0);
-  const bench = runBenchmark({ split: 'dev', writeOutputs: false });
+  const bench = await runBenchmark({ split: 'dev', writeOutputs: false });
   assert.equal(bench.typescript.total_silent_misses, 0);
+  assert.equal(bench.python.total_silent_misses, 0);
   assert.equal(bench.evasion.silent_miss, 0);
-  assert.throws(() => runBenchmark({ split: 'test', writeOutputs: false }), /not stored/);
+  await assert.rejects(() => runBenchmark({ split: 'test', writeOutputs: false }), /not stored/);
 });

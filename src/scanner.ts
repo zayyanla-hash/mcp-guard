@@ -6,8 +6,8 @@ import { SOURCE_RULES } from './analyzer.js';
 import type { AuditResult } from './types.js';
 export const LIMITS={files:2000,entries:4000,bytes:20*1024*1024,fileBytes:1024*1024,depth:20,milliseconds:30000,fileMilliseconds:2000};
 const excluded=new Set(['node_modules','.git','.svn','.hg','dist','build','coverage','.next','vendor','__pycache__']);
-const supported=new Set(['.js','.mjs','.ts','.mts']);
-const unsupported=new Set(['.cjs','.cts','.jsx','.tsx','.py','.go','.rs','.java','.rb','.php','.c','.cpp']);
+const supported=new Set(['.js','.mjs','.ts','.mts','.py']);
+const unsupported=new Set(['.cjs','.cts','.jsx','.tsx','.go','.rs','.java','.rb','.php','.c','.cpp']);
 export function inside(root:string,candidate:string):boolean {const rel=path.relative(root,candidate);return rel===''||(!rel.startsWith('..'+path.sep)&&rel!=='..'&&!path.isAbsolute(rel));}
 async function analyze(file:string,text:string,milliseconds:number):Promise<AuditResult>{
   return new Promise((resolve,reject)=>{

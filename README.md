@@ -2,7 +2,7 @@
 
 Vambrace audits MCP servers without running them, and proves how well it works. A local CLI for reviewing risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
 
-**Status: v1.0.0 (renamed from MCP Guard).** Static analysis supports a documented subset of JavaScript/TypeScript, SARIF 2.1.0, client config checks (`MG008`–`MG012`), tool-poisoning checks (`MG007`), unified `vambrace.policy.yaml` + `agentgateway` policy compilation, and optional local advisory triage (`vambrace explain`). Findings include evidence and assumptions; incomplete assessments are visible.
+**Status: v1.1.0 (renamed from MCP Guard).** Static analysis supports documented TypeScript/JavaScript and Python MCP server subsets (via WASM `web-tree-sitter`), SARIF 2.1.0, client config checks (`MG008`–`MG012`), tool-poisoning checks (`MG007`), unified `vambrace.policy.yaml` + `agentgateway` policy compilation, and optional local advisory triage (`vambrace explain`). Findings include evidence and assumptions; incomplete assessments are visible.
 
 ## Inspect the evidence
 

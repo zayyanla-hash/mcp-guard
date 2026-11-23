@@ -1,0 +1,13 @@
+server_id,split,file,handler_name,analyzer_complete,analyzer_diagnostics,MG001_label,MG001_detected,MG002_label,MG002_detected,MG003_label,MG003_detected,MG004_label,MG004_detected,MG006_label,MG006_detected
+py-positive,dev,fixtures/python/positive/server.py,run_shell,,,positive,0,negative,0,negative,0,negative,0,negative,0
+py-positive,dev,fixtures/python/positive/server.py,read_path,,,negative,0,positive,0,negative,0,negative,0,negative,0
+py-positive,dev,fixtures/python/positive/server.py,fetch_url,,,negative,0,negative,0,positive,0,negative,0,negative,0
+py-positive,dev,fixtures/python/positive/server.py,leak_env,,,negative,0,negative,0,negative,0,positive,0,negative,0
+py-positive,dev,fixtures/python/positive/server.py,ro_mutation,,,negative,0,negative,0,negative,0,negative,0,positive,0
+py-negative,dev,fixtures/python/negative/server.py,safe_echo,,,negative,0,negative,0,negative,0,negative,0,negative,0
+py-negative,dev,fixtures/python/negative/server.py,fixed_read,,,negative,0,negative,0,negative,0,negative,0,negative,0
+py-negative,dev,fixtures/python/negative/server.py,fixed_http,,,negative,0,negative,0,negative,0,negative,0,negative,0
+py-negative,dev,fixtures/python/negative/server.py,node_env,,,negative,0,negative,0,negative,0,negative,0,negative,0
+py-negative,dev,fixtures/python/negative/server.py,explicit_tool,,,negative,0,negative,0,negative,0,negative,0,negative,0
+py-unresolved,dev,fixtures/python/unresolved/server.py,remote_shell,,,unsupported,0,unsupported,0,unsupported,0,unsupported,0,unsupported,0
+py-unresolved,dev,fixtures/python/unresolved/server.py,nested_shell,,,unsupported,0,unsupported,0,unsupported,0,unsupported,0,unsupported,0

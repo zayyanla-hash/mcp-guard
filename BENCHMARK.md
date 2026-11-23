@@ -1,6 +1,6 @@
 # Vambrace Benchmark Report
 
-Generated automatically by `npm run bench` (2026-11-23T10:19:50.093Z). Never hand-edited.
+Generated automatically by `npm run bench` (2026-11-23T10:25:08.575Z). Never hand-edited.
 
 - **Split:** `dev` (3 servers, 5 source files, seed `20261123`)
 - **Frozen labels SHA-256:** `75d161afcbca9fad44083b9b203a095204dd385c33e1cd9b3c7649f223dc4feb`
@@ -54,5 +54,19 @@ Tested 20 transformed variants across MG001–MG004: **20 detected**, **0 flagge
 ## Performance
 
 - **Samples:** 15 (5 files)
-- **Per-file latency:** p50 = 0.971 ms, p95 = 2.173 ms
-- **Process RSS:** p50 = 162.469 MiB, p95 = 167.922 MiB
+- **Per-file latency:** p50 = 1.008 ms, p95 = 3.603 ms
+- **Process RSS:** p50 = 163.75 MiB, p95 = 169.063 MiB
+
+## Python slice (separate v1.1 evaluation)
+
+- **Frozen Python labels SHA-256:** `3da659eb977968849c33d38ee2ae743166e85e44ed615b48475186b9f2748906`
+- **Handler coverage:** 83.3% (10/12 handlers, 95% Wilson CI [55.2%, 95.3%])
+- **Silent misses:** **0**
+
+| Rule | TP | FP | FN | TN | Unsupported | Silent misses | Precision (95% Wilson CI) | Recall (95% Wilson CI) | F1 |
+|---|---:|---:|---:|---:|---:|---:|---|---|---:|
+| MG001 | 1 | 0 | 0 | 9 | 2 | 0 | 100.0% [20.6%, 100.0%] | 100.0% [20.6%, 100.0%] | 1.0000 |
+| MG002 | 1 | 0 | 0 | 9 | 2 | 0 | 100.0% [20.6%, 100.0%] | 100.0% [20.6%, 100.0%] | 1.0000 |
+| MG003 | 1 | 0 | 0 | 9 | 2 | 0 | 100.0% [20.6%, 100.0%] | 100.0% [20.6%, 100.0%] | 1.0000 |
+| MG004 | 1 | 0 | 0 | 9 | 2 | 0 | 100.0% [20.6%, 100.0%] | 100.0% [20.6%, 100.0%] | 1.0000 |
+| MG006 | 1 | 0 | 0 | 9 | 2 | 0 | 100.0% [20.6%, 100.0%] | 100.0% [20.6%, 100.0%] | 1.0000 |

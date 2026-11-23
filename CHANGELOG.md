@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Phase 6: Added Python MCP server support via WASM `web-tree-sitter` and `tree-sitter-python` (MIT, zero native builds) under `engine: 'vambrace-py'`.
+- Recognizes FastMCP/Server `@mcp.tool()` decorators and `add_tool` calls, porting `MG001`–`MG004` and `MG006` to Python sinks (`subprocess`, `os.system`, `open`/`pathlib`, `requests`/`httpx`, `os.environ`) with explicit `UNRESOLVED_*` diagnostics.
+- Added Python controls (`fixtures/python/`) and a separate Python benchmark slice in `BENCHMARK.md` while keeping TypeScript benchmark numbers unchanged.
+
 ## 1.0.0
 
 - Phase 1: Added 1-level local server factory support in `src/analyzer.ts` (`UNRESOLVED_FACTORY` diagnostics for deeper/imported/dynamic factories) and pre-registered `evaluation/v2/` (24/24 SDK example registrations recognized).

@@ -3,6 +3,7 @@ import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'n
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { analyzeSource } from '../dist/analyzer.js';
+import { analyzePythonSource } from '../dist/python-analyzer.js';
 import { loadManifest } from './fetch.mjs';
 import { generateLabelingSheet, resolveServerRoot } from './sheet.mjs';
 import { parseCsv, RULES, scoreRows, verifyLabelsSha256 } from './score.mjs';
@@ -36,7 +37,7 @@ function fmtRate(v, ci) {
   return `${pct} [${(ci.low * 100).toFixed(1)}%, ${(ci.high * 100).toFixed(1)}%]`;
 }
 
-export function runBenchmark({
+export async function runBenchmark({
   split = 'dev',
   labelsPath = path.join(here, 'dev-labels.csv'),
   sha256Path = path.join(here, 'dev-labels.sha256'),
@@ -81,6 +82,31 @@ export function runBenchmark({
   });
 
   const tsScores = scoreRows(scoredRows, RULES);
+
+  // Separate Python MCP server slice (v1.1)
+  const pyLabelsPath = path.join(here, 'python-dev-labels.csv');
+  const pyShaPath = path.join(here, 'python-dev-labels.sha256');
+  const pySha256 = verifyLabelsSha256(pyLabelsPath, readFileSync(pyShaPath, 'utf8'));
+  const pyRows = parseCsv(readFileSync(pyLabelsPath, 'utf8'));
+  const pyAnalysisCache = new Map();
+  for (const row of pyRows) {
+    if (!pyAnalysisCache.has(row.file)) {
+      pyAnalysisCache.set(row.file, await analyzePythonSource(row.file, readFileSync(path.resolve(root, row.file), 'utf8')));
+    }
+  }
+  const pyScoredRows = pyRows.map(row => {
+    const analysis = pyAnalysisCache.get(row.file);
+    const toolFindings = analysis.findings.filter(f => f.observed.includes(`Tool: ${row.handler_name}`));
+    const out = {
+      ...row,
+      analyzer_complete: analysis.coverage.complete ? 'true' : 'false',
+      analyzer_diagnostics: analysis.coverage.diagnostics.map(d => d.code).join(';')
+    };
+    for (const rule of RULES) out[`${rule}_detected`] = toolFindings.some(f => f.ruleId === rule) ? '1' : '0';
+    return out;
+  });
+  const pyScores = scoreRows(pyScoredRows, RULES);
+
   const grepBaseline = runGrepBaseline(files);
   const opengrepBaseline = runOpengrepBaseline(files);
   const evasion = runEvasionSuite();
@@ -93,8 +119,10 @@ export function runBenchmark({
     server_count: servers.length,
     file_count: files.length,
     labels_sha256: labelsSha256,
+    python_labels_sha256: pySha256,
     sheet_path: path.relative(root, sheet.outFile),
     typescript: tsScores,
+    python: pyScores,
     baselines: {
       grep: { total: grepBaseline.total, byRule: grepBaseline.byRule },
       opengrep: { status: opengrepBaseline.status, reason: opengrepBaseline.reason ?? null, total: opengrepBaseline.total ?? 0 }
@@ -142,7 +170,20 @@ export function runBenchmark({
     '',
     `- **Samples:** ${perf.samples} (${perf.files} files)`,
     `- **Per-file latency:** p50 = ${perf.latency_ms.p50} ms, p95 = ${perf.latency_ms.p95} ms`,
-    `- **Process RSS:** p50 = ${perf.rss_mb.p50} MiB, p95 = ${perf.rss_mb.p95} MiB`
+    `- **Process RSS:** p50 = ${perf.rss_mb.p50} MiB, p95 = ${perf.rss_mb.p95} MiB`,
+    '',
+    '## Python slice (separate v1.1 evaluation)',
+    '',
+    `- **Frozen Python labels SHA-256:** \`${pySha256}\``,
+    `- **Handler coverage:** ${(pyScores.coverage * 100).toFixed(1)}% (${pyScores.covered_handlers}/${pyScores.total_handlers} handlers, 95% Wilson CI [${(pyScores.coverage_ci95.low * 100).toFixed(1)}%, ${(pyScores.coverage_ci95.high * 100).toFixed(1)}%])`,
+    `- **Silent misses:** **${pyScores.total_silent_misses}**`,
+    '',
+    '| Rule | TP | FP | FN | TN | Unsupported | Silent misses | Precision (95% Wilson CI) | Recall (95% Wilson CI) | F1 |',
+    '|---|---:|---:|---:|---:|---:|---:|---|---|---:|',
+    ...RULES.map(r => {
+      const s = pyScores.per_rule[r];
+      return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${fmtRate(s.precision, s.precision_ci95)} | ${fmtRate(s.recall, s.recall_ci95)} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
+    })
   ];
 
   if (writeOutputs) {
@@ -159,13 +200,13 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const split = get('--split') ?? 'dev';
   const labelsPath = get('--labels');
   const sha256Path = get('--sha256-file');
-  const out = runBenchmark({ split, ...(labelsPath ? { labelsPath } : {}), ...(sha256Path ? { sha256Path } : {}) });
+  const out = await runBenchmark({ split, ...(labelsPath ? { labelsPath } : {}), ...(sha256Path ? { sha256Path } : {}) });
   console.log(JSON.stringify({
     split: out.split,
     servers: out.server_count,
     files: out.file_count,
-    coverage: out.typescript.coverage,
-    silent_misses: out.typescript.total_silent_misses,
+    typescript: { coverage: out.typescript.coverage, silent_misses: out.typescript.total_silent_misses },
+    python: { coverage: out.python.coverage, silent_misses: out.python.total_silent_misses },
     evasion: out.evasion,
     perf: out.perf
   }, null, 2));

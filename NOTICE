@@ -8,7 +8,9 @@ Runtime npm dependencies:
 - @modelcontextprotocol/client (2.2.0) — MIT License
 - @modelcontextprotocol/server (2.2.0) — MIT License
 - ajv (8.20.0) — MIT License
+- tree-sitter-python (0.25.0) — MIT License
 - typescript (6.0.3) — Apache-2.0 License
+- web-tree-sitter (0.27.2) — MIT License
 - zod (4.6.5) — MIT License
 
 Development npm dependencies:
