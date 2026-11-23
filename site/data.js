@@ -1,5 +1,5 @@
 /* Curated static copy of examples/seeded/*.json. Evidence fields are preserved. */
-window.MCP_GUARD_DEMO = {
+window.VAMBRACE_DEMO = {
   source: {
     target: "Project-owned seeded fixture: vulnerable",
     coverage: { complete: true, inspected: ["server.ts"], recognizedTools: 5, rulesApplied: ["MG001", "MG002", "MG003", "MG004", "MG006"], unresolvedHandlers: 0, diagnostics: [], excluded: [], failed: [], truncated: [] },

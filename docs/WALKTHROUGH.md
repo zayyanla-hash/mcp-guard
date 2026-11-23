@@ -1,10 +1,10 @@
-# MCP Guard walkthrough script
+# Vambrace walkthrough script
 
-**Status:** narration and shot plan only. No screen recording has been produced. The [browser demonstration](https://zayyanla-hash.github.io/mcp-guard/) presents recorded seeded evidence.
+**Status:** narration and shot plan only. No screen recording has been produced. The [browser demonstration](https://zayyanla-hash.github.io/vambrace/) presents recorded seeded evidence.
 
 ## 60–90 second narration
 
-> MCP Guard is an experimental offline CLI for a documented subset of MCP servers. It keeps two kinds of evidence separate: implementation patterns in JavaScript or TypeScript, and capabilities declared in a tool inventory.
+> Vambrace is an experimental offline CLI for a documented subset of MCP servers. It keeps two kinds of evidence separate: implementation patterns in JavaScript or TypeScript, and capabilities declared in a tool inventory.
 >
 > Here, the vulnerable fixture demonstrates several direct patterns. The analyzer parses syntax and import identity, then reports the source location and the assumptions behind each observation. Comments and strings do not become findings just because they contain alarming words. A finding is not proof of exploitation: severity, confidence, and coverage are recorded separately.
 >
@@ -31,12 +31,12 @@ Run from the repository root after dependencies are installed. Use a fresh outpu
 
 ```sh
 npm run build
-npm run guard -- audit ./fixtures/vulnerable --format json
-npm run guard -- audit ./fixtures/corrected --format json
-npm run guard -- snapshot ./fixtures/inventories/valid.json --out ../walkthrough-before.json
-npm run guard -- snapshot ./fixtures/inventories/drift.json --out ../walkthrough-after.json
-npm run guard -- diff ../walkthrough-before.json ../walkthrough-after.json
-npm run demo -- --out ../../work/mcp-guard-walkthrough-demo
+npm run vambrace -- audit ./fixtures/vulnerable --format json
+npm run vambrace -- audit ./fixtures/corrected --format json
+npm run vambrace -- snapshot ./fixtures/inventories/valid.json --out ../walkthrough-before.json
+npm run vambrace -- snapshot ./fixtures/inventories/drift.json --out ../walkthrough-after.json
+npm run vambrace -- diff ../walkthrough-before.json ../walkthrough-after.json
+npm run demo -- --out ../../work/vambrace-walkthrough-demo
 ```
 
 The first two commands display results directly. Snapshot commands create new files outside the fixture tree. The demo writes generated JSON/HTML evidence to a new directory. The recorded example under `examples/seeded/` is also suitable when the live terminal is not prepared. Do not run discovery as part of this walkthrough: it is a separate opt-in operation.

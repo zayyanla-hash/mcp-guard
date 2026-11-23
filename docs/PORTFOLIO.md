@@ -1,8 +1,8 @@
-# Recruiter case study: MCP Guard
+# Recruiter case study: Vambrace
 
 ## A narrow security review that keeps evidence and uncertainty visible
 
-**One-line summary.** I built MCP Guard, an experimental TypeScript CLI that audits a documented subset of MCP servers for six source and descriptor patterns, records evidence for each observation, compares declared tool inventories, and makes incomplete coverage visible in CI.
+**One-line summary.** I built Vambrace (formerly MCP Guard), an experimental TypeScript CLI that audits a documented subset of MCP servers for six source and descriptor patterns, records evidence for each observation, compares declared tool inventories, and makes incomplete coverage visible in CI.
 
 ### The engineering problem
 

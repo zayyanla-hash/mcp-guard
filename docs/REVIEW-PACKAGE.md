@@ -1,10 +1,10 @@
-# MCP Guard external review package
+# Vambrace external review package
 
 This package is ready to share with a technically curious reviewer. No reviewer has been contacted and no external feedback is represented here.
 
 ## What to review
 
-MCP Guard v0.2.1 is an experimental offline CLI for a documented JavaScript/TypeScript source subset and supplied MCP tool inventories. The useful review question is whether the evidence and boundaries are honest and understandable, not whether the project proves an MCP server is safe.
+Vambrace v0.3.0 (renamed from MCP Guard v0.2.1) is an experimental offline CLI for a documented JavaScript/TypeScript source subset and supplied MCP tool inventories. The useful review question is whether the evidence and boundaries are honest and understandable, not whether the project proves an MCP server is safe.
 
 Start with:
 

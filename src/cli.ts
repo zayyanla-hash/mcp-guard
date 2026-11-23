@@ -16,8 +16,8 @@ import type { AuditResult, Severity } from './types.js';
 const cancellation=new AbortController();
 process.once('SIGINT',()=>cancellation.abort());
 process.once('SIGTERM',()=>cancellation.abort());
-const HELP=`MCP Guard ${VERSION} — bounded offline MCP audits
-Usage: mcp-guard <command> [arguments] [options]
+const HELP=`Vambrace ${VERSION} — bounded offline MCP audits
+Usage: vambrace <command> [arguments] [options]
   audit <directory>                  Static source audit; never executes targets
   inventory <tools.json>             Validate offline inventory
   snapshot <tools.json> --out <file>  Create a new inventory baseline

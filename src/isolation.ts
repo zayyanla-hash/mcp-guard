@@ -39,7 +39,7 @@ async function launch(script:string,args:string[],options:LaunchOptions):Promise
 export async function verifyIsolation():Promise<{backend:string;verified:boolean;controls:Record<string,boolean>}> {
   if(process.platform!=='darwin')throw new IsolationBlocked('No verified isolation backend on this platform.');
   const probe=fileURLToPath(new URL('./isolation-probe.js',import.meta.url));
-  const scratch=await fs.mkdtemp(path.join(os.tmpdir(),'mcp-guard-isolation-'));
+  const scratch=await fs.mkdtemp(path.join(os.tmpdir(),'vambrace-isolation-'));
   const canary=path.join(scratch,'fake-canary.txt');
   await fs.writeFile(canary,'FAKE_PRIVATE_CANARY_SCOPE_ONLY',{mode:0o600});
   let child:IsolatedChild|undefined;

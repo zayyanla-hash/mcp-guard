@@ -172,7 +172,7 @@ async function runDiscovery(mode: DiscoveryFixtureMode, options: DiscoveryOption
     process = await launchFixture(fixturePaths[mode], { signal: controller.signal, maxBytes: MAX_STREAM_BYTES, timeoutMs: MAX_TOTAL_MS });
     transport = new FixtureTransport(process);
     client = new Client(
-      { name: 'mcp-guard', version: VERSION },
+      { name: 'vambrace', version: VERSION },
       {
         versionNegotiation: { mode: { pin: PROTOCOL_VERSION } },
         inputRequired: { autoFulfill: false },

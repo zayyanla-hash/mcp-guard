@@ -1,18 +1,20 @@
 {
-  "name": "mcp-guard",
-  "version": "0.2.1",
+  "name": "vambrace",
+  "version": "0.3.0",
   "description": "Offline, evidence-linked auditing and inventory drift for a documented subset of MCP servers",
   "type": "module",
   "private": true,
   "license": "MIT",
   "bin": {
-    "mcp-guard": "dist/cli.js"
+    "vambrace": "dist/cli.js",
+    "mcp-guard": "dist/mcp-guard-alias.js"
   },
   "files": [
     "dist",
     "fixtures",
     "README.md",
     "LICENSE",
+    "NOTICE",
     "docs",
     "examples",
     "SECURITY.md",
@@ -23,6 +25,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "vambrace": "node dist/cli.js",
     "guard": "node dist/cli.js",
     "test": "npm run build && node --test tests/bounded-scan.test.mjs tests/cli.test.mjs tests/inventory.test.mjs tests/reporting.test.mjs tests/scanner.test.mjs tests/source.test.mjs",
     "validate": "npm test",

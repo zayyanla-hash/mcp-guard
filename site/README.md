@@ -1,4 +1,4 @@
-# MCP Guard recruiter walkthrough
+# Vambrace recruiter walkthrough
 
 This is a plain static HTML/CSS/JavaScript presentation. It has no build step, frontend framework, remote scripts, analytics, or font dependencies.
 

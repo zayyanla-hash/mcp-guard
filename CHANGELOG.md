@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- Renamed the project, npm package, and CLI from `MCP Guard` (`mcp-guard`) to `Vambrace` (`vambrace`).
+- Kept `mcp-guard` as a deprecated binary alias emitting a one-line stderr notice until v0.4.0.
+- Added `AGENTS.md` standing rules and `NOTICE` dependency/license attribution while keeping `src/analyzer.ts` and `evaluation/` unchanged from v0.2.1.
+
 ## 0.2.1
 
 - Added an explicit `audit --fixture-root` annotation for repositories containing seeded examples. JSON, terminal, and HTML reports identify operator-declared fixture paths while retaining every finding, coverage diagnostic, and policy exit. Paths are validated within the audit root; the declaration does not establish safety.

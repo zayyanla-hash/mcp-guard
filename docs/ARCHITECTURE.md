@@ -1,6 +1,6 @@
-# MCP Guard architecture
+# Vambrace architecture
 
-MCP Guard has two input paths and one reporting contract. The paths keep source implementation patterns separate from supplied tool metadata.
+Vambrace (formerly MCP Guard) has two input paths and one reporting contract. The paths keep source implementation patterns separate from supplied tool metadata.
 
 ```text
 JavaScript / TypeScript tree ── bounded scanner ── AST source rules ──┐

@@ -1,5 +1,5 @@
 (() => {
-  const data = window.MCP_GUARD_DEMO;
+  const data = window.VAMBRACE_DEMO;
   const byId = (id) => document.getElementById(id);
   const esc = (value) => String(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
   const asCode = (value) => esc(typeof value === "string" ? value : JSON.stringify(value, null, 2));
@@ -55,7 +55,7 @@
   }
   document.addEventListener("click", async event => {
     const button = event.target.closest("[data-copy], #copy-install, #copy-demo"); if (!button) return;
-    const text = button.id === "copy-install" ? byId("install-command").textContent : button.id === "copy-demo" ? ["git clone https://github.com/zayyanla-hash/mcp-guard.git", "cd mcp-guard", "npm ci --ignore-scripts", "npm run demo"].join("\n") : button.dataset.copy;
+    const text = button.id === "copy-install" ? byId("install-command").textContent : button.id === "copy-demo" ? ["git clone https://github.com/zayyanla-hash/vambrace.git", "cd vambrace", "npm ci --ignore-scripts", "npm run demo"].join("\n") : button.dataset.copy;
     const status = button.id === "copy-install" ? byId("copy-status") : null;
     try {
       await copyText(text);

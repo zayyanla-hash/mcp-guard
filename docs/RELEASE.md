@@ -1,6 +1,6 @@
-# v0.2.1 release gate
+# v0.3.0 release gate
 
-Distribution: GitHub archive and checksum under zayyanla-hash/mcp-guard. Runtime transitive dependencies are locked by npm-shrinkwrap.json, which is included in the archive. The npm registry name belongs to another project.
+Distribution: release archive, checksum, and npm package `vambrace` under zayyanla-hash/vambrace (previously `mcp-guard`). Runtime transitive dependencies are locked by npm-shrinkwrap.json, which is included in the archive. The `mcp-guard` bin remains as a deprecated alias in v0.3.0 until v0.4.0.
 
 Required gates: clean scoped diff, npm ci --ignore-scripts, offline test and validate commands, seeded demo, CLI help/version/invalid input, reviewed-fixture discovery under verified OS restrictions, denial probes, timeout/cancellation/PID cleanup, malicious-protocol fixtures, archive installation, independent public download checksum/install, and Linux/macOS Node24/26 CI. No skipped mandatory tests.
 

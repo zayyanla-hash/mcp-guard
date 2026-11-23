@@ -1,6 +1,6 @@
 # Read-only fixture discovery
 
-MCP Guard can collect a tool descriptor from its reviewed, project-owned stdio fixture. Discovery is disabled unless the CLI receives both `--approve-execution` and `--fixture reviewed`. It accepts no server config, command, argument list, URL, or executable path. The CLI never exposes the adversarial test fixtures.
+Vambrace can collect a tool descriptor from its reviewed, project-owned stdio fixture. Discovery is disabled unless the CLI receives both `--approve-execution` and `--fixture reviewed`. It accepts no server config, command, argument list, URL, or executable path. The CLI never exposes the adversarial test fixtures.
 
 Discovery uses the official MCP TypeScript client v2 SDK and pins the protocol to `2026-07-28`. It launches only the built-in fixture through the project isolation launcher, inventories `tools/list` pages, and never calls a tool, reads a resource, or requests a prompt. The protocol revision is explicitly negotiated because v2 clients otherwise default to the 2025-era exchange. See the [SDK guide for protocol revision 2026-07-28](https://ts.sdk.modelcontextprotocol.io/v2/migration/support-2026-07-28).
 

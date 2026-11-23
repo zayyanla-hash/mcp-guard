@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const readJson = async (name) => JSON.parse(await readFile(path.join(root, 'examples/seeded', name), 'utf8'));
 const window = {};
 vm.runInNewContext(await readFile(path.join(root, 'site/data.js'), 'utf8'), { window });
-const demo = JSON.parse(JSON.stringify(window.MCP_GUARD_DEMO));
+const demo = JSON.parse(JSON.stringify(window.VAMBRACE_DEMO));
 assert.ok(demo, 'static demo data is present');
 const [source, corrected, inventory, drift, before, after] = await Promise.all([
   readJson('vulnerable.json'), readJson('corrected.json'), readJson('inventory.json'),
@@ -69,4 +69,4 @@ for (const [key, count] of Object.entries(externalCounts)) {
   assert.equal(displayed.length, 1, `one visible external evaluation count for ${key}`);
   assert.equal(Number(displayed[0][1]), count, `displayed ${key} matches the recorded evaluation`);
 }
-console.log('MCP Guard static demo validation passed: seeded evidence, external evaluation summary, relative assets, and dependency boundary.');
+console.log('Vambrace static demo validation passed: seeded evidence, external evaluation summary, relative assets, and dependency boundary.');

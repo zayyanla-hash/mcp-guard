@@ -1,0 +1,27 @@
+Vambrace
+Copyright 2026 Zayyan Latif
+Licensed under the MIT License (see LICENSE).
+
+This package bundles or depends on the following third-party components (MIT or Apache-2.0):
+
+Runtime npm dependencies:
+- @modelcontextprotocol/client (2.2.0) — MIT License
+- @modelcontextprotocol/server (2.2.0) — MIT License
+- ajv (8.20.0) — MIT License
+- typescript (6.0.3) — Apache-2.0 License
+- zod (4.6.5) — MIT License
+
+Development npm dependencies:
+- @types/node (26.0.0) — MIT License
+
+Vendored evaluation data:
+- evaluation/**/vendor/modelcontextprotocol-typescript-sdk — MIT / Apache-2.0 transition (see vendored LICENSE)
+
+Optional external binaries and user-downloaded artifacts (not bundled in this package):
+- Opengrep (LGPL-2.1) — external benchmark baseline binary
+- OSV-Scanner (Apache-2.0) — optional external lockfile scanner binary
+- Cisco MCP Scanner (Apache-2.0) — optional external YARA static metadata scanner binary
+- ToolHive (Apache-2.0) — optional external container runtime backend for Linux discovery
+- agentgateway (Apache-2.0) — optional external MCP gateway target for compiled policy
+- Llama Prompt Guard 2 (Llama 4 Community License) — user-downloaded model weights for optional local sidecar
+- Foundation-Sec-8B (Apache-2.0 base model) — user-served local model via Ollama or MLX for advisory explanations

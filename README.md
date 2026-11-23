@@ -1,12 +1,12 @@
-# MCP Guard
+# Vambrace
 
-A local CLI for reviewing specific risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
+Vambrace audits MCP servers without running them, and proves how well it works. A local CLI for reviewing risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
 
-**Status: v0.2.1, scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
+**Status: v0.3.0 (renamed from MCP Guard), scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
 
 ## Inspect the evidence
 
-[Interactive browser demo](https://zayyanla-hash.github.io/mcp-guard/) · [Engineering case study](docs/PORTFOLIO.md) · [Architecture](docs/ARCHITECTURE.md) · [External coverage study](docs/EVALUATION-EXTERNAL.md)
+[Interactive browser demo](https://zayyanla-hash.github.io/vambrace/) · [Engineering case study](docs/PORTFOLIO.md) · [Architecture](docs/ARCHITECTURE.md) · [External coverage study](docs/EVALUATION-EXTERNAL.md)
 
 The browser demo shows recorded project-owned seeded fixtures. It does not execute a server or scan visitor files. The separate external study uses 24 actual handlers across seven unchanged official SDK example files: the analyzer reported four recognized registrations in aggregate; manual review identified 20 factory-bound registrations outside the supported shape, and all seven files had incomplete coverage. Zero findings is not a clean assessment or an accuracy result.
 
@@ -22,8 +22,8 @@ npm run validate:site
 Requires Node.js 24 or newer and npm. No model credentials or external servers are needed.
 
 ```sh
-git clone https://github.com/zayyanla-hash/mcp-guard.git
-cd mcp-guard
+git clone https://github.com/zayyanla-hash/vambrace.git
+cd vambrace
 npm ci --ignore-scripts
 npm run validate
 npm run demo
@@ -37,14 +37,14 @@ npm run demo -- --out demo-output-2
 
 These results measure seeded examples, not real-world detection accuracy. No fixture server is started.
 
-## Install the GitHub release
+## Install the release
 
-Distribution is through the GitHub release archive. The registry package named `mcp-guard` belongs to someone else; do not install it as this project.
+Distribution is through the release archive (and npm package `vambrace`). `mcp-guard` remains as a deprecated CLI alias in v0.3.0 and will be removed in v0.4.0.
 
 ```sh
-npm install --global https://github.com/zayyanla-hash/mcp-guard/releases/download/v0.2.1/mcp-guard-0.2.1.tgz --ignore-scripts
-mcp-guard --help
-mcp-guard --version
+npm install --global https://github.com/zayyanla-hash/vambrace/releases/download/v0.3.0/vambrace-0.3.0.tgz --ignore-scripts
+vambrace --help
+vambrace --version
 ```
 
 The archive contains compiled code; installation does not require a build. Its runtime dependencies are locked by the packaged npm-shrinkwrap.json, including TypeScript (parser), Ajv (schema meta-validation), the official MCP SDK and Zod (reviewed fixture schemas).
@@ -54,23 +54,23 @@ The archive contains compiled code; installation does not require a build. Its r
 Build once with `npm run build` when running from source.
 
 ```sh
-npm run guard -- audit ./fixtures/vulnerable --format json --out ../scan.json
-npm run guard -- audit ./fixtures/corrected
-npm run guard -- inventory ./fixtures/inventories/valid.json
-npm run guard -- snapshot ./fixtures/inventories/valid.json --out ../before.json
-npm run guard -- snapshot ./fixtures/inventories/drift.json --out ../after.json
-npm run guard -- diff ../before.json ../after.json
-npm run guard -- report ../scan.json --out ../report.html
+npm run vambrace -- audit ./fixtures/vulnerable --format json --out ../scan.json
+npm run vambrace -- audit ./fixtures/corrected
+npm run vambrace -- inventory ./fixtures/inventories/valid.json
+npm run vambrace -- snapshot ./fixtures/inventories/valid.json --out ../before.json
+npm run vambrace -- snapshot ./fixtures/inventories/drift.json --out ../after.json
+npm run vambrace -- diff ../before.json ../after.json
+npm run vambrace -- report ../scan.json --out ../report.html
 ```
 
 When scanning a repository that contains seeded test fixtures, the operator can label a fixture directory without suppressing findings:
 
 ```sh
-npm run guard -- audit . --fixture-root fixtures --format json --out ../repository-scan.json
-npm run guard -- report ../repository-scan.json --out ../repository-scan.html
+npm run vambrace -- audit . --fixture-root fixtures --format json --out ../repository-scan.json
+npm run vambrace -- report ../repository-scan.json --out ../repository-scan.html
 ```
 
-The report calls this an **operator-declared fixture path**. MCP Guard does not verify that code under the path is harmless. The label does not change findings, coverage, or CI exit codes. Use it only for an actual test-fixture directory within the selected source root.
+The report calls this an **operator-declared fixture path**. Vambrace does not verify that code under the path is harmless. The label does not change findings, coverage, or CI exit codes. Use it only for an actual test-fixture directory within the selected source root.
 
 Outputs must be new files. Source audit output must be outside the selected target root. No baseline is overwritten automatically. `--threshold low|medium|high` sets the finding policy (default medium); descriptor drift requires review independently of severity. `--format terminal|json` applies to audit, inventory, and diff. There are no automatic suppressions or executable configuration plugins.
 
@@ -89,8 +89,8 @@ Explicitly approve only the reviewed built-in fixture:
 
 ```sh
 npm run discovery:demo
-npm run guard -- discover --fixture reviewed --approve-execution --format json --inventory-out ../discovered-tools.json
-npm run guard -- snapshot ../discovered-tools.json --out ../discovered.snapshot.json
+npm run vambrace -- discover --fixture reviewed --approve-execution --format json --inventory-out ../discovered-tools.json
+npm run vambrace -- snapshot ../discovered-tools.json --out ../discovered.snapshot.json
 npm run test:discovery
 ```
 
