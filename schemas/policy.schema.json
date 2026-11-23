@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vambrace Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "allowedTools"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "threshold": { "type": "string", "enum": ["low", "medium", "high"] },
+    "allowedTools": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "pinnedDescriptors": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "deniedCapabilities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

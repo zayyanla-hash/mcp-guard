@@ -6,3 +6,4 @@ demo-output*/
 artifacts/
 bench/.cache/
 bench/artifacts/
+e2e/artifacts/

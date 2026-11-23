@@ -7,11 +7,11 @@ import os from 'node:os';
 const cli=path.resolve('dist/cli.js');
 const run=(...args)=>spawnSync(process.execPath,[cli,...args],{encoding:'utf8',timeout:15000});
 test('help and version identify the working CLI',()=>{
- const help=run('--help');assert.equal(help.status,0);assert.match(help.stdout,/Vambrace 0\.3\.0/);assert.match(help.stdout,/audit <directory>/);assert.match(help.stdout,/never executes targets/);
- const version=run('--version');assert.equal(version.status,0);assert.equal(version.stdout.trim(),'0.3.0');
+ const help=run('--help');assert.equal(help.status,0);assert.match(help.stdout,/Vambrace 1\.0\.0/);assert.match(help.stdout,/audit <directory>/);assert.match(help.stdout,/never executes targets/);
+ const version=run('--version');assert.equal(version.status,0);assert.equal(version.stdout.trim(),'1.0.0');
  const alias=spawnSync(process.execPath,[path.resolve('dist/mcp-guard-alias.js'),'--version'],{encoding:'utf8',timeout:15000});
  assert.equal(alias.status,0);
- assert.equal(alias.stdout.trim(),'0.3.0');
+ assert.equal(alias.stdout.trim(),'1.0.0');
  assert.equal(alias.stderr.trim(),'mcp-guard is now vambrace. This alias will be removed in v0.4.0.');
 });
 test('invalid commands and flags fail with exit 2',()=>{

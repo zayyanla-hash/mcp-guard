@@ -1,6 +1,6 @@
 {
   "name": "vambrace",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Offline, evidence-linked auditing and inventory drift for a documented subset of MCP servers",
   "type": "module",
   "private": true,
@@ -28,7 +28,7 @@
     "build": "tsc",
     "vambrace": "node dist/cli.js",
     "guard": "node dist/cli.js",
-    "test": "npm run build && node --test tests/bounded-scan.test.mjs tests/cli.test.mjs tests/inventory.test.mjs tests/reporting.test.mjs tests/scanner.test.mjs tests/source.test.mjs tests/bench.test.mjs tests/sarif.test.mjs tests/deps.test.mjs tests/config.test.mjs tests/injection.test.mjs tests/engines.test.mjs tests/explain.test.mjs",
+    "test": "npm run build && node --test tests/bounded-scan.test.mjs tests/cli.test.mjs tests/inventory.test.mjs tests/reporting.test.mjs tests/scanner.test.mjs tests/source.test.mjs tests/bench.test.mjs tests/sarif.test.mjs tests/deps.test.mjs tests/config.test.mjs tests/injection.test.mjs tests/engines.test.mjs tests/explain.test.mjs tests/toolhive.test.mjs tests/policy-compile.test.mjs",
     "validate": "npm test",
     "bench": "npm run build && node bench/run.mjs",
     "demo": "npm run build && node dist/demo.js",

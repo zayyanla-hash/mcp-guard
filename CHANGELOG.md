@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+- Phase 1: Added 1-level local server factory support in `src/analyzer.ts` (`UNRESOLVED_FACTORY` diagnostics for deeper/imported/dynamic factories) and pre-registered `evaluation/v2/` (24/24 SDK example registrations recognized).
+- Phase 2: Added benchmark infrastructure (`bench/`), Wilson 95% confidence intervals, AST evasion suite, grep/Opengrep baselines, performance tracking, and auto-generated `BENCHMARK.md`.
+- Phase 3: Added SARIF 2.1.0 output (`--format sarif`) validated against OASIS schema, OWASP MCP Top 10 rule tags, GitHub Action (`action/`), verifiable release workflow (Syft SBOM, Sigstore keyless signing, npm provenance), `vambrace deps` (OSV-Scanner opt-in), and `vambrace config` (`MG008`–`MG012`).
+- Phase 4: Added `MG007` tool poisoning checks with exact span/offset evidence, `--ignore-order` diff mode, optional `--engine cisco-yara` / `--engine promptguard` adapters + Python sidecar, and advisory `vambrace explain` with JSON schema validation, faithfulness checking, and exit-code invariance.
+- Phase 5: Added Linux ToolHive container discovery backend (fail-closed), `vambrace.policy.yaml` schema + `--policy` enforcement, deterministic `vambrace policy compile --target agentgateway|mcp-context-protector`, and `e2e/` gateway verification harness.
+
 ## 0.3.0
 
 - Renamed the project, npm package, and CLI from `MCP Guard` (`mcp-guard`) to `Vambrace` (`vambrace`).

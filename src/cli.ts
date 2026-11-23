@@ -15,6 +15,8 @@ import { fileURLToPath } from 'node:url';
 import { discoverFixture, DiscoveryIncomplete } from './discovery.js';
 import { IsolationBlocked,describeFixtureLaunch } from './isolation.js';
 import { policyExit } from './policy.js';
+import { evaluatePolicyAgainstResult, loadPolicyFile } from './policy-file.js';
+import { compilePolicyConfig, type CompileTarget } from './policy-compile.js';
 import type { AuditResult, Severity } from './types.js';
 
 const cancellation=new AbortController();
@@ -30,8 +32,10 @@ Usage: vambrace <command> [arguments] [options]
   diff <before.json> <after.json>    Explain inventory drift
   report <scan.json> --out <file>    Render self-contained HTML
   explain <scan.json>                Advisory triage via local OpenAI-compatible model
+  policy compile --policy <file> --snapshot <file> --target agentgateway|mcp-context-protector
+                                     Compile approved policy into gateway/pin config
   discover --fixture reviewed --approve-execution
-                                     Isolated reviewed local fixture (macOS only)
+                                     Isolated reviewed local fixture (macOS Seatbelt / Linux ToolHive)
 Options:
   --format terminal|json|sarif       Audit/inventory/diff/config/deps output (default terminal)
   --out <file>                       Write a NEW artifact; never overwrite
@@ -42,6 +46,10 @@ Options:
   --engine cisco-yara|promptguard    Inventory: optional external/sidecar metadata engine
   --endpoint <url>                   Local OpenAI-compatible or Prompt Guard URL
   --model <name>                     Explain: local model name (default foundation-sec-8b)
+  --policy <file>                    Audit/inventory/diff/config/deps/policy: vambrace.policy.yaml
+  --snapshot <file>                  Policy compile: inventory or snapshot JSON
+  --target <name>                    Policy compile target (agentgateway|mcp-context-protector)
+  --backend seatbelt|toolhive        Discovery isolation backend
   --threshold low|medium|high        Finding policy threshold (default medium)
   --help                             Show help
   --version                          Show version
@@ -81,31 +89,43 @@ async function main(argv:string[]):Promise<number> {
   if(argv.length===1&&argv[0]==='--version'){console.log(VERSION);return 0;}
   if(!argv.length||(argv.length===1&&argv[0]==='--help')){console.log(HELP);return 0;}
   const command=argv.shift()!;
-  if(!['audit','inventory','config','deps','snapshot','diff','report','explain','discover'].includes(command))throw new Error('Unknown command: '+command);
+  if(!['audit','inventory','config','deps','snapshot','diff','report','explain','discover','policy'].includes(command))throw new Error('Unknown command: '+command);
   if(argv.length===1&&argv[0]==='--help'){console.log(HELP);return 0;}
   const positions:string[]=[],options=new Map<string,string>();
   for(let i=0;i<argv.length;i++){
     const value=argv[i]!;
     if(value.startsWith('--')){
-      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root','--allow-network','--ignore-order','--engine','--endpoint','--model'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
+      if(!['--out','--format','--threshold','--fixture','--approve-execution','--inventory-out','--fixture-root','--allow-network','--ignore-order','--engine','--endpoint','--model','--policy','--snapshot','--target','--backend'].includes(value)||options.has(value))throw new Error('Unknown or repeated option: '+value);
       if(value==='--approve-execution'||value==='--allow-network'||value==='--ignore-order'){options.set(value,'true');continue;}
       const next=argv[++i];if(!next||next.startsWith('--'))throw new Error('Missing value for '+value);options.set(value,next);
     }else if(value.startsWith('-'))throw new Error('Unknown option: '+value);else positions.push(value);
   }
+  if(command==='policy'){
+    if(positions.length!==1||positions[0]!=='compile')throw new Error('Usage: vambrace policy compile --policy <file> --snapshot <file> --target agentgateway|mcp-context-protector [--out <file>]');
+    const policyPath=options.get('--policy'),snapshotPath=options.get('--snapshot'),target=(options.get('--target')??'agentgateway') as CompileTarget;
+    if(!policyPath||!snapshotPath)throw new Error('policy compile requires --policy and --snapshot');
+    if(!['agentgateway','mcp-context-protector'].includes(target))throw new Error('Unsupported policy compile --target: '+target);
+    const compiled=compilePolicyConfig(await loadPolicyFile(policyPath),await readJson(snapshotPath),target);
+    if(options.get('--out'))await writeNew(options.get('--out')!,compiled.content);else process.stdout.write(compiled.content);
+    return 0;
+  }
   if(positions.length!==(command==='diff'?2:command==='discover'?0:1))throw new Error('Incorrect number of arguments for '+command);
-  const format=options.get('--format')??'terminal',threshold=options.get('--threshold')??'medium',out=options.get('--out');
+  const format=options.get('--format')??'terminal',threshold=options.get('--threshold'),out=options.get('--out');
   if(!['terminal','json','sarif'].includes(format))throw new Error('Invalid output format');
-  if(!['low','medium','high'].includes(threshold))throw new Error('Invalid severity threshold');
-  if(command!=='discover'&&(options.has('--fixture')||options.has('--approve-execution')||options.has('--inventory-out')))throw new Error('Discovery options only apply to discover');
+  if(threshold!==undefined&&!['low','medium','high'].includes(threshold))throw new Error('Invalid severity threshold');
+  if(command!=='discover'&&(options.has('--fixture')||options.has('--approve-execution')||options.has('--inventory-out')||options.has('--backend')))throw new Error('Discovery options only apply to discover');
   if(command!=='audit'&&options.has('--fixture-root'))throw new Error('--fixture-root only applies to audit');
   if(command!=='deps'&&options.has('--allow-network'))throw new Error('--allow-network only applies to deps');
   if(command!=='diff'&&options.has('--ignore-order'))throw new Error('--ignore-order only applies to diff');
   if(command!=='inventory'&&options.has('--engine'))throw new Error('--engine only applies to inventory');
   if(command!=='explain'&&options.has('--model'))throw new Error('--model only applies to explain');
   if(!['explain','inventory'].includes(command)&&options.has('--endpoint'))throw new Error('--endpoint only applies to explain or inventory');
+  if(options.has('--snapshot')||options.has('--target'))throw new Error('--snapshot and --target only apply to policy compile');
   if(options.has('--engine')&&!['cisco-yara','promptguard'].includes(options.get('--engine')!))throw new Error('Unsupported --engine; choose cisco-yara or promptguard');
+  if(options.has('--backend')&&!['seatbelt','toolhive'].includes(options.get('--backend')!))throw new Error('Unsupported --backend; choose seatbelt or toolhive');
+  const policyFile=options.has('--policy')?await loadPolicyFile(options.get('--policy')!):undefined;
   if(command==='explain'){
-    const explained=await explainScanResult(await readJson(positions[0]!),{endpoint:options.get('--endpoint'),model:options.get('--model'),threshold:threshold as Severity});
+    const explained=await explainScanResult(await readJson(positions[0]!),{endpoint:options.get('--endpoint'),model:options.get('--model'),threshold:(threshold??'medium') as Severity});
     const rendered=JSON.stringify(explained,null,2)+'\n';
     if(out)await writeNew(out,rendered);else process.stdout.write(rendered);
     return explained.policyExitCode;
@@ -125,9 +145,10 @@ async function main(argv:string[]):Promise<number> {
   let result:AuditResult;
   if(command==='discover'){
     if(options.get('--fixture')!=='reviewed'||!options.has('--approve-execution')){console.error('BLOCKED: use --fixture reviewed --approve-execution to explicitly authorize the isolated project-owned fixture.');return 3;}
+    const backend=(options.get('--backend') as 'seatbelt'|'toolhive'|undefined)??(process.platform==='linux'?'toolhive':'seatbelt');
     const approvedFixture=fileURLToPath(new URL('../fixtures/discovery/reviewed.mjs',import.meta.url));
-    console.error('Approved executable/arguments: '+cleanTerminal(redactText(JSON.stringify(await describeFixtureLaunch(approvedFixture)))));
-    const acquired=await discoverFixture({approved:true,signal:cancellation.signal});
+    if(backend==='seatbelt')console.error('Approved executable/arguments: '+cleanTerminal(redactText(JSON.stringify(await describeFixtureLaunch(approvedFixture)))));
+    const acquired=await discoverFixture({approved:true,signal:cancellation.signal,backend});
     result=await artifact('inventory',[acquired.inventory]) as AuditResult;
     result.target='Project-owned reviewed fixture: isolated SDK discovery';
     if(options.has('--inventory-out')){const checked=await artifact('snapshot',[acquired.inventory]) as {payload:unknown};await writeNew(options.get('--inventory-out')!,canonical(checked.payload)+'\n',fileURLToPath(new URL('../fixtures',import.meta.url)));}
@@ -169,6 +190,7 @@ async function main(argv:string[]):Promise<number> {
   result=validateResult(result);
   const rendered=format==='json'?JSON.stringify(result,null,2)+'\n':format==='sarif'?renderSarif(result)+'\n':renderTerminal(result)+'\n';
   if(out)await writeNew(out,rendered,command==='audit'?positions[0]:undefined);else process.stdout.write(rendered);
-  return policyExit(result,threshold as Severity);
+  if(policyFile)return evaluatePolicyAgainstResult(result,policyFile,threshold as Severity|undefined);
+  return policyExit(result,(threshold??'medium') as Severity);
 }
 main(process.argv.slice(2)).then(code=>{process.exitCode=code;}).catch(error=>{console.error('Error: '+cleanTerminal(redactText(error instanceof Error?error.message:String(error))));process.exitCode=error instanceof IsolationBlocked||error instanceof DiscoveryIncomplete?3:2;});

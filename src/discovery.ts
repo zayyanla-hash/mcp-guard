@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { ReadBuffer, Client, isJSONRPCRequest, serializeMessage, type JSONRPCMessage, type Transport } from '@modelcontextprotocol/client';
 import type { Readable, Writable } from 'node:stream';
 import { launchFixture, IsolationBlocked } from './isolation.js';
+import { discoverWithToolHive } from './toolhive.js';
 
 export class DiscoveryIncomplete extends Error {readonly code='DISCOVERY_INCOMPLETE';}
 const PROTOCOL_VERSION = '2026-07-28';
@@ -20,6 +21,7 @@ export interface DiscoveryOptions {
   /** Must be set by the CLI only after both required approval flags are present. */
   approved?: boolean;
   signal?: AbortSignal;
+  backend?: 'seatbelt' | 'toolhive';
 }
 
 export interface DiscoveryDiagnostic {
@@ -150,6 +152,10 @@ const fixturePaths: Record<DiscoveryFixtureMode, string> = {
  */
 export async function discoverFixture(options: DiscoveryOptions = {}): Promise<DiscoveryResult> {
   if (options.approved !== true) throw new Error('Discovery is disabled. Pass --approve-execution and --fixture reviewed to approve the built-in fixture.');
+  const backend = options.backend ?? (process.platform === 'linux' ? 'toolhive' : 'seatbelt');
+  if (backend === 'toolhive') {
+    return discoverWithToolHive({ approved: true, signal: options.signal });
+  }
   return runDiscovery('reviewed', options);
 }
 

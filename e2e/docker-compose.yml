@@ -1,0 +1,33 @@
+services:
+  fixture-server:
+    image: node:24-alpine
+    working_dir: /app
+    command: ["node", "e2e/fixture-server.mjs"]
+    environment:
+      PORT: "3001"
+      DRIFT_MODE: "${DRIFT_MODE:-0}"
+    volumes:
+      - ../:/app:ro
+    ports:
+      - "3001:3001"
+
+  agentgateway:
+    image: ghcr.io/agentgateway/agentgateway:latest
+    command: ["-f", "/config/agentgateway.yaml"]
+    depends_on:
+      - fixture-server
+    volumes:
+      - ./artifacts/agentgateway.yaml:/config/agentgateway.yaml:ro
+    ports:
+      - "3000:3000"
+
+  test-client:
+    image: node:24-alpine
+    working_dir: /app
+    depends_on:
+      - agentgateway
+    environment:
+      GATEWAY_URL: "http://agentgateway:3000/mcp"
+    volumes:
+      - ../:/app:ro
+    command: ["node", "e2e/test-client.mjs"]

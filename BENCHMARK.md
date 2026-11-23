@@ -1,6 +1,6 @@
 # Vambrace Benchmark Report
 
-Generated automatically by `npm run bench` (2026-11-23T10:08:48.774Z). Never hand-edited.
+Generated automatically by `npm run bench` (2026-11-23T10:19:50.093Z). Never hand-edited.
 
 - **Split:** `dev` (3 servers, 5 source files, seed `20261123`)
 - **Frozen labels SHA-256:** `75d161afcbca9fad44083b9b203a095204dd385c33e1cd9b3c7649f223dc4feb`
@@ -54,5 +54,5 @@ Tested 20 transformed variants across MG001–MG004: **20 detected**, **0 flagge
 ## Performance
 
 - **Samples:** 15 (5 files)
-- **Per-file latency:** p50 = 1.557 ms, p95 = 4.99 ms
-- **Process RSS:** p50 = 161.844 MiB, p95 = 167.313 MiB
+- **Per-file latency:** p50 = 0.971 ms, p95 = 2.173 ms
+- **Process RSS:** p50 = 162.469 MiB, p95 = 167.922 MiB

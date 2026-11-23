@@ -2,11 +2,11 @@
 
 Vambrace audits MCP servers without running them, and proves how well it works. A local CLI for reviewing risky MCP implementation patterns, validating offline tool inventories, and comparing declared capabilities over time.
 
-**Status: v0.3.0 (renamed from MCP Guard), scoped developer release.** Static analysis supports a documented subset of JavaScript/TypeScript. Findings include evidence and assumptions; incomplete assessments are visible. This is a defensive auditor, not a runtime firewall or a security certification.
+**Status: v1.0.0 (renamed from MCP Guard).** Static analysis supports a documented subset of JavaScript/TypeScript, SARIF 2.1.0, client config checks (`MG008`–`MG012`), tool-poisoning checks (`MG007`), unified `vambrace.policy.yaml` + `agentgateway` policy compilation, and optional local advisory triage (`vambrace explain`). Findings include evidence and assumptions; incomplete assessments are visible.
 
 ## Inspect the evidence
 
-[Interactive browser demo](https://zayyanla-hash.github.io/vambrace/) · [Engineering case study](docs/PORTFOLIO.md) · [Architecture](docs/ARCHITECTURE.md) · [External coverage study](docs/EVALUATION-EXTERNAL.md)
+[Benchmark report (BENCHMARK.md)](BENCHMARK.md) · [Interactive browser demo](https://zayyanla-hash.github.io/vambrace/) · [Engineering case study](docs/PORTFOLIO.md) · [Architecture](docs/ARCHITECTURE.md) · [External coverage study v2](docs/EVALUATION-EXTERNAL-V2.md)
 
 The browser demo shows recorded project-owned seeded fixtures. It does not execute a server or scan visitor files. The separate external study uses 24 actual handlers across seven unchanged official SDK example files: the analyzer reported four recognized registrations in aggregate; manual review identified 20 factory-bound registrations outside the supported shape, and all seven files had incomplete coverage. Zero findings is not a clean assessment or an accuracy result.
 
