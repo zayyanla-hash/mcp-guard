@@ -65,6 +65,17 @@ export function parseCsv(text) {
   return rows.slice(1).map(cells => Object.fromEntries(header.map((h, idx) => [h, cells[idx] ?? ''])));
 }
 
+const UNENUMERATED = '<tools-not-enumerated>';
+const isPlaceholder = row => String(row.handler_name ?? '').trim() === UNENUMERATED;
+const serverOf = row => String(row.server_id ?? '').trim() || 'unassigned';
+function isCovered(row) {
+  const codes = String(row.analyzer_diagnostics ?? '').split(';').map(code => code.trim());
+  return !isPlaceholder(row) && !codes.some(code => [
+    'UNSUPPORTED_REGISTRATION', 'UNRESOLVED_HANDLER', 'UNRESOLVED_FACTORY',
+    'TOOLS_NOT_ENUMERATED', 'SOURCE_NOT_FETCHED'
+  ].includes(code));
+}
+
 /**
  * Score handler rows.
  * Each row has:
@@ -75,15 +86,8 @@ export function parseCsv(text) {
  */
 function computeRowStats(rows, rules = RULES) {
   const totalHandlers = rows.length;
-  const coveredHandlers = rows.filter(r => {
-    const diags = String(r.analyzer_diagnostics ?? '').trim();
-    const unmapped = diags.includes('UNSUPPORTED_REGISTRATION') || diags.includes('UNRESOLVED_HANDLER') || diags.includes('UNRESOLVED_FACTORY')
-      || diags.includes('TOOLS_NOT_ENUMERATED') || diags.includes('SOURCE_NOT_FETCHED');
-    return !unmapped;
-  }).length;
-  const unenumeratedServers = new Set(rows
-    .filter(r => String(r.handler_name ?? '').trim() === '<tools-not-enumerated>')
-    .map(r => String(r.server_id ?? '').trim())).size;
+  const coveredHandlers = rows.filter(isCovered).length;
+  const unenumeratedServers = new Set(rows.filter(isPlaceholder).map(serverOf)).size;
   const coverage = totalHandlers > 0 ? Number((coveredHandlers / totalHandlers).toFixed(4)) : 0;
 
   const perRule = {};
@@ -152,7 +156,37 @@ export function scoreRows(rows, rules = RULES) {
       rules
     );
   }
-  return { ...aggregate, by_stratum: byStratum };
+  const serverCounts = new Map();
+  for (const row of rows) {
+    const id = serverOf(row);
+    const counts = serverCounts.get(id) ?? { total_handlers: 0, covered_handlers: 0, placeholder_rows: 0 };
+    counts.total_handlers++;
+    if (isCovered(row)) counts.covered_handlers++;
+    if (isPlaceholder(row)) counts.placeholder_rows++;
+    serverCounts.set(id, counts);
+  }
+  const ordered = [...serverCounts].sort(([a, x], [b, y]) =>
+    y.total_handlers - x.total_handlers || a.localeCompare(b));
+  const round = n => Number(n.toFixed(4));
+  const byServer = Object.fromEntries(ordered.map(([serverId, counts]) => [serverId, {
+    ...counts,
+    coverage: round(counts.covered_handlers / counts.total_handlers),
+    row_share: round(counts.total_handlers / rows.length)
+  }]));
+  const largest = ordered[0];
+  return {
+    ...aggregate,
+    by_stratum: byStratum,
+    by_server: byServer,
+    largest_server: largest ? {
+      server_id: largest[0],
+      total_handlers: largest[1].total_handlers,
+      row_share: byServer[largest[0]].row_share
+    } : null,
+    server_macro_coverage: ordered.length
+      ? round(ordered.reduce((sum, [, c]) => sum + c.covered_handlers / c.total_handlers, 0) / ordered.length)
+      : null
+  };
 }
 
 export function scoreFromFiles({ labelsPath, sha256Path, expectedSha } = {}) {

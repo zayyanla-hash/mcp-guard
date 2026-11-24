@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { analyzeSource } from '../dist/analyzer.js';
 import { analyzePythonSource } from '../dist/python-analyzer.js';
 import { loadManifest } from './fetch.mjs';
-import { generateLabelingSheet, resolveServerRoot } from './sheet.mjs';
+import { generateLabelingSheet, resolveServerRoot, UNENUMERATED_TOOL } from './sheet.mjs';
 import { parseCsv, RULES, scoreRows, verifyLabelsSha256 } from './score.mjs';
 import { runGrepBaseline } from './baselines/grep.mjs';
 import { runOpengrepBaseline } from './baselines/opengrep/run.mjs';
@@ -37,6 +37,23 @@ function fmtRate(v, ci) {
   return `${pct} [${(ci.low * 100).toFixed(1)}%, ${(ci.high * 100).toFixed(1)}%]`;
 }
 
+export function serverCoverageMarkdown(language, scores) {
+  const largest = scores.largest_server;
+  return [
+    `## Coverage by server (${language})`,
+    '',
+    '- Per-handler coverage weights every row equally. Server-macro coverage weights each represented server equally; placeholders count as uncovered.',
+    `- **Largest server:** ${largest ? `\`${largest.server_id}\` (${largest.total_handlers}/${scores.total_handlers} rows, ${fmtRate(largest.row_share)})` : 'n/a'}`,
+    `- **Server-macro coverage:** ${fmtRate(scores.server_macro_coverage)}`,
+    '',
+    '| Server | Covered rows | Total rows | Placeholder rows | Row share | Coverage |',
+    '|---|---:|---:|---:|---:|---:|',
+    ...Object.entries(scores.by_server).map(([id, server]) =>
+      `| \`${id}\` | ${server.covered_handlers} | ${server.total_handlers} | ${server.placeholder_rows} | ${fmtRate(server.row_share)} | ${fmtRate(server.coverage)} |`),
+    ''
+  ];
+}
+
 export async function runBenchmark({
   split = 'dev',
   labelsPath,
@@ -51,9 +68,6 @@ export async function runBenchmark({
   if (!sha256Path) {
     throw new Error('No SHA-256 file given. Pass --sha256-file <path>.');
   }
-  if (split === 'test') {
-    // External path verified below; test-split labels remain outside the repository.
-  }
   const manifest = loadManifest(path.join(here, 'manifest.json'));
   const servers = manifest.servers.filter(s => split === 'all' || (s.split ?? 'dev') === split);
   const files = [];
@@ -62,12 +76,12 @@ export async function runBenchmark({
     if (dir) files.push(...collectSourceFiles(dir));
   }
 
-  // Generate blank labeling sheet artifact
-  const sheet = generateLabelingSheet({ split });
-
-  // Verify frozen labels SHA-256 before scoring
+  // Verify frozen labels before scoring; never generate test or mixed-split worksheets.
   const labelsSha256 = verifyLabelsSha256(labelsPath, readFileSync(sha256Path, 'utf8'));
   const labelRows = parseCsv(readFileSync(labelsPath, 'utf8'));
+  const sheet = split === 'dev' && writeOutputs
+    ? generateLabelingSheet({ split, outFile: path.join(here, 'artifacts', 'typescript-dev.csv') })
+    : null;
 
   // Run analyzer across files in the split and attach live predictions to label rows
   const analysisCache = new Map();
@@ -76,6 +90,7 @@ export async function runBenchmark({
     analysisCache.set(rel, analyzeSource(rel, readFileSync(file, 'utf8')));
   }
   const scoredRows = labelRows.map(row => {
+    if (row.handler_name === UNENUMERATED_TOOL) return row;
     const analysis = analysisCache.get(row.file) ?? analyzeSource(row.file, readFileSync(path.resolve(root, row.file), 'utf8'));
     const toolFindings = analysis.findings.filter(f => f.observed.includes(`Tool: ${row.handler_name}`));
     const out = {
@@ -102,11 +117,13 @@ export async function runBenchmark({
     const pyRows = parseCsv(readFileSync(pyLabelsPath, 'utf8'));
     const pyAnalysisCache = new Map();
     for (const row of pyRows) {
+      if (row.handler_name === UNENUMERATED_TOOL) continue;
       if (!pyAnalysisCache.has(row.file)) {
         pyAnalysisCache.set(row.file, await analyzePythonSource(row.file, readFileSync(path.resolve(root, row.file), 'utf8')));
       }
     }
     const pyScoredRows = pyRows.map(row => {
+      if (row.handler_name === UNENUMERATED_TOOL) return row;
       const analysis = pyAnalysisCache.get(row.file);
       const toolFindings = analysis.findings.filter(f => f.observed.includes(`Tool: ${row.handler_name}`));
       const out = {
@@ -133,7 +150,7 @@ export async function runBenchmark({
     file_count: files.length,
     labels_sha256: labelsSha256,
     python_labels_sha256: pySha256,
-    sheet_path: path.relative(root, sheet.outFile),
+    sheet_path: sheet ? path.relative(root, sheet.outFile) : null,
     typescript: tsScores,
     python: pyScores,
     baselines: {
@@ -178,6 +195,7 @@ export async function runBenchmark({
       ''
     ]),
     '',
+    ...serverCoverageMarkdown('TypeScript', tsScores),
     '## Baselines',
     '',
     '| Baseline | Status | Total hits | Details |',
@@ -213,6 +231,7 @@ export async function runBenchmark({
         return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${fmtRate(s.precision, s.precision_ci95)} | ${fmtRate(s.recall, s.recall_ci95)} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
       }),
       '',
+      ...serverCoverageMarkdown('Python', pyScores),
       ...Object.entries(pyScores.by_stratum ?? {}).flatMap(([stratum, st]) => [
         `### Python stratum: \`${stratum}\` (${st.covered_handlers}/${st.total_handlers} handlers covered, ${st.total_silent_misses} silent misses)`,
         '',
@@ -249,12 +268,19 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const pySha256Path = get('--py-sha256-file');
   try {
     const out = await runBenchmark({ split, labelsPath, sha256Path, pyLabelsPath, pySha256Path });
+    const consoleScores = scores => ({
+      coverage: scores.coverage,
+      silent_misses: scores.total_silent_misses,
+      by_server: scores.by_server,
+      largest_server: scores.largest_server,
+      server_macro_coverage: scores.server_macro_coverage
+    });
     console.log(JSON.stringify({
       split: out.split,
       servers: out.server_count,
       files: out.file_count,
-      typescript: { coverage: out.typescript.coverage, silent_misses: out.typescript.total_silent_misses },
-      python: out.python ? { coverage: out.python.coverage, silent_misses: out.python.total_silent_misses } : null,
+      typescript: consoleScores(out.typescript),
+      python: out.python ? consoleScores(out.python) : null,
       evasion: out.evasion,
       perf: out.perf
     }, null, 2));

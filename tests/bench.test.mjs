@@ -13,7 +13,7 @@ import { runOpengrepBaseline } from '../bench/baselines/opengrep/run.mjs';
 import { runEvasionSuite } from '../bench/evasion/run.mjs';
 import { generateLabelingSheet, generatePythonLabelingSheet, extractTsToolNames, extractPythonToolNames, UNENUMERATED_TOOL } from '../bench/sheet.mjs';
 import { measurePerf } from '../bench/perf.mjs';
-import { runBenchmark } from '../bench/run.mjs';
+import { runBenchmark, serverCoverageMarkdown } from '../bench/run.mjs';
 
 test('wilsonInterval computes bounded 95% confidence intervals', () => {
   const full = wilsonInterval(10, 10);
@@ -41,6 +41,22 @@ test('scoreRows computes TP, FP, FN, TN, silent misses, coverage, and F1', () =>
   assert.equal(s.per_rule.MG002.fp, 1);
   assert.equal(s.per_rule.MG002.tn, 2);
   assert.equal(s.by_stratum.unassigned.total_handlers, 4);
+});
+
+test('server coverage keeps every row and weights servers equally in the macro', () => {
+  const large = Array.from({ length: 9 }, () => ({ server_id: 'large', handler_name: 'tool' }));
+  const s = scoreRows([...large, { server_id: 'small', handler_name: UNENUMERATED_TOOL }]);
+  assert.equal(s.total_handlers, 10);
+  assert.equal(s.coverage, 0.9);
+  assert.equal(s.server_macro_coverage, 0.5);
+  assert.equal(s.unenumerated_servers, 1);
+  assert.deepEqual(s.largest_server, { server_id: 'large', total_handlers: 9, row_share: 0.9 });
+  assert.deepEqual(s.by_server, {
+    large: { covered_handlers: 9, total_handlers: 9, placeholder_rows: 0, coverage: 1, row_share: 0.9 },
+    small: { covered_handlers: 0, total_handlers: 1, placeholder_rows: 1, coverage: 0, row_share: 0.1 }
+  });
+  assert.match(serverCoverageMarkdown('TypeScript', s).join('\n'), /9\/10 rows, 90\.0%[\s\S]+Server-macro coverage:\*\* 50\.0%/);
+  assert.equal(scoreRows([]).largest_server, null);
 });
 
 test('scoreFromFiles enforces SHA-256 verification and refuses mismatch', async t => {
