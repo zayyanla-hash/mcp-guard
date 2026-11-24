@@ -77,9 +77,13 @@ function computeRowStats(rows, rules = RULES) {
   const totalHandlers = rows.length;
   const coveredHandlers = rows.filter(r => {
     const diags = String(r.analyzer_diagnostics ?? '').trim();
-    const unmapped = diags.includes('UNSUPPORTED_REGISTRATION') || diags.includes('UNRESOLVED_HANDLER') || diags.includes('UNRESOLVED_FACTORY');
+    const unmapped = diags.includes('UNSUPPORTED_REGISTRATION') || diags.includes('UNRESOLVED_HANDLER') || diags.includes('UNRESOLVED_FACTORY')
+      || diags.includes('TOOLS_NOT_ENUMERATED') || diags.includes('SOURCE_NOT_FETCHED');
     return !unmapped;
   }).length;
+  const unenumeratedServers = new Set(rows
+    .filter(r => String(r.handler_name ?? '').trim() === '<tools-not-enumerated>')
+    .map(r => String(r.server_id ?? '').trim())).size;
   const coverage = totalHandlers > 0 ? Number((coveredHandlers / totalHandlers).toFixed(4)) : 0;
 
   const perRule = {};
@@ -130,6 +134,7 @@ function computeRowStats(rows, rules = RULES) {
   return {
     total_handlers: totalHandlers,
     covered_handlers: coveredHandlers,
+    unenumerated_servers: unenumeratedServers,
     coverage,
     coverage_ci95: wilsonInterval(coveredHandlers, totalHandlers),
     total_silent_misses: totalSilentMisses,

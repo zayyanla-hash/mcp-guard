@@ -1,6 +1,13 @@
 # Benchmark Sampling Design
 
-All external benchmark servers are sampled deterministically by `bench/select.mjs` from a frozen snapshot of the official MCP Registry (`bench/registry-snapshot.json`, `https://registry.modelcontextprotocol.io/v0.1/servers`) using fixed seed `20261123`.
+All external benchmark servers are sampled by `bench/select.mjs` from a snapshot of the official MCP Registry (`https://registry.modelcontextprotocol.io/v0.1/servers`) using fixed seed `20261123`.
+
+## What Is Frozen
+
+- **The sample is frozen in the manifests**, not in the snapshot. `bench/manifest.json` and `bench/python-manifest.json` pin each server's repository URL, commit SHA, license, stratum and split. Benchmark runs and labeling sheets read only these.
+- **The registry snapshot is not committed.** `bench/registry-snapshot.json` (about 86 MB) is git-ignored. Each manifest records its `snapshotSha256`, `snapshotBytes` and `snapshotFetchedAt` so a kept copy can be checked against it.
+- **Re-running the selector does not reproduce the sample**, even with `--from-snapshot`. Eligibility checks resolve each repository's current `HEAD` and fetch license files over the network at run time, so qualifying servers and pinned commits drift. Treat a re-run as a new sample, not a re-check of this one.
+- **Manual scoping.** `mcparmory-registry-com-mcparmory-mailersend` carries a hand-set `subpath` (`servers/mailersend`) with a `subpathNote`. Its registry entry gives no `repository.subfolder`, and the repository holds 76 servers, so without the subpath the sheet would list every server's tools. A re-run of the selector drops this override.
 
 ## Eligibility Criteria
 

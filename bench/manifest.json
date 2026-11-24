@@ -8,6 +8,9 @@
   },
   "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): among remaining qualifying servers in seeded order, up to 15 TS / 10 Python containing >=1 fixed sink token via plain-text search. Both strata split 60/40 by server.",
   "snapshotFile": "bench/registry-snapshot.json",
+  "snapshotCommitted": false,
+  "snapshotSha256": "46dc01579a632426792c169ede460db7171e0ce6476f20f6c5bbefe2c1b65e3d",
+  "snapshotBytes": 89972904,
   "snapshotFetchedAt": "2026-11-23T22:51:05.056Z",
   "note": "Real-world TypeScript/JavaScript MCP servers sampled across random-registry and sink-enriched strata. Test-split labels remain outside this repository.",
   "servers": [

@@ -20,6 +20,17 @@ Each handler row includes `<RULE>_label` (`MG001`, `MG002`, `MG003`, `MG004`, `M
 
 Do not copy `<RULE>_detected` blindly when filling `<RULE>_label`; inspect the linked source file and line independently.
 
+## Placeholder Rows
+
+Every sampled dev server appears in the sheet. When the sheet generator cannot list a server's tools, it writes one row with `handler_name` `<tools-not-enumerated>` and `analyzer_diagnostics` `TOOLS_NOT_ENUMERATED` (or `SOURCE_NOT_FETCHED` when the pinned commit is not in `bench/.cache/`). The generator recognizes `registerTool`/`tool` calls with a literal or same-file constant name, low-level tool objects with a literal `name` and an `inputSchema`, `@<server>.tool` decorators (including multi-line ones) and `add_tool(fn)`.
+
+For each placeholder row, a human reviewer either:
+
+- replaces it with one row per tool the server actually registers (file, tool name, line), labeling each as usual, or
+- keeps it and labels every rule `unsupported`, with a rationale naming the registration pattern that prevented enumeration.
+
+Placeholder rows always count as uncovered handlers, and `bench/score.mjs` reports how many servers still have one (`unenumerated_servers`).
+
 ## Rationale Requirement
 
 Write **one rationale line per row** explaining the basis for the row's label assignment(s) (no embedded newlines inside CSV cells). Cite the key sink, guard, constant, annotation, or unresolved boundary on that handler line.

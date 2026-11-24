@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
@@ -11,7 +11,7 @@ import { wilsonInterval, scoreRows, scoreFromFiles, verifyLabelsSha256 } from '.
 import { grepScanSource } from '../bench/baselines/grep.mjs';
 import { runOpengrepBaseline } from '../bench/baselines/opengrep/run.mjs';
 import { runEvasionSuite } from '../bench/evasion/run.mjs';
-import { generateLabelingSheet, generatePythonLabelingSheet } from '../bench/sheet.mjs';
+import { generateLabelingSheet, generatePythonLabelingSheet, extractTsToolNames, extractPythonToolNames, UNENUMERATED_TOOL } from '../bench/sheet.mjs';
 import { measurePerf } from '../bench/perf.mjs';
 import { runBenchmark } from '../bench/run.mjs';
 
@@ -132,4 +132,65 @@ test('labeling sheet, perf, and explicit missing-labels rejection run offline cl
   const runRes = spawnSync(process.execPath, [path.resolve('bench/run.mjs')], { encoding: 'utf8', timeout: 15000 });
   assert.notEqual(runRes.status, 0);
   assert.match(runRes.stderr, /No labels file given/i);
+});
+
+test('sheet extractors list multi-line decorators, constant names and low-level tool objects', () => {
+  const py = [
+    'from mcp.server.fastmcp import FastMCP',
+    'mcp = FastMCP("demo")',
+    '',
+    '@mcp.tool(',
+    '    name="list_services",',
+    '    annotations={"title": "List (all) services", "readOnlyHint": True},',
+    ')',
+    'async def list_services() -> str:',
+    '    return "ok"',
+    '',
+    '@mcp.tool()',
+    '# comment between decorator and def',
+    'def ping() -> str:',
+    '    return "pong"'
+  ].join('\n');
+  assert.deepEqual(extractPythonToolNames(py).map(t => [t.name, t.line]), [['list_services', 8], ['ping', 13]]);
+
+  const tsText = [
+    "const LOOKUP = 'lookup_order';",
+    "server.registerTool(LOOKUP, { description: 'x' }, async () => ({ content: [] }));",
+    "server.tool('literal_tool', {}, async () => ({ content: [] }));",
+    'const TOOLS = [',
+    "  { name: 'low_level_read', description: 'r', inputSchema: { type: 'object' } },",
+    "  { name: 'not_a_tool', value: 1 }",
+    '];',
+    'server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));'
+  ].join('\n');
+  assert.deepEqual(extractTsToolNames('x.ts', tsText).map(t => t.name).sort(), ['literal_tool', 'lookup_order', 'low_level_read']);
+});
+
+test('labeling sheets keep servers whose tools cannot be enumerated', async t => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'vambrace-unenumerated-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const emptySrc = path.join(dir, 'src');
+  await mkdir(emptySrc, { recursive: true });
+  await writeFile(path.join(emptySrc, 'index.ts'), "export const helper = () => 1;\n");
+  const manifestFile = path.join(dir, 'manifest.json');
+  await writeFile(manifestFile, JSON.stringify({
+    schemaVersion: 1, seed: 20261123, splitBy: 'server',
+    servers: [
+      { id: 'no-tools', url: 'https://example.invalid/a.git', commit: '0'.repeat(40), license: 'MIT', selectionReason: 'unit test', stratum: 'random-registry', split: 'dev', localFallback: emptySrc },
+      { id: 'not-fetched', url: 'https://example.invalid/b.git', commit: '1'.repeat(40), license: 'MIT', selectionReason: 'unit test', stratum: 'random-registry', split: 'dev' }
+    ]
+  }));
+  const sheet = generateLabelingSheet({ split: 'dev', manifestFile, outFile: path.join(dir, 'sheet.csv') });
+  assert.equal(sheet.rowCount, 2);
+  const csv = await readFile(sheet.outFile, 'utf8');
+  assert.match(csv, new RegExp(`no-tools,random-registry,dev,[^,]*,${UNENUMERATED_TOOL},,false,TOOLS_NOT_ENUMERATED`));
+  assert.match(csv, new RegExp(`not-fetched,random-registry,dev,[^,]*,${UNENUMERATED_TOOL},,false,SOURCE_NOT_FETCHED`));
+
+  const scored = scoreRows([
+    { server_id: 'a', handler_name: UNENUMERATED_TOOL, analyzer_complete: 'false', analyzer_diagnostics: 'TOOLS_NOT_ENUMERATED' },
+    { server_id: 'b', handler_name: 'read_file', analyzer_complete: 'true', analyzer_diagnostics: '' }
+  ]);
+  assert.equal(scored.total_handlers, 2);
+  assert.equal(scored.covered_handlers, 1);
+  assert.equal(scored.unenumerated_servers, 1);
 });

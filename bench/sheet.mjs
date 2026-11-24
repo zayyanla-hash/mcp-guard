@@ -30,16 +30,45 @@ function collectFiles(dir, extPattern) {
   return out;
 }
 
-function extractTsToolNames(file, text) {
+export const UNENUMERATED_TOOL = '<tools-not-enumerated>';
+
+function propName(p) {
+  return p.name && (ts.isIdentifier(p.name) || ts.isStringLiteralLike(p.name)) ? p.name.text : undefined;
+}
+
+export function extractTsToolNames(file, text) {
   const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  const lineOf = (n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
+  // Same-file `const NAME = 'literal'` bindings, so registerTool(TOOL_NAME, ...) still yields a row.
+  const constStrings = new Map();
+  const collectConsts = (n) => {
+    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.initializer && ts.isStringLiteralLike(n.initializer)) {
+      constStrings.set(n.name.text, n.initializer.text);
+    }
+    ts.forEachChild(n, collectConsts);
+  };
+  collectConsts(sf);
   const tools = [];
+  const seen = new Set();
+  const push = (name, line) => {
+    const key = `${name}:${line}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    tools.push({ name, line });
+  };
   const visit = (n) => {
     if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression) && ['registerTool', 'tool'].includes(n.expression.name.text)) {
       const arg0 = n.arguments[0];
-      if (arg0 && ts.isStringLiteralLike(arg0)) {
-        const line = sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
-        tools.push({ name: arg0.text, line });
-      }
+      if (arg0 && ts.isStringLiteralLike(arg0)) push(arg0.text, lineOf(n));
+      else if (arg0 && ts.isIdentifier(arg0) && constStrings.has(arg0.text)) push(constStrings.get(arg0.text), lineOf(n));
+    }
+    // Low-level servers (setRequestHandler(ListToolsRequestSchema, ...)) declare tools as
+    // object literals with a literal `name` and an `inputSchema`.
+    if (ts.isObjectLiteralExpression(n)) {
+      const props = n.properties.filter(ts.isPropertyAssignment);
+      const nameProp = props.find(p => propName(p) === 'name');
+      const hasSchema = n.properties.some(p => propName(p) === 'inputSchema');
+      if (nameProp && hasSchema && ts.isStringLiteralLike(nameProp.initializer)) push(nameProp.initializer.text, lineOf(n));
     }
     ts.forEachChild(n, visit);
   };
@@ -47,16 +76,43 @@ function extractTsToolNames(file, text) {
   return tools;
 }
 
-function extractPythonToolNames(text) {
+function parenDelta(line) {
+  // Count ( ) outside string literals and comments; good enough for decorator argument lists.
+  let d = 0;
+  let quote = null;
+  for (let k = 0; k < line.length; k++) {
+    const c = line[k];
+    if (quote) {
+      if (c === '\\') k++;
+      else if (c === quote) quote = null;
+    } else if (c === '"' || c === "'") quote = c;
+    else if (c === '#') break;
+    else if (c === '(') d++;
+    else if (c === ')') d--;
+  }
+  return d;
+}
+
+export function extractPythonToolNames(text) {
   const lines = text.split(/\r?\n/);
   const tools = [];
   const seen = new Set();
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trim();
     if (/^@[A-Za-z_][A-Za-z0-9_]*\.tool\b/.test(trimmed)) {
-      for (let j = i + 1; j < lines.length; j++) {
+      // A decorator call may span several lines: `@mcp.tool(\n    name="x",\n)`.
+      let depth = 0;
+      for (let j = i; j < lines.length; j++) {
         const nextTrim = lines[j].trim();
-        if (nextTrim.startsWith('@') || nextTrim === '' || nextTrim.startsWith('#')) continue;
+        if (depth > 0 || (j > i && nextTrim.startsWith('@'))) {
+          depth = Math.max(0, depth + parenDelta(nextTrim));
+          continue;
+        }
+        if (j === i) {
+          depth = Math.max(0, parenDelta(nextTrim));
+          continue;
+        }
+        if (nextTrim === '' || nextTrim.startsWith('#')) continue;
         const m = nextTrim.match(/^(?:async\s+)?def\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/);
         if (m) {
           const key = `${m[1]}:${j + 1}`;
@@ -108,6 +164,14 @@ function appendHandlerRows(rows, server, split, rel, handlers, result) {
   }
 }
 
+function appendUnenumeratedRow(rows, server, split, dir, reason) {
+  // Keep every sampled server in the sheet. A server whose tools the extractor cannot list
+  // gets one placeholder row, so it counts as uncovered instead of silently dropping out.
+  const rel = dir ? path.relative(root, dir).split(path.sep).join('/') : `bench/.cache/${server.id}`;
+  const ruleCols = RULES.flatMap(() => ['0', '', '']);
+  rows.push([server.id, server.stratum ?? 'unassigned', server.split ?? split, rel, UNENUMERATED_TOOL, '', 'false', reason, ...ruleCols]);
+}
+
 function writeSheetCsv(outFile, rows) {
   mkdirSync(path.dirname(outFile), { recursive: true });
   const csv = [HEADER.map(csvCell).join(','), ...rows.map(r => r.map(csvCell).join(','))].join('\n') + '\n';
@@ -128,14 +192,20 @@ export function generateLabelingSheet({
   const rows = [];
   for (const server of servers) {
     const dir = resolveServerRoot(server);
-    if (!dir) continue;
+    if (!dir) {
+      appendUnenumeratedRow(rows, server, split, null, 'SOURCE_NOT_FETCHED');
+      continue;
+    }
+    const before = rows.length;
     for (const file of collectFiles(dir, /\.(ts|mts|js|mjs)$/i)) {
       const rel = path.relative(root, file).split(path.sep).join('/');
       const text = readFileSync(file, 'utf8');
-      const result = analyzeSource(rel, text);
       const tools = extractTsToolNames(rel, text);
-      if (tools.length) appendHandlerRows(rows, server, split, rel, tools, result);
+      if (!tools.length) continue;
+      const result = analyzeSource(rel, text);
+      appendHandlerRows(rows, server, split, rel, tools, result);
     }
+    if (rows.length === before) appendUnenumeratedRow(rows, server, split, dir, 'TOOLS_NOT_ENUMERATED');
   }
   return writeSheetCsv(outFile, rows);
 }
@@ -153,14 +223,20 @@ export async function generatePythonLabelingSheet({
   const rows = [];
   for (const server of servers) {
     const dir = resolveServerRoot(server);
-    if (!dir) continue;
+    if (!dir) {
+      appendUnenumeratedRow(rows, server, split, null, 'SOURCE_NOT_FETCHED');
+      continue;
+    }
+    const before = rows.length;
     for (const file of collectFiles(dir, /\.py$/i)) {
       const rel = path.relative(root, file).split(path.sep).join('/');
       const text = readFileSync(file, 'utf8');
-      const result = await analyzePythonSource(rel, text);
       const tools = extractPythonToolNames(text);
-      if (tools.length) appendHandlerRows(rows, server, split, rel, tools, result);
+      if (!tools.length) continue;
+      const result = await analyzePythonSource(rel, text);
+      appendHandlerRows(rows, server, split, rel, tools, result);
     }
+    if (rows.length === before) appendUnenumeratedRow(rows, server, split, dir, 'TOOLS_NOT_ENUMERATED');
   }
   return writeSheetCsv(outFile, rows);
 }

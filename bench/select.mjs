@@ -312,6 +312,15 @@ export async function runSelect({
   if (!fromSnapshot) {
     writeFileSync(snapshotPath, JSON.stringify(snapshot, null, 2) + '\n', 'utf8');
   }
+  // The snapshot is large and is not committed (see .gitignore); manifests record its hash instead.
+  const snapshotBytes = readFileSync(snapshotPath);
+  const snapshotRecord = {
+    snapshotFile: 'bench/registry-snapshot.json',
+    snapshotCommitted: false,
+    snapshotSha256: createHash('sha256').update(snapshotBytes).digest('hex'),
+    snapshotBytes: snapshotBytes.length,
+    snapshotFetchedAt: snapshot.fetchedAt
+  };
 
   const tsCandidates = [];
   const pyCandidates = [];
@@ -336,8 +345,7 @@ export async function runSelect({
     splitBy: 'server',
     splitRatio: { dev: DEV_RATIO, test: Number((1 - DEV_RATIO).toFixed(2)) },
     samplingRule,
-    snapshotFile: 'bench/registry-snapshot.json',
-    snapshotFetchedAt: snapshot.fetchedAt,
+    ...snapshotRecord,
     note: 'Real-world TypeScript/JavaScript MCP servers sampled across random-registry and sink-enriched strata. Test-split labels remain outside this repository.',
     servers: tsResult.servers
   };
@@ -348,8 +356,7 @@ export async function runSelect({
     splitBy: 'server',
     splitRatio: { dev: DEV_RATIO, test: Number((1 - DEV_RATIO).toFixed(2)) },
     samplingRule,
-    snapshotFile: 'bench/registry-snapshot.json',
-    snapshotFetchedAt: snapshot.fetchedAt,
+    ...snapshotRecord,
     note: 'Real-world Python MCP servers sampled across random-registry and sink-enriched strata. Test-split labels remain outside this repository.',
     servers: pyResult.servers
   };

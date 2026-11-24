@@ -7,3 +7,4 @@ artifacts/
 bench/.cache/
 bench/artifacts/
 e2e/artifacts/
+bench/registry-snapshot.json
