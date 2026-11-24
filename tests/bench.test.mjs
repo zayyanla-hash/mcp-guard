@@ -14,7 +14,7 @@ import { runEvasionSuite } from '../bench/evasion/run.mjs';
 import { generateLabelingSheet, generatePythonLabelingSheet, extractTsToolNames, extractPythonToolNames, UNENUMERATED_TOOL } from '../bench/sheet.mjs';
 import { measurePerf } from '../bench/perf.mjs';
 import { runBenchmark, serverCoverageMarkdown } from '../bench/run.mjs';
-import { hasStrongSink } from '../bench/select.mjs';
+import { hasStrongSink, isNonServerFile, scanTextForSinks } from '../bench/select.mjs';
 
 test('wilsonInterval computes bounded 95% confidence intervals', () => {
   const full = wilsonInterval(10, 10);
@@ -219,4 +219,31 @@ test('labeling sheets keep servers whose tools cannot be enumerated', async t =>
   assert.equal(scored.total_handlers, 2);
   assert.equal(scored.covered_handlers, 1);
   assert.equal(scored.unenumerated_servers, 1);
+});
+
+test('sink scan ignores method exec calls, comments and non-server files', () => {
+  // Regex and SQLite .exec( are not shell execution.
+  assert.deepEqual(scanTextForSinks("const m = cardRe.exec(html);\ndb.exec('PRAGMA journal_mode=WAL');", 'ts'), []);
+  // A bare exec( only counts where child_process is loaded.
+  assert.deepEqual(scanTextForSinks('function exec(q) { return q; }\nexec("x");', 'ts'), []);
+  assert.deepEqual(
+    scanTextForSinks("import { exec } from 'node:child_process';\nexec(cmd);", 'ts').sort(),
+    ['child_process', 'exec']
+  );
+  assert.deepEqual(scanTextForSinks("const cp = require('child_process');", 'ts'), ['child_process']);
+  assert.deepEqual(scanTextForSinks('// we avoid child_process here', 'ts'), []);
+
+  assert.deepEqual(scanTextForSinks('"""Runs no subprocess at all."""\nx = 1', 'py'), []);
+  assert.deepEqual(scanTextForSinks('import subprocess\nsubprocess.run(["ls"])', 'py'), ['subprocess']);
+  assert.deepEqual(scanTextForSinks('proc = await asyncio.create_subprocess_shell(cmd)', 'py'), ['subprocess']);
+  assert.deepEqual(scanTextForSinks('os.popen(cmd)', 'py'), ['os.system']);
+
+  for (const rel of ['test/forward.test.ts', 'tests/test_ui.py', 'scripts/build.js', 'docs/research/x.mjs',
+    'src/api.spec.ts', 'pkg/test_tools.py', 'setup.js', 'setup.py', 'vite.config.ts', 'examples/demo.ts',
+    'build-web.mjs', 'version.mjs', 'local/prepare-publish.js', 'local/setup-dev.js', 'auto_setup.py']) {
+    assert.equal(isNonServerFile(rel), true, rel);
+  }
+  for (const rel of ['src/index.ts', 'myopic/gitutil.py', 'server.py', 'lib/atomic-write.js', 'src/testing-utils-free.ts', 'src/builder.ts', 'src/versioning.ts']) {
+    assert.equal(isNonServerFile(rel), false, rel);
+  }
 });

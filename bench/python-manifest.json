@@ -6,7 +6,7 @@
     "dev": 0.6,
     "test": 0.4
   },
-  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): continue after Stratum 1 in seeded order and stop at 15 TS / 10 Python whose source matches at least one strong token via plain-text search (TS: exec, execSync, child_process, spawn with shell, writeFile, unlink; Python: subprocess, os.system). Weaker matches may be recorded but do not qualify a server. Both strata split 60/40 by server.",
+  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): continue after Stratum 1 in seeded order and stop at 15 TS / 10 Python whose server code (tests, scripts, docs, examples, benchmarks, config and setup files excluded) matches at least one strong token via plain-text search (TS: child_process import, bare exec/execSync in a file that loads child_process, spawn with shell, writeFile, unlink; Python: subprocess import or asyncio create_subprocess_*, os.system/os.popen). Weaker matches may be recorded but do not qualify a server. Both strata split 60/40 by server.",
   "snapshotFile": "bench/registry-snapshot.json",
   "snapshotCommitted": false,
   "snapshotSha256": "46dc01579a632426792c169ede460db7171e0ce6476f20f6c5bbefe2c1b65e3d",
@@ -214,22 +214,6 @@
       "split": "dev"
     },
     {
-      "id": "googlecloudplatform-conversational-insights-devkit-io-github-goo",
-      "url": "https://github.com/GoogleCloudPlatform/conversational-insights-devkit.git",
-      "commit": "676c1713010ab53fdb0629dac05dd0626ef9427f",
-      "license": "Apache-2.0",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 00e550365199, verified Apache-2.0 license); plain-text sinks: open, os.environ, requests, subprocess, httpx",
-      "matchedSinks": [
-        "open",
-        "os.environ",
-        "requests",
-        "subprocess",
-        "httpx"
-      ],
-      "stratum": "sink-enriched",
-      "split": "dev"
-    },
-    {
       "id": "junipertcy-refereekit-com-inferweave-refereekit",
       "url": "https://github.com/junipertcy/refereekit.git",
       "commit": "6dd6b3ee583d40068e0bf31e95cb7f9b5ac5df9b",
@@ -245,28 +229,15 @@
       "split": "dev"
     },
     {
-      "id": "geovicco-dev-bhoonidhi-mcp-io-github-geovicco-dev-bhoonidhi-mcp",
-      "url": "https://github.com/geovicco-dev/bhoonidhi-mcp.git",
-      "commit": "0ff836655f84e675bab7d701dd7a530f19e181e1",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 00f9e806bca3, verified MIT license); plain-text sinks: os.environ, subprocess",
-      "matchedSinks": [
-        "os.environ",
-        "subprocess"
-      ],
-      "stratum": "sink-enriched",
-      "split": "dev"
-    },
-    {
       "id": "bytestay-specwise-mcp-io-github-bytestay-specwise-mcp",
       "url": "https://github.com/bytestay/specwise-mcp.git",
       "commit": "a7f35b8db7e681fc6982bb257c62b525e7193d67",
       "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 0103bdb0a932, verified MIT license); plain-text sinks: os.environ, requests, httpx, subprocess",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0103bdb0a932, verified MIT license); plain-text sinks: requests, httpx, os.environ, subprocess",
       "matchedSinks": [
-        "os.environ",
         "requests",
         "httpx",
+        "os.environ",
         "subprocess"
       ],
       "stratum": "sink-enriched",
@@ -290,16 +261,16 @@
       "url": "https://github.com/norrietaylor/distillery.git",
       "commit": "c5ad2e45ff6be07335892bc479498117bf33fda6",
       "license": "Apache-2.0",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 01cc731985e4, verified Apache-2.0 license); plain-text sinks: open, os.environ, subprocess, requests, httpx",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 01cc731985e4, verified Apache-2.0 license); plain-text sinks: os.environ, open, requests, httpx, subprocess",
       "matchedSinks": [
-        "open",
         "os.environ",
-        "subprocess",
+        "open",
         "requests",
-        "httpx"
+        "httpx",
+        "subprocess"
       ],
       "stratum": "sink-enriched",
-      "split": "test"
+      "split": "dev"
     },
     {
       "id": "shapeandshare-ember-io-github-shapeandshare-ember",
@@ -315,34 +286,63 @@
         "requests"
       ],
       "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "henilcalagiya-google-sheets-mcp-io-github-henilcalagiya-google-s",
-      "url": "https://github.com/henilcalagiya/google-sheets-mcp.git",
-      "commit": "fa4bc1fb940fcbeba9d73f86b232ba02b50f8a8a",
-      "license": "Apache-2.0",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 021992069977, verified Apache-2.0 license); plain-text sinks: subprocess, open, requests",
-      "matchedSinks": [
-        "subprocess",
-        "open",
-        "requests"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
+      "split": "dev"
     },
     {
       "id": "sk-dev-ai-websearch-io-github-sk-dev-ai-websearch",
       "url": "https://github.com/SK-DEV-AI/websearch.git",
       "commit": "717ed78a7a79700796796e1bb5f0494da7d252f5",
       "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 0229f6c05ee2, verified MIT license); plain-text sinks: subprocess, os.environ, open, requests, httpx",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0229f6c05ee2, verified MIT license); plain-text sinks: os.environ, open, requests, httpx, subprocess",
       "matchedSinks": [
-        "subprocess",
         "os.environ",
         "open",
         "requests",
+        "httpx",
+        "subprocess"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "tuprolog-arg2p-kt-io-github-tuprolog-arg2p",
+      "url": "https://github.com/tuProlog/arg2p-kt.git",
+      "commit": "0d2a04152d551efad6512111b1e98f35e4db1434",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 023e76d14761, verified MIT license); plain-text sinks: subprocess, open, os.environ",
+      "matchedSinks": [
+        "subprocess",
+        "open",
+        "os.environ"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "donggyun112-codecanvas-io-github-donggyun112-codecanvas",
+      "url": "https://github.com/donggyun112/codecanvas.git",
+      "commit": "e427af40f5de094db223bded50b8712743d0e001",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0289d8079e5b, verified MIT license); plain-text sinks: open, requests, subprocess, os.environ, httpx",
+      "matchedSinks": [
+        "open",
+        "requests",
+        "subprocess",
+        "os.environ",
         "httpx"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "huoshuiai42-huoshui-pdf-translator-io-github-huoshuiai42-huoshui",
+      "url": "https://github.com/huoshuiai42/huoshui-pdf-translator.git",
+      "commit": "4681ece48de6e88ebee5d5a20e40bddf335f8cb7",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 02b57e2f7c4b, verified Apache-2.0 license); plain-text sinks: subprocess, open",
+      "matchedSinks": [
+        "subprocess",
+        "open"
       ],
       "stratum": "sink-enriched",
       "split": "test"

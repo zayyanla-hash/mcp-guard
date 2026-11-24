@@ -25,10 +25,11 @@ const OSI_SPDX_LICENSES = new Set([
 ]);
 
 const TS_SINK_PATTERNS = [
-  ['exec', /\bexec\s*\(/],
-  ['execSync', /\bexecSync\s*\(/],
+  // Bare exec(/execSync( only (not regex.exec( or db.exec(), and only in files that load child_process.
+  ['exec', /(?<![.\w$])exec\s*\(/, /\bchild_process\b/],
+  ['execSync', /(?<![.\w$])execSync\s*\(/, /\bchild_process\b/],
   ['spawn_shell', /\bspawn(?:Sync)?\s*\([\s\S]{0,160}\bshell\s*:\s*(?:true\b|["'`])/],
-  ['child_process', /\bchild_process\b/],
+  ['child_process', /(?:\bfrom\s*|\brequire\s*\(\s*|\bimport\s*\(\s*)['"](?:node:)?child_process['"]/],
   ['readFile', /\breadFile(?:Sync)?\s*\(/],
   ['writeFile', /\bwriteFile(?:Sync)?\s*\(/],
   ['unlink', /\bunlink(?:Sync)?\s*\(/],
@@ -62,8 +63,9 @@ export function hasStrongSink(sinks, lang) {
 }
 
 const PY_SINK_PATTERNS = [
-  ['subprocess', /\bsubprocess\b/],
-  ['os.system', /\bos\.system\s*\(/],
+  // Imports or calls, not the word "subprocess" in a comment or docstring.
+  ['subprocess', /^\s*(?:import\s+subprocess\b|from\s+subprocess\s+import\b)|\bcreate_subprocess_(?:exec|shell)\s*\(/m],
+  ['os.system', /\bos\.(?:system|popen)\s*\(/],
   ['open', /\bopen\s*\(/],
   ['requests', /\brequests\b/],
   ['httpx', /\bhttpx\b/],
@@ -204,6 +206,30 @@ function makeServerId(name, owner, repo) {
     .slice(0, 64);
 }
 
+// The sink scan reads server code only: tests, scripts, docs, examples, benchmarks,
+// build/config and setup files can mention a sink the server never runs.
+const NON_SERVER_DIRS = new Set([
+  'test', 'tests', '__tests__', 'spec', 'specs', 'e2e', 'fixtures', '__fixtures__', '__mocks__',
+  'script', 'scripts', 'doc', 'docs', 'example', 'examples', 'bench', 'benchmark', 'benchmarks', '.github'
+]);
+
+export function isNonServerFile(relPath) {
+  const parts = relPath.split(/[\\/]/).filter(Boolean);
+  const name = parts.at(-1) ?? '';
+  if (parts.slice(0, -1).some(dir => NON_SERVER_DIRS.has(dir.toLowerCase()))) return true;
+  return /\.(?:test|spec)\.[cm]?[jt]s$/i.test(name) ||
+    /^test_.*\.py$|_test\.py$|^conftest\.py$/i.test(name) ||
+    /(?:^|_)setup\.py$/i.test(name) ||
+    // Build, release and install helpers (build-web.mjs, version.mjs, prepare-publish.js, setup-dev.js).
+    /^(?:build|release|version|publish|prepare|postinstall|install|setup)(?:[-_.][\w.-]*)?\.[cm]?[jt]s$/i.test(name) ||
+    /\.config\.[cm]?[jt]s$/i.test(name);
+}
+
+export function scanTextForSinks(text, lang) {
+  const patterns = lang === 'py' ? PY_SINK_PATTERNS : TS_SINK_PATTERNS;
+  return patterns.filter(([, re, requires]) => re.test(text) && (!requires || requires.test(text))).map(([label]) => label);
+}
+
 function collectPlainTextFiles(dir, extPattern) {
   const out = [];
   if (!existsSync(dir)) return out;
@@ -214,7 +240,8 @@ function collectPlainTextFiles(dir, extPattern) {
       const st = lstatSync(full);
       if (st.isSymbolicLink()) continue;
       if (st.isDirectory()) walk(full);
-      else if (extPattern.test(entry) && !entry.endsWith('.d.ts') && !entry.endsWith('.min.js')) out.push(full);
+      else if (extPattern.test(entry) && !entry.endsWith('.d.ts') && !entry.endsWith('.min.js') &&
+        !isNonServerFile(path.relative(dir, full))) out.push(full);
     }
   };
   walk(dir);
@@ -254,16 +281,13 @@ function scanRepoSinksPlainText(dest, candidate, lang) {
     }
   } catch { return []; }
   const ext = lang === 'py' ? /\.py$/i : /\.(ts|mts|js|mjs)$/i;
-  const patterns = lang === 'py' ? PY_SINK_PATTERNS : TS_SINK_PATTERNS;
   const matched = new Set();
   for (const f of collectPlainTextFiles(scanRoot, ext)) {
     let text;
     try {
       text = readFileSync(f, 'utf8');
     } catch { continue; }
-    for (const [label, re] of patterns) {
-      if (re.test(text)) matched.add(label);
-    }
+    for (const label of scanTextForSinks(text, lang)) matched.add(label);
   }
   return [...matched];
 }
@@ -412,7 +436,7 @@ export async function runSelect({
     selectLanguageStrata(pyCandidates, 'py', 20, 10, seed, pyPinned)
   ]);
 
-  const samplingRule = `Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256("${seed}:<lang>:<registryName>:<repoUrl>"). Stratum 2 (sink-enriched): continue after Stratum 1 in seeded order and stop at 15 TS / 10 Python whose source matches at least one strong token via plain-text search (TS: exec, execSync, child_process, spawn with shell, writeFile, unlink; Python: subprocess, os.system). Weaker matches may be recorded but do not qualify a server. Both strata split 60/40 by server.`;
+  const samplingRule = `Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256("${seed}:<lang>:<registryName>:<repoUrl>"). Stratum 2 (sink-enriched): continue after Stratum 1 in seeded order and stop at 15 TS / 10 Python whose server code (tests, scripts, docs, examples, benchmarks, config and setup files excluded) matches at least one strong token via plain-text search (TS: child_process import, bare exec/execSync in a file that loads child_process, spawn with shell, writeFile, unlink; Python: subprocess import or asyncio create_subprocess_*, os.system/os.popen). Weaker matches may be recorded but do not qualify a server. Both strata split 60/40 by server.`;
 
   const tsManifest = {
     schemaVersion: 1,

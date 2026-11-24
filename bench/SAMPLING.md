@@ -28,9 +28,10 @@ Qualifying servers are ordered deterministically per language by `sha256("202611
 
 2. **Stratum 2 — `sink-enriched` (sink-bearing servers)**
    - Drawn strictly from qualifying servers **not already sampled in Stratum 1**, continuing in the same seeded order (`seed: 20261123`).
-   - Takes the first **15 TypeScript/JavaScript** and **10 Python** eligible servers whose source files match at least one **strong** token via plain-text search (never using the Vambrace analyzer).
-   - **TypeScript/JavaScript strong tokens:** `exec`, `execSync`, `child_process`, `spawn` with an explicitly enabled `shell` option, `writeFile`, `unlink`.
-   - **Python strong tokens:** `subprocess`, `os.system`.
+   - Takes the first **15 TypeScript/JavaScript** and **10 Python** eligible servers whose **server code** matches at least one **strong** token via plain-text search (never using the Vambrace analyzer).
+   - **Server code only.** The scan skips files under `test`, `tests`, `__tests__`, `spec`, `e2e`, `fixtures`, `__mocks__`, `script(s)`, `doc(s)`, `example(s)`, `bench(mark(s))` and `.github` directories, plus `*.test.*`, `*.spec.*`, `test_*.py`, `*_test.py`, `conftest.py`, `setup.py`/`*_setup.py`, `*.config.*` files, and build, release and install helpers named `build*`, `release*`, `version*`, `publish*`, `prepare*`, `postinstall*`, `install*` or `setup*` (`.js`/`.ts`). A sink that only appears there says nothing about what the server runs.
+   - **TypeScript/JavaScript strong tokens:** a `child_process` import or `require`; a bare `exec(`/`execSync(` call in a file that loads `child_process` (method calls such as `regex.exec(` or `db.exec(` do not count); `spawn` with an explicitly enabled `shell` option; `writeFile`; `unlink`.
+   - **Python strong tokens:** `import subprocess`/`from subprocess import` or `asyncio.create_subprocess_exec`/`_shell` (the word "subprocess" in a comment or docstring does not count); `os.system`/`os.popen`.
    - Other tracked tokens (e.g. `fetch`, `process.env`, `readFile`, `open`, `requests`, `httpx`) can be recorded in `matchedSinks` but cannot qualify a server on their own. A textual match is an enrichment signal, not a finding or human label.
    - Resume against the original verified snapshot with `node bench/select.mjs --from-snapshot --refresh-sink-enriched`: keep both pinned Stratum 1 lists unchanged, start after each final Stratum 1 rank, verify each candidate lazily, and stop at the quota. License recognition reads license blobs from the pinned shallow Git repository without checking out or executing candidate code. The optional source scan reads only plain text under the selected scope. This command refreshes Stratum 2; it is not a reproducibility check for its newly pinned commits.
 
@@ -43,3 +44,4 @@ Qualifying servers are ordered deterministically per language by `sha256("202611
 ## Sampling log
 
 - **2026-11-24 (UTC):** Stratum 2 re-picked from the original snapshot under the strong-token rule. All pinned Stratum 1 records, including the manual MailerSend scope, were kept unchanged.
+- **2026-11-24 (UTC), second re-pick:** Stratum 2 re-picked again after review found that 10 of 15 TypeScript and 3 of 10 Python picks had strong tokens only in tests, scripts, docs or setup files, or only as `regex.exec(`/`db.exec(` method calls. The scan now reads server code only and matches real imports and calls. Stratum 1 is unchanged.
