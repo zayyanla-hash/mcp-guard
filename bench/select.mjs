@@ -1,14 +1,48 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const cacheDir = path.join(here, '.cache');
 const REGISTRY_URL = 'https://registry.modelcontextprotocol.io/v0.1/servers';
 const FIXED_SEED = 20261123;
 const DEV_RATIO = 0.6;
 const EXCLUDED_REPO_PATTERN = /(?:zayyanla-hash\/vambrace|zayyanla-hash\/mcp-guard|modelcontextprotocol\/typescript-sdk)/i;
+
+const OSI_SPDX_LICENSES = new Set([
+  'MIT', 'Apache-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'MPL-2.0',
+  'GPL-2.0', 'GPL-2.0-only', 'GPL-2.0-or-later',
+  'GPL-3.0', 'GPL-3.0-only', 'GPL-3.0-or-later',
+  'LGPL-2.1', 'LGPL-2.1-only', 'LGPL-2.1-or-later',
+  'LGPL-3.0', 'LGPL-3.0-only', 'LGPL-3.0-or-later',
+  'AGPL-3.0', 'AGPL-3.0-only', 'AGPL-3.0-or-later',
+  'EPL-2.0', 'Unlicense', '0BSD', 'BSL-1.0', 'Zlib', 'Artistic-2.0', 'CC0-1.0'
+]);
+
+const TS_SINK_PATTERNS = [
+  ['exec', /\bexec\s*\(/],
+  ['execSync', /\bexecSync\s*\(/],
+  ['spawn_shell', /\bspawn(?:Sync)?\s*\([\s\S]{0,160}\bshell\s*:/],
+  ['child_process', /\bchild_process\b/],
+  ['readFile', /\breadFile(?:Sync)?\s*\(/],
+  ['writeFile', /\bwriteFile(?:Sync)?\s*\(/],
+  ['unlink', /\bunlink(?:Sync)?\s*\(/],
+  ['fetch', /\bfetch\s*\(/],
+  ['axios', /\baxios\b/],
+  ['http.request', /\bhttp\.request\s*\(/],
+  ['process.env', /\bprocess\.env\b/]
+];
+
+const PY_SINK_PATTERNS = [
+  ['subprocess', /\bsubprocess\b/],
+  ['os.system', /\bos\.system\s*\(/],
+  ['open', /\bopen\s*\(/],
+  ['requests', /\brequests\b/],
+  ['httpx', /\bhttpx\b/],
+  ['os.environ', /\bos\.environ\b/]
+];
 
 function seedRank(seed, key) {
   return createHash('sha256').update(`${seed}:${key}`).digest('hex');
@@ -28,39 +62,66 @@ function classifyLicenseText(text) {
   if (/Apache License\s+Version 2\.0/i.test(text) || /http:\/\/www\.apache\.org\/licenses\/LICENSE-2\.0/i.test(text)) {
     return 'Apache-2.0';
   }
+  if (/GNU GENERAL PUBLIC LICENSE\s+Version 3/i.test(text)) return 'GPL-3.0';
+  if (/GNU GENERAL PUBLIC LICENSE\s+Version 2/i.test(text)) return 'GPL-2.0';
+  if (/GNU LESSER GENERAL PUBLIC LICENSE\s+Version 3/i.test(text)) return 'LGPL-3.0';
+  if (/GNU LESSER GENERAL PUBLIC LICENSE\s+Version 2\.1/i.test(text)) return 'LGPL-2.1';
+  if (/GNU AFFERO GENERAL PUBLIC LICENSE\s+Version 3/i.test(text)) return 'AGPL-3.0';
+  if (/Mozilla Public License Version 2\.0/i.test(text)) return 'MPL-2.0';
+  if (/ISC License/i.test(text) || /Permission to use, copy, modify, and\/or distribute this software for any purpose with or without fee/i.test(text)) {
+    return 'ISC';
+  }
+  if (/Redistribution and use in source and binary forms/i.test(text)) {
+    return /Neither the name of/i.test(text) ? 'BSD-3-Clause' : 'BSD-2-Clause';
+  }
+  if (/This is free and unencumbered software released into the public domain/i.test(text)) return 'Unlicense';
+  if (/Eclipse Public License - v 2\.0/i.test(text)) return 'EPL-2.0';
+  if (/Boost Software License - Version 1\.0/i.test(text)) return 'BSL-1.0';
+  return null;
+}
+
+function normalizeSpdx(raw) {
+  if (typeof raw !== 'string') return null;
+  const trimmed = raw.trim();
+  if (OSI_SPDX_LICENSES.has(trimmed)) return trimmed;
   return null;
 }
 
 async function detectRepoLicense(owner, repo, commit, subpath) {
-  const candidates = [];
-  if (subpath) {
-    for (const f of ['LICENSE', 'LICENSE.md', 'LICENSE.txt']) {
-      candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${commit}/${subpath}/${f}`);
+  const prefixes = subpath ? [`${subpath}/`, ''] : [''];
+  for (const prefix of prefixes) {
+    for (const f of ['LICENSE', 'LICENSE.md', 'LICENSE.txt', 'LICENSE-MIT', 'LICENSE-APACHE', 'COPYING']) {
+      try {
+        const res = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${commit}/${prefix}${f}`, {
+          signal: AbortSignal.timeout(6000)
+        });
+        if (!res.ok) continue;
+        const lic = classifyLicenseText(await res.text());
+        if (lic) return lic;
+      } catch { /* try next */ }
     }
-  }
-  for (const f of ['LICENSE', 'LICENSE.md', 'LICENSE.txt', 'LICENSE-MIT', 'LICENSE-APACHE']) {
-    candidates.push(`https://raw.githubusercontent.com/${owner}/${repo}/${commit}/${f}`);
-  }
-  for (const url of candidates) {
     try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) continue;
-      const body = await res.text();
-      const lic = classifyLicenseText(body);
-      if (lic) return lic;
-    } catch { /* try next candidate */ }
+      const pkgRes = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${commit}/${prefix}package.json`, {
+        signal: AbortSignal.timeout(6000)
+      });
+      if (pkgRes.ok) {
+        const pkg = JSON.parse(await pkgRes.text());
+        const spdx = normalizeSpdx(typeof pkg.license === 'string' ? pkg.license : pkg.license?.type);
+        if (spdx) return spdx;
+      }
+    } catch { /* ignore */ }
+    try {
+      const pyRes = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${commit}/${prefix}pyproject.toml`, {
+        signal: AbortSignal.timeout(6000)
+      });
+      if (pyRes.ok) {
+        const toml = await pyRes.text();
+        const m = toml.match(/license\s*=\s*(?:"([^"]+)"|'([^']+)'|\{\s*text\s*=\s*"([^"]+)")/i);
+        const spdx = normalizeSpdx(m?.[1] ?? m?.[2] ?? m?.[3]);
+        if (spdx) return spdx;
+      }
+    } catch { /* ignore */ }
   }
-  try {
-    const apiRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/license`, {
-      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'vambrace-benchmark-selector' },
-      signal: AbortSignal.timeout(8000)
-    });
-    if (apiRes.ok) {
-      const json = await apiRes.json();
-      const spdx = json?.license?.spdx_id;
-      if (spdx === 'MIT' || spdx === 'Apache-2.0') return spdx;
-    }
-  } catch { /* ignore */ }
   return null;
 }
 
@@ -68,7 +129,7 @@ function resolveRemoteHead(repoUrl) {
   try {
     const out = execFileSync('git', ['ls-remote', '--exit-code', repoUrl, 'HEAD'], {
       encoding: 'utf8',
-      timeout: 15000,
+      timeout: 12000,
       stdio: ['ignore', 'pipe', 'pipe']
     });
     const sha = out.trim().split(/\s+/)[0];
@@ -78,11 +139,11 @@ function resolveRemoteHead(repoUrl) {
   }
 }
 
-async function fetchRegistrySnapshot(maxPages = 40) {
+async function fetchRegistrySnapshot() {
   const seen = new Map();
   let cursor = null;
   let pages = 0;
-  while (pages < maxPages) {
+  while (true) {
     const url = new URL(REGISTRY_URL);
     url.searchParams.set('limit', '100');
     if (cursor) url.searchParams.set('cursor', cursor);
@@ -129,16 +190,68 @@ function makeServerId(name, owner, repo) {
     .slice(0, 64);
 }
 
-async function pickSeededServers(candidates, lang, targetCount, seed) {
+function collectPlainTextFiles(dir, extPattern) {
+  const out = [];
+  if (!existsSync(dir)) return out;
+  const walk = (d) => {
+    for (const entry of readdirSync(d)) {
+      if (['node_modules', '.git', 'dist', 'build', 'coverage', '__pycache__', '.venv', 'venv'].includes(entry)) continue;
+      const full = path.join(d, entry);
+      const st = statSync(full);
+      if (st.isDirectory()) walk(full);
+      else if (extPattern.test(entry) && !entry.endsWith('.d.ts') && !entry.endsWith('.min.js')) out.push(full);
+    }
+  };
+  walk(dir);
+  return out;
+}
+
+function scanRepoSinksPlainText(candidate, lang) {
+  const dest = path.join(cacheDir, candidate.id);
+  try {
+    if (!existsSync(path.join(dest, '.git'))) {
+      execFileSync('git', ['clone', '--no-checkout', '--depth', '1', candidate.url, dest], { stdio: 'pipe', timeout: 45000 });
+    }
+    execFileSync('git', ['-C', dest, 'fetch', '--depth', '1', 'origin', candidate.commit], { stdio: 'pipe', timeout: 45000 });
+    execFileSync('git', ['-C', dest, 'checkout', '--detach', candidate.commit], { stdio: 'pipe', timeout: 30000 });
+  } catch {
+    return [];
+  }
+  const scanRoot = candidate.subpath ? path.join(dest, candidate.subpath) : dest;
+  const ext = lang === 'py' ? /\.py$/i : /\.(ts|mts|js|mjs)$/i;
+  const patterns = lang === 'py' ? PY_SINK_PATTERNS : TS_SINK_PATTERNS;
+  const matched = new Set();
+  for (const f of collectPlainTextFiles(scanRoot, ext)) {
+    let text;
+    try {
+      text = readFileSync(f, 'utf8');
+    } catch { continue; }
+    for (const [label, re] of patterns) {
+      if (re.test(text)) matched.add(label);
+    }
+  }
+  return [...matched];
+}
+
+function assignStratumSplits(items, stratum) {
+  const devCount = items.length <= 1 ? items.length : Math.max(1, Math.round(items.length * DEV_RATIO));
+  return items.map((item, idx) => ({
+    ...item,
+    stratum,
+    split: idx < devCount ? 'dev' : 'test'
+  }));
+}
+
+async function selectLanguageStrata(candidates, lang, stratum1Target, stratum2Target, seed) {
   const ranked = [...candidates]
     .map(c => ({ ...c, rank: seedRank(seed, `${lang}:${c.server.name}:${c.repo.canonicalUrl}`) }))
     .sort((a, b) => a.rank.localeCompare(b.rank));
 
-  const picked = [];
   const seenRepos = new Set();
   const seenIds = new Set();
+  const qualifying = [];
+
   for (const item of ranked) {
-    if (picked.length >= targetCount) break;
     if (seenRepos.has(item.repo.canonicalUrl)) continue;
     const sha = resolveRemoteHead(item.repo.canonicalUrl);
     if (!sha) continue;
@@ -151,40 +264,50 @@ async function pickSeededServers(candidates, lang, targetCount, seed) {
     if (seenIds.has(id)) continue;
     seenRepos.add(item.repo.canonicalUrl);
     seenIds.add(id);
-    picked.push({
+    qualifying.push({
       id,
-      registryName: item.server.name,
       url: item.repo.canonicalUrl,
       commit: sha,
       ...(subpath ? { subpath } : {}),
       license,
-      selectionReason: `MCP Registry (${lang}) seeded sample (rank ${item.rank.slice(0, 12)}, verified ${license} license)`,
-      seedRank: item.rank
+      selectionReason: `MCP Registry (${lang}) seeded sample (rank ${item.rank.slice(0, 12)}, verified ${license} license)`
     });
   }
 
-  // Partition deterministically by server into dev (60%) and test (40%) using fixed seed
-  const devCount = Math.max(1, Math.round(picked.length * DEV_RATIO));
-  return picked.map((entry, idx) => {
-    const { seedRank: _rank, registryName: _reg, ...rest } = entry;
-    return {
-      ...rest,
-      split: idx < devCount ? 'dev' : 'test'
-    };
-  });
+  const stratum1 = assignStratumSplits(qualifying.slice(0, stratum1Target), 'random-registry');
+  const remaining = qualifying.slice(stratum1Target);
+  const stratum2Raw = [];
+  for (const cand of remaining) {
+    if (stratum2Raw.length >= stratum2Target) break;
+    const sinks = scanRepoSinksPlainText(cand, lang);
+    if (sinks.length > 0) {
+      stratum2Raw.push({
+        ...cand,
+        matchedSinks: sinks,
+        selectionReason: `${cand.selectionReason}; plain-text sinks: ${sinks.join(', ')}`
+      });
+    }
+  }
+  const stratum2 = assignStratumSplits(stratum2Raw, 'sink-enriched');
+
+  return {
+    totalCandidates: candidates.length,
+    totalQualifying: qualifying.length,
+    stratum1Count: stratum1.length,
+    stratum2Count: stratum2.length,
+    servers: [...stratum1, ...stratum2]
+  };
 }
 
 export async function runSelect({
   snapshotPath = path.join(here, 'registry-snapshot.json'),
   fromSnapshot = false,
-  seed = FIXED_SEED,
-  tsCount = 5,
-  pyCount = 5,
-  maxPages = 40
+  seed = FIXED_SEED
 } = {}) {
+  mkdirSync(cacheDir, { recursive: true });
   const snapshot = fromSnapshot && existsSync(snapshotPath)
     ? JSON.parse(readFileSync(snapshotPath, 'utf8'))
-    : await fetchRegistrySnapshot(maxPages);
+    : await fetchRegistrySnapshot();
 
   if (!fromSnapshot) {
     writeFileSync(snapshotPath, JSON.stringify(snapshot, null, 2) + '\n', 'utf8');
@@ -202,10 +325,10 @@ export async function runSelect({
     else if (lang === 'py') pyCandidates.push({ server: s, repo });
   }
 
-  const tsServers = await pickSeededServers(tsCandidates, 'ts', tsCount, seed);
-  const pyServers = await pickSeededServers(pyCandidates, 'py', pyCount, seed);
+  const tsResult = await selectLanguageStrata(tsCandidates, 'ts', 40, 15, seed);
+  const pyResult = await selectLanguageStrata(pyCandidates, 'py', 20, 10, seed);
 
-  const samplingRule = `Sort active MCP Registry servers (npm/pypi, public GitHub, verified MIT or Apache-2.0, excluding Vambrace fixtures and typescript-sdk examples) ascending by sha256("${seed}:<lang>:<registryName>:<repoUrl>"). Take first N per language and assign first round(N * ${DEV_RATIO}) servers to dev, remaining to test.`;
+  const samplingRule = `Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256("${seed}:<lang>:<registryName>:<repoUrl>"). Stratum 2 (sink-enriched): among remaining qualifying servers in seeded order, up to 15 TS / 10 Python containing >=1 fixed sink token via plain-text search. Both strata split 60/40 by server.`;
 
   const tsManifest = {
     schemaVersion: 1,
@@ -215,8 +338,8 @@ export async function runSelect({
     samplingRule,
     snapshotFile: 'bench/registry-snapshot.json',
     snapshotFetchedAt: snapshot.fetchedAt,
-    note: 'Real-world TypeScript/JavaScript MCP servers sampled from the official MCP Registry. Run node bench/fetch.mjs to clone pinned commits into bench/.cache/. Test-split labels remain outside this repository.',
-    servers: tsServers
+    note: 'Real-world TypeScript/JavaScript MCP servers sampled across random-registry and sink-enriched strata. Test-split labels remain outside this repository.',
+    servers: tsResult.servers
   };
 
   const pyManifest = {
@@ -227,8 +350,8 @@ export async function runSelect({
     samplingRule,
     snapshotFile: 'bench/registry-snapshot.json',
     snapshotFetchedAt: snapshot.fetchedAt,
-    note: 'Real-world Python MCP servers sampled from the official MCP Registry. Run node bench/fetch.mjs to clone pinned commits into bench/.cache/. Test-split labels remain outside this repository.',
-    servers: pyServers
+    note: 'Real-world Python MCP servers sampled across random-registry and sink-enriched strata. Test-split labels remain outside this repository.',
+    servers: pyResult.servers
   };
 
   writeFileSync(path.join(here, 'manifest.json'), JSON.stringify(tsManifest, null, 2) + '\n', 'utf8');
@@ -236,26 +359,29 @@ export async function runSelect({
 
   return {
     snapshotPath,
+    pagesFetched: snapshot.pagesFetched,
     snapshotTotalServers: snapshot.totalLatestServers,
-    candidates: { ts: tsCandidates.length, py: pyCandidates.length },
-    typescript: { count: tsServers.length, dev: tsServers.filter(s => s.split === 'dev').map(s => s.id), test: tsServers.filter(s => s.split === 'test').map(s => s.id) },
-    python: { count: pyServers.length, dev: pyServers.filter(s => s.split === 'dev').map(s => s.id), test: pyServers.filter(s => s.split === 'test').map(s => s.id) }
+    typescript: {
+      candidates: tsResult.totalCandidates,
+      qualifying: tsResult.totalQualifying,
+      randomRegistry: tsResult.stratum1Count,
+      sinkEnriched: tsResult.stratum2Count,
+      dev: tsResult.servers.filter(s => s.split === 'dev').length,
+      test: tsResult.servers.filter(s => s.split === 'test').length
+    },
+    python: {
+      candidates: pyResult.totalCandidates,
+      qualifying: pyResult.totalQualifying,
+      randomRegistry: pyResult.stratum1Count,
+      sinkEnriched: pyResult.stratum2Count,
+      dev: pyResult.servers.filter(s => s.split === 'dev').length,
+      test: pyResult.servers.filter(s => s.split === 'test').length
+    }
   };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
-  const get = (flag) => {
-    const idx = args.indexOf(flag);
-    const val = idx !== -1 ? args[idx + 1] : undefined;
-    return val && !val.startsWith('--') ? val : undefined;
-  };
-  const out = await runSelect({
-    fromSnapshot: args.includes('--from-snapshot'),
-    ...(get('--seed') ? { seed: Number(get('--seed')) } : {}),
-    ...(get('--ts-count') ? { tsCount: Number(get('--ts-count')) } : {}),
-    ...(get('--py-count') ? { pyCount: Number(get('--py-count')) } : {}),
-    ...(get('--max-pages') ? { maxPages: Number(get('--max-pages')) } : {})
-  });
+  const out = await runSelect({ fromSnapshot: args.includes('--from-snapshot') });
   console.log(JSON.stringify(out, null, 2));
 }

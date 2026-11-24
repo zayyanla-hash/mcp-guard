@@ -6,49 +6,333 @@
     "dev": 0.6,
     "test": 0.4
   },
-  "samplingRule": "Sort active MCP Registry servers (npm/pypi, public GitHub, verified MIT or Apache-2.0, excluding Vambrace fixtures and typescript-sdk examples) ascending by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Take first N per language and assign first round(N * 0.6) servers to dev, remaining to test.",
+  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): among remaining qualifying servers in seeded order, up to 15 TS / 10 Python containing >=1 fixed sink token via plain-text search. Both strata split 60/40 by server.",
   "snapshotFile": "bench/registry-snapshot.json",
-  "snapshotFetchedAt": "2026-11-23T21:55:56.477Z",
-  "note": "Real-world Python MCP servers sampled from the official MCP Registry. Run node bench/fetch.mjs to clone pinned commits into bench/.cache/. Test-split labels remain outside this repository.",
+  "snapshotFetchedAt": "2026-11-23T22:51:05.056Z",
+  "note": "Real-world Python MCP servers sampled across random-registry and sink-enriched strata. Test-split labels remain outside this repository.",
   "servers": [
     {
-      "id": "software-as-content-software-as-content-sdk-ai-dynsoft-sac",
-      "url": "https://github.com/Software-As-Content/software-as-content-sdk.git",
-      "commit": "03d480724c56b470e72baff51b55fc550e7725f5",
+      "id": "m-dev-tools-m-dev-tools-mcp-io-github-m-dev-tools-m-dev-tools-mc",
+      "url": "https://github.com/m-dev-tools/m-dev-tools-mcp.git",
+      "commit": "fa0696a079b040bb0f1e62205f82fc90a226c531",
+      "license": "AGPL-3.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 001f22826d75, verified AGPL-3.0 license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "daedalus-mcp-mysql-connector-io-github-daedalus-mcp-mysql-connec",
+      "url": "https://github.com/daedalus/mcp-mysql-connector.git",
+      "commit": "b397ef6dac9969fa66ecd972339e8feb543ee143",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00251cc2a1b3, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "mshegolev-jaeger-mcp-io-github-mshegolev-jaeger-mcp",
+      "url": "https://github.com/mshegolev/jaeger-mcp.git",
+      "commit": "e8e71a12062f52b3e40249ad64f665442242d083",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 002866e2aeb1, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "gabrielmahia-remit-mcp-io-github-gabrielmahia-remit-mcp",
+      "url": "https://github.com/gabrielmahia/remit-mcp.git",
+      "commit": "1aa09fe90c736cf08bdf376271d3e4331ed41e67",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00308986cf26, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "mcparmory-registry-com-mcparmory-mailersend",
+      "url": "https://github.com/mcparmory/registry.git",
+      "commit": "04af6ce3ff58fb74017a715ad66d987d4bef45c8",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 003dac4eb95c, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "h-hiram-handmade-io-github-h-hiram-handmade",
+      "url": "https://github.com/h-hiram/handmade.git",
+      "commit": "3453089aed852fa8e2dcafaa5e3c82556f29a8c5",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 004f246e3777, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "jeremdecustovox-custovox-ai-io-github-jeremdecustovox-custovox-t",
+      "url": "https://github.com/jeremdecustovox/custovox-ai.git",
+      "commit": "8242acaa65e05d26e27379b8cb6ceea227d9a68c",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 005c7f0dd3d7, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "bijectivelabs-trading-research-agents-io-github-bijectivelabs-tr",
+      "url": "https://github.com/BijectiveLabs/trading-research-agents.git",
+      "commit": "d80b0e37bcc8fa5d497888337f0fd4ab61721600",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 005f53c0956a, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "shaag7967-mcp-server-senseca-pro-io-github-shaag7967-mcp-server-",
+      "url": "https://github.com/shaag7967/mcp-server-senseca-pro.git",
+      "commit": "26bc87fbf9bf69547eb9452cde3296e5db75ab0f",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0073083ae8f4, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "dev"
+    },
+    {
+      "id": "legalaspro-proton-mail-mcp-io-github-legalaspro-proton-mail-mcp",
+      "url": "https://github.com/legalaspro/proton-mail-mcp.git",
+      "commit": "875e3bfe26d36f8e230a88023b0face6f0bfca8a",
       "license": "Apache-2.0",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 058261c88b85, verified Apache-2.0 license)",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0090e2efe413, verified Apache-2.0 license)",
+      "stratum": "random-registry",
       "split": "dev"
     },
     {
-      "id": "alfonsoguv-deepdna-mcp-ai-deepdna-local",
-      "url": "https://github.com/alfonsoguv/deepdna-mcp.git",
-      "commit": "0fef341cd1ea45d2bc33244ffc74d8576c86355b",
+      "id": "gabmj23-nyambot-mcp-io-github-gabmj23-nyambot-mcp",
+      "url": "https://github.com/GabMJ23/nyambot-mcp.git",
+      "commit": "7e9651666e00aa17cc94ed9f167a19888eaa08cb",
       "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 0ec7afce7fad, verified MIT license)",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 009c8251c904, verified MIT license)",
+      "stratum": "random-registry",
       "split": "dev"
     },
     {
-      "id": "dinglebear-ai-unraid-ai-dinglebear-unraid-mcp",
-      "url": "https://github.com/dinglebear-ai/unraid.git",
-      "commit": "1e86b294af8f3b10a8031290d98666c78a4a782c",
+      "id": "flayedone-plesk-mcp-io-github-flayedone-plesk-mcp",
+      "url": "https://github.com/FlayedOne/plesk-mcp.git",
+      "commit": "fcf4fd55bfea5018df60028558da2366b9377a02",
       "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 159c5ce4873d, verified MIT license)",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 009cd85ed008, verified MIT license)",
+      "stratum": "random-registry",
       "split": "dev"
     },
     {
-      "id": "glassflow-tares-ai-glassflow-tares",
-      "url": "https://github.com/glassflow/tares.git",
-      "commit": "03c46fb92e47677edae35f8b71a6dcde418264ba",
+      "id": "euisuh-nginx-proxy-manager-mcp-io-github-euisuh-nginx-proxy-mana",
+      "url": "https://github.com/euisuh/nginx-proxy-manager-mcp.git",
+      "commit": "1d4bf6110a4ca9721849c5c50ecd03498874c228",
       "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 1f7956cfcf27, verified MIT license)",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00a0e09f35d0, verified MIT license)",
+      "stratum": "random-registry",
       "split": "test"
     },
     {
-      "id": "fortisil-gateco-sdk-python-ai-gateco-gateco",
-      "url": "https://github.com/fortisil/gateco-sdk-python.git",
-      "commit": "9fad58394822f23a9b44978e32d489d357e1f4ba",
+      "id": "crunchtools-mcp-slack-io-github-crunchtools-slack",
+      "url": "https://github.com/crunchtools/mcp-slack.git",
+      "commit": "8c5f292239704eeef3f035814564e6fed2c86d0d",
+      "license": "AGPL-3.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00b94ec9e284, verified AGPL-3.0 license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "moorcheh-ai-memanto-io-github-moorcheh-ai-memanto",
+      "url": "https://github.com/moorcheh-ai/memanto.git",
+      "commit": "ee7b0b6165f3319fd21d8b083c2cac0678633130",
+      "subpath": "integrations/mcp",
       "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 2d600d7faf43, verified MIT license)",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00ba2631a99c, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "zhang-liz-personal-brain-io-github-zhang-liz-personal-brain",
+      "url": "https://github.com/zhang-liz/personal-brain.git",
+      "commit": "40ca5edc559d2abf3c996129ec016625a41249b6",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00ca0d6ac6ff, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "mayim-mayim-mayim-agent-io-github-mayim-mayim-mayim-agent-mcp",
+      "url": "https://github.com/mayim-mayim/mayim-agent.git",
+      "commit": "bd850cce2925f6997d3b19a792322d72926b5d2a",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00cb1c4e4db4, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "dinevdecor-trust-engine-mcp-io-github-dinevdecor-trust-engine-mc",
+      "url": "https://github.com/DinevDecor/trust-engine-mcp.git",
+      "commit": "c46ed5a22d2e80974dbc9a923546a27c17fac62a",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00d681feb5d0, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "jumodada-drissionpage-mcp-server-io-github-jumodada-drissionpage",
+      "url": "https://github.com/jumodada/Drissionpage-MCP-Server.git",
+      "commit": "140756ac4e70b0d70132359bb61f3750f608349f",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00dd9a4212a5, verified Apache-2.0 license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "upstageai-korean-tax-calc-mcp-io-github-upstageai-korean-tax-cal",
+      "url": "https://github.com/UpstageAI/korean-tax-calc-mcp.git",
+      "commit": "5c7b3e201240a00b40d71a4c176ae85d1702743c",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00e2f9122918, verified MIT license)",
+      "stratum": "random-registry",
+      "split": "test"
+    },
+    {
+      "id": "surajkgoyal-myopic-io-github-surajkgoyal-myopic",
+      "url": "https://github.com/SurajKGoyal/myopic.git",
+      "commit": "b30b5ad8475da03d28173ec94ea7162cc3760bf9",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00e454eaa411, verified MIT license); plain-text sinks: httpx, os.environ, subprocess, open, requests",
+      "matchedSinks": [
+        "httpx",
+        "os.environ",
+        "subprocess",
+        "open",
+        "requests"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "jimdrews-fastmcp-trello-io-github-jimdrews-fastmcp-trello",
+      "url": "https://github.com/Jimdrews/fastmcp-trello.git",
+      "commit": "4431461f0f23638f973b8a46b0f132577adea55c",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00e4a5697910, verified MIT license); plain-text sinks: httpx, os.environ",
+      "matchedSinks": [
+        "httpx",
+        "os.environ"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "googlecloudplatform-conversational-insights-devkit-io-github-goo",
+      "url": "https://github.com/GoogleCloudPlatform/conversational-insights-devkit.git",
+      "commit": "676c1713010ab53fdb0629dac05dd0626ef9427f",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00e550365199, verified Apache-2.0 license); plain-text sinks: open, os.environ, requests, subprocess, httpx",
+      "matchedSinks": [
+        "open",
+        "os.environ",
+        "requests",
+        "subprocess",
+        "httpx"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "junipertcy-refereekit-com-inferweave-refereekit",
+      "url": "https://github.com/junipertcy/refereekit.git",
+      "commit": "6dd6b3ee583d40068e0bf31e95cb7f9b5ac5df9b",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00ebba45f47c, verified MIT license); plain-text sinks: subprocess, os.environ, open, requests",
+      "matchedSinks": [
+        "subprocess",
+        "os.environ",
+        "open",
+        "requests"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "geovicco-dev-bhoonidhi-mcp-io-github-geovicco-dev-bhoonidhi-mcp",
+      "url": "https://github.com/geovicco-dev/bhoonidhi-mcp.git",
+      "commit": "0ff836655f84e675bab7d701dd7a530f19e181e1",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 00f9e806bca3, verified MIT license); plain-text sinks: os.environ, subprocess",
+      "matchedSinks": [
+        "os.environ",
+        "subprocess"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "bytestay-specwise-mcp-io-github-bytestay-specwise-mcp",
+      "url": "https://github.com/bytestay/specwise-mcp.git",
+      "commit": "a7f35b8db7e681fc6982bb257c62b525e7193d67",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0103bdb0a932, verified MIT license); plain-text sinks: os.environ, requests, httpx, subprocess",
+      "matchedSinks": [
+        "os.environ",
+        "requests",
+        "httpx",
+        "subprocess"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "ikoskela-precision-desktop-io-github-ikoskela-precision-desktop",
+      "url": "https://github.com/ikoskela/precision-desktop.git",
+      "commit": "58a56a60b2ff7fda10b3b8db3439de43878034c7",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 016bb7466e3a, verified MIT license); plain-text sinks: subprocess, os.environ",
+      "matchedSinks": [
+        "subprocess",
+        "os.environ"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "matteoredaelli-pyviaggiatreno-io-github-matteoredaelli-italy-tra",
+      "url": "https://github.com/matteoredaelli/pyviaggiatreno.git",
+      "commit": "af6c0e8493d61627b30c0157192bb4c0c420c703",
+      "license": "GPL-3.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 017975ea0407, verified GPL-3.0 license); plain-text sinks: httpx, open",
+      "matchedSinks": [
+        "httpx",
+        "open"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "sogl-mikrotik-rest-mcp-io-github-sogl-mikrotik-rest-mcp",
+      "url": "https://github.com/Sogl/mikrotik-rest-mcp.git",
+      "commit": "28a47a9698a19ec22ffd4b17d18f456f294e448c",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 017d45a2da74, verified MIT license); plain-text sinks: os.environ, requests",
+      "matchedSinks": [
+        "os.environ",
+        "requests"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "norrietaylor-distillery-io-github-norrietaylor-distillery-mcp",
+      "url": "https://github.com/norrietaylor/distillery.git",
+      "commit": "c5ad2e45ff6be07335892bc479498117bf33fda6",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 01cc731985e4, verified Apache-2.0 license); plain-text sinks: open, os.environ, subprocess, requests, httpx",
+      "matchedSinks": [
+        "open",
+        "os.environ",
+        "subprocess",
+        "requests",
+        "httpx"
+      ],
+      "stratum": "sink-enriched",
       "split": "test"
     }
   ]

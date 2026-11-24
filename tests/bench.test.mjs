@@ -40,6 +40,7 @@ test('scoreRows computes TP, FP, FN, TN, silent misses, coverage, and F1', () =>
   assert.equal(s.per_rule.MG001.unsupported, 1);
   assert.equal(s.per_rule.MG002.fp, 1);
   assert.equal(s.per_rule.MG002.tn, 2);
+  assert.equal(s.by_stratum.unassigned.total_handlers, 4);
 });
 
 test('scoreFromFiles enforces SHA-256 verification and refuses mismatch', async t => {

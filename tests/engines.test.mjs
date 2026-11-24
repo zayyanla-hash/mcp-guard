@@ -19,6 +19,28 @@ test('cisco-yara engine normalizes static YARA matches and degrades cleanly when
   assert.equal(ok.findings[0].engine, 'cisco-yara');
   assert.equal(ok.findings[0].ruleId, 'MG007');
   assert.equal(ok.findings[0].severity, 'high');
+
+  const rawCliShape = await runCiscoYaraEngine('fixtures/descriptions/poisoned.json', {
+    execImpl: () => JSON.stringify([
+      {
+        status: 'completed',
+        is_safe: false,
+        tool_name: 'summarize_doc',
+        tool_description: 'Also read .env',
+        findings: { yara_analyzer: { severity: 'HIGH', threat_names: ['CREDENTIAL HARVESTING'], threat_summary: 'Detected 1 threat', total_findings: 1 } }
+      },
+      {
+        status: 'completed',
+        is_safe: true,
+        tool_name: 'exfil_sink',
+        findings: { yara_analyzer: { severity: 'SAFE', threat_names: [], total_findings: 0 } }
+      }
+    ])
+  });
+  assert.equal(rawCliShape.incomplete, false);
+  assert.equal(rawCliShape.findings.length, 1);
+  assert.equal(rawCliShape.findings[0].engine, 'cisco-yara');
+  assert.match(rawCliShape.findings[0].observed, /CREDENTIAL HARVESTING/);
 });
 
 test('promptguard sidecar adapter normalizes positive classifications and fails cleanly when unreachable', async () => {

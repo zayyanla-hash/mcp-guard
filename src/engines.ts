@@ -37,7 +37,7 @@ export async function runCiscoYaraEngine(
   const binary = options.binary ?? 'mcp-scanner';
   let stdout = '';
   try {
-    stdout = execImpl(binary, ['--analyzers', 'yara', '--raw', '--format', 'json', '--stdio-inventory', path.resolve(inventoryPath)], {
+    stdout = execImpl(binary, ['--analyzers', 'yara', '--raw', 'static', '--tools', path.resolve(inventoryPath)], {
       encoding: 'utf8',
       timeout: 30_000,
       stdio: ['ignore', 'pipe', 'pipe']
@@ -82,9 +82,42 @@ export async function runCiscoYaraEngine(
   for (const item of rawFindings) {
     if (!item || typeof item !== 'object') continue;
     const rec = item as Record<string, unknown>;
-    const ruleName = String(rec.rule ?? rec.rule_name ?? rec.id ?? 'yara_match');
     const toolName = typeof rec.tool === 'string' ? rec.tool : (typeof rec.tool_name === 'string' ? rec.tool_name : undefined);
     const pointer = typeof rec.pointer === 'string' ? rec.pointer : '/tools';
+
+    // Real `mcp-scanner --analyzers yara --raw static --tools` per-tool entry
+    const findingsObj = rec.findings && typeof rec.findings === 'object' ? rec.findings as Record<string, unknown> : undefined;
+    const yaraObj = findingsObj?.yara_analyzer && typeof findingsObj.yara_analyzer === 'object'
+      ? findingsObj.yara_analyzer as Record<string, unknown>
+      : undefined;
+    if (yaraObj) {
+      const total = Number(yaraObj.total_findings ?? 0);
+      if (rec.is_safe === true || total <= 0) continue;
+      const threats = Array.isArray(yaraObj.threat_names) ? yaraObj.threat_names.map(String) : ['yara_match'];
+      const ruleName = threats.join(', ') || 'yara_match';
+      const excerpt = String(rec.tool_description ?? yaraObj.threat_summary ?? ruleName);
+      findings.push(finding({
+        engine: 'cisco-yara',
+        ruleId: 'MG007',
+        title: `Cisco YARA match: ${ruleName}`,
+        category: 'tool-poisoning',
+        severity: normalizeSeverity(yaraObj.severity),
+        confidence: 'medium',
+        evidenceType: 'metadata-observation',
+        locations: [{ file: inventoryPath, pointer }],
+        evidence: excerpt.slice(0, 320),
+        observed: `External cisco-yara matched ${ruleName}${toolName ? ` on tool "${toolName}"` : ''}.`,
+        why: String(yaraObj.threat_summary ?? 'YARA signature matched suspicious instruction or payload metadata.'),
+        assumptions: ['Cisco mcp-scanner ran offline in static YARA-only mode on inventory JSON.'],
+        remediation: 'Review the flagged descriptor content and remove hidden directives or suspicious patterns.',
+        limitations: ['External YARA engine match; verify signature context manually.']
+      }));
+      continue;
+    }
+
+    // Flat finding object format
+    if (rec.is_safe === true) continue;
+    const ruleName = String(rec.rule ?? rec.rule_name ?? rec.id ?? 'yara_match');
     const excerpt = String(rec.match ?? rec.evidence ?? rec.description ?? ruleName);
     findings.push(finding({
       engine: 'cisco-yara',

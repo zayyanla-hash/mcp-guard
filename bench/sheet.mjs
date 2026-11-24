@@ -11,7 +11,7 @@ const root = path.resolve(here, '..');
 const cacheDir = path.join(here, '.cache');
 const RULES = ['MG001', 'MG002', 'MG003', 'MG004', 'MG006'];
 const HEADER = [
-  'server_id', 'split', 'file', 'handler_name', 'line', 'analyzer_complete', 'analyzer_diagnostics',
+  'server_id', 'stratum', 'split', 'file', 'handler_name', 'line', 'analyzer_complete', 'analyzer_diagnostics',
   ...RULES.flatMap(r => [`${r}_detected`, `${r}_label`, `${r}_rationale`])
 ];
 
@@ -34,7 +34,7 @@ function extractTsToolNames(file, text) {
   const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
   const tools = [];
   const visit = (n) => {
-    if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression) && n.expression.name.text === 'registerTool') {
+    if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression) && ['registerTool', 'tool'].includes(n.expression.name.text)) {
       const arg0 = n.arguments[0];
       if (arg0 && ts.isStringLiteralLike(arg0)) {
         const line = sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
@@ -104,7 +104,7 @@ function appendHandlerRows(rows, server, split, rel, handlers, result) {
   for (const h of handlers) {
     const toolFindings = result.findings.filter(f => f.observed.includes(`Tool: ${h.name}`));
     const ruleCols = RULES.flatMap(r => [toolFindings.some(f => f.ruleId === r) ? '1' : '0', '', '']);
-    rows.push([server.id, server.split ?? split, rel, h.name, h.line, complete, diags, ...ruleCols]);
+    rows.push([server.id, server.stratum ?? 'unassigned', server.split ?? split, rel, h.name, h.line, complete, diags, ...ruleCols]);
   }
 }
 
@@ -134,8 +134,7 @@ export function generateLabelingSheet({
       const text = readFileSync(file, 'utf8');
       const result = analyzeSource(rel, text);
       const tools = extractTsToolNames(rel, text);
-      const handlers = tools.length ? tools : [{ name: '<file-level>', line: 1 }];
-      appendHandlerRows(rows, server, split, rel, handlers, result);
+      if (tools.length) appendHandlerRows(rows, server, split, rel, tools, result);
     }
   }
   return writeSheetCsv(outFile, rows);
@@ -160,8 +159,7 @@ export async function generatePythonLabelingSheet({
       const text = readFileSync(file, 'utf8');
       const result = await analyzePythonSource(rel, text);
       const tools = extractPythonToolNames(text);
-      const handlers = tools.length ? tools : [{ name: '<file-level>', line: 1 }];
-      appendHandlerRows(rows, server, split, rel, handlers, result);
+      if (tools.length) appendHandlerRows(rows, server, split, rel, tools, result);
     }
   }
   return writeSheetCsv(outFile, rows);

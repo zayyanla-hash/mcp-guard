@@ -164,6 +164,20 @@ export async function runBenchmark({
       return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${fmtRate(s.precision, s.precision_ci95)} | ${fmtRate(s.recall, s.recall_ci95)} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
     }),
     '',
+    '## Per-stratum accuracy (TypeScript analyzer)',
+    '',
+    ...Object.entries(tsScores.by_stratum ?? {}).flatMap(([stratum, st]) => [
+      `### Stratum: \`${stratum}\` (${st.covered_handlers}/${st.total_handlers} handlers covered, ${st.total_silent_misses} silent misses)`,
+      '',
+      '| Rule | TP | FP | FN | TN | Unsupported | Silent misses | Precision | Recall | F1 |',
+      '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|',
+      ...RULES.map(r => {
+        const s = st.per_rule[r];
+        return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${s.precision === null ? 'n/a' : (s.precision * 100).toFixed(1) + '%'} | ${s.recall === null ? 'n/a' : (s.recall * 100).toFixed(1) + '%'} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
+      }),
+      ''
+    ]),
+    '',
     '## Baselines',
     '',
     '| Baseline | Status | Total hits | Details |',
@@ -197,7 +211,19 @@ export async function runBenchmark({
       ...RULES.map(r => {
         const s = pyScores.per_rule[r];
         return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${fmtRate(s.precision, s.precision_ci95)} | ${fmtRate(s.recall, s.recall_ci95)} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
-      })
+      }),
+      '',
+      ...Object.entries(pyScores.by_stratum ?? {}).flatMap(([stratum, st]) => [
+        `### Python stratum: \`${stratum}\` (${st.covered_handlers}/${st.total_handlers} handlers covered, ${st.total_silent_misses} silent misses)`,
+        '',
+        '| Rule | TP | FP | FN | TN | Unsupported | Silent misses | Precision | Recall | F1 |',
+        '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|',
+        ...RULES.map(r => {
+          const s = st.per_rule[r];
+          return `| ${r} | ${s.tp} | ${s.fp} | ${s.fn} | ${s.tn} | ${s.unsupported} | ${s.silent_misses} | ${s.precision === null ? 'n/a' : (s.precision * 100).toFixed(1) + '%'} | ${s.recall === null ? 'n/a' : (s.recall * 100).toFixed(1) + '%'} | ${s.f1 === null ? 'n/a' : s.f1.toFixed(4)} |`;
+        }),
+        ''
+      ])
     ] : ['Benchmark pending human labels.'])
   ];
 

@@ -73,7 +73,7 @@ export function parseCsv(text) {
  * - <RULE>_label: 'positive' | 'negative' | 'unsupported'
  * - <RULE>_detected: '1' | '0' | 'true' | 'false'
  */
-export function scoreRows(rows, rules = RULES) {
+function computeRowStats(rows, rules = RULES) {
   const totalHandlers = rows.length;
   const coveredHandlers = rows.filter(r => {
     const diags = String(r.analyzer_diagnostics ?? '').trim();
@@ -135,6 +135,19 @@ export function scoreRows(rows, rules = RULES) {
     total_silent_misses: totalSilentMisses,
     per_rule: perRule
   };
+}
+
+export function scoreRows(rows, rules = RULES) {
+  const aggregate = computeRowStats(rows, rules);
+  const strata = [...new Set(rows.map(r => String(r.stratum ?? '').trim() || 'unassigned'))];
+  const byStratum = {};
+  for (const stratum of strata) {
+    byStratum[stratum] = computeRowStats(
+      rows.filter(r => (String(r.stratum ?? '').trim() || 'unassigned') === stratum),
+      rules
+    );
+  }
+  return { ...aggregate, by_stratum: byStratum };
 }
 
 export function scoreFromFiles({ labelsPath, sha256Path, expectedSha } = {}) {
