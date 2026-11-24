@@ -6,7 +6,7 @@
     "dev": 0.6,
     "test": 0.4
   },
-  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): among remaining qualifying servers in seeded order, up to 15 TS / 10 Python containing >=1 fixed sink token via plain-text search. Both strata split 60/40 by server.",
+  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): continue after Stratum 1 in seeded order and stop at 15 TS / 10 Python whose source matches at least one strong token via plain-text search (TS: exec, execSync, child_process, spawn with shell, writeFile, unlink; Python: subprocess, os.system). Weaker matches may be recorded but do not qualify a server. Both strata split 60/40 by server.",
   "snapshotFile": "bench/registry-snapshot.json",
   "snapshotCommitted": false,
   "snapshotSha256": "46dc01579a632426792c169ede460db7171e0ce6476f20f6c5bbefe2c1b65e3d",
@@ -214,19 +214,6 @@
       "split": "dev"
     },
     {
-      "id": "jimdrews-fastmcp-trello-io-github-jimdrews-fastmcp-trello",
-      "url": "https://github.com/Jimdrews/fastmcp-trello.git",
-      "commit": "4431461f0f23638f973b8a46b0f132577adea55c",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 00e4a5697910, verified MIT license); plain-text sinks: httpx, os.environ",
-      "matchedSinks": [
-        "httpx",
-        "os.environ"
-      ],
-      "stratum": "sink-enriched",
-      "split": "dev"
-    },
-    {
       "id": "googlecloudplatform-conversational-insights-devkit-io-github-goo",
       "url": "https://github.com/GoogleCloudPlatform/conversational-insights-devkit.git",
       "commit": "676c1713010ab53fdb0629dac05dd0626ef9427f",
@@ -296,33 +283,7 @@
         "os.environ"
       ],
       "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "matteoredaelli-pyviaggiatreno-io-github-matteoredaelli-italy-tra",
-      "url": "https://github.com/matteoredaelli/pyviaggiatreno.git",
-      "commit": "af6c0e8493d61627b30c0157192bb4c0c420c703",
-      "license": "GPL-3.0",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 017975ea0407, verified GPL-3.0 license); plain-text sinks: httpx, open",
-      "matchedSinks": [
-        "httpx",
-        "open"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "sogl-mikrotik-rest-mcp-io-github-sogl-mikrotik-rest-mcp",
-      "url": "https://github.com/Sogl/mikrotik-rest-mcp.git",
-      "commit": "28a47a9698a19ec22ffd4b17d18f456f294e448c",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (py) seeded sample (rank 017d45a2da74, verified MIT license); plain-text sinks: os.environ, requests",
-      "matchedSinks": [
-        "os.environ",
-        "requests"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
+      "split": "dev"
     },
     {
       "id": "norrietaylor-distillery-io-github-norrietaylor-distillery-mcp",
@@ -334,6 +295,52 @@
         "open",
         "os.environ",
         "subprocess",
+        "requests",
+        "httpx"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "shapeandshare-ember-io-github-shapeandshare-ember",
+      "url": "https://github.com/shapeandshare/ember.git",
+      "commit": "03e45cc29d0be53fee2ac3fc481c17c12f331203",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 021063de3a09, verified MIT license); plain-text sinks: open, os.environ, httpx, subprocess, requests",
+      "matchedSinks": [
+        "open",
+        "os.environ",
+        "httpx",
+        "subprocess",
+        "requests"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "henilcalagiya-google-sheets-mcp-io-github-henilcalagiya-google-s",
+      "url": "https://github.com/henilcalagiya/google-sheets-mcp.git",
+      "commit": "fa4bc1fb940fcbeba9d73f86b232ba02b50f8a8a",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 021992069977, verified Apache-2.0 license); plain-text sinks: subprocess, open, requests",
+      "matchedSinks": [
+        "subprocess",
+        "open",
+        "requests"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "sk-dev-ai-websearch-io-github-sk-dev-ai-websearch",
+      "url": "https://github.com/SK-DEV-AI/websearch.git",
+      "commit": "717ed78a7a79700796796e1bb5f0494da7d252f5",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (py) seeded sample (rank 0229f6c05ee2, verified MIT license); plain-text sinks: subprocess, os.environ, open, requests, httpx",
+      "matchedSinks": [
+        "subprocess",
+        "os.environ",
+        "open",
         "requests",
         "httpx"
       ],

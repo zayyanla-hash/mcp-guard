@@ -6,7 +6,7 @@
     "dev": 0.6,
     "test": 0.4
   },
-  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): among remaining qualifying servers in seeded order, up to 15 TS / 10 Python containing >=1 fixed sink token via plain-text search. Both strata split 60/40 by server.",
+  "samplingRule": "Full MCP Registry snapshot (latest active entries, public GitHub, verified OSI-approved license, excluding Vambrace fixtures and typescript-sdk). Stratum 1 (random-registry): first 40 TS / 20 Python sorted by sha256(\"20261123:<lang>:<registryName>:<repoUrl>\"). Stratum 2 (sink-enriched): continue after Stratum 1 in seeded order and stop at 15 TS / 10 Python whose source matches at least one strong token via plain-text search (TS: exec, execSync, child_process, spawn with shell, writeFile, unlink; Python: subprocess, os.system). Weaker matches may be recorded but do not qualify a server. Both strata split 60/40 by server.",
   "snapshotFile": "bench/registry-snapshot.json",
   "snapshotCommitted": false,
   "snapshotSha256": "46dc01579a632426792c169ede460db7171e0ce6476f20f6c5bbefe2c1b65e3d",
@@ -377,19 +377,6 @@
       "split": "test"
     },
     {
-      "id": "a007mr-posthero-mcp-ai-posthero-posthero",
-      "url": "https://github.com/a007mr/posthero-mcp.git",
-      "commit": "5116d20fa63f8823ef3949dc70edd1bb1f93dc5c",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 00e2067ed4b3, verified MIT license); plain-text sinks: fetch, process.env",
-      "matchedSinks": [
-        "fetch",
-        "process.env"
-      ],
-      "stratum": "sink-enriched",
-      "split": "dev"
-    },
-    {
       "id": "jtalk22-slack-mcp-server-io-github-jtalk22-slack-mcp-server",
       "url": "https://github.com/jtalk22/slack-mcp-server.git",
       "commit": "902b3ea67ad00c8efecd60ea81a6cdfd5a8afac7",
@@ -426,32 +413,16 @@
       "split": "dev"
     },
     {
-      "id": "specshield-io-specshield-mcp-server-io-github-specshield-io-spec",
-      "url": "https://github.com/specshield-io/specshield-mcp-server.git",
-      "commit": "f69c1bbd536b2660bd04725ae1cb6a72d1aa86e2",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 00e7dd93ed2b, verified MIT license); plain-text sinks: process.env, readFile",
-      "matchedSinks": [
-        "process.env",
-        "readFile"
-      ],
-      "stratum": "sink-enriched",
-      "split": "dev"
-    },
-    {
       "id": "estruyf-vscode-demo-time-io-github-estruyf-vscode-demo-time",
       "url": "https://github.com/estruyf/vscode-demo-time.git",
       "commit": "6e5174a2e1acefb29a5a0b1c3a2284d3046f633c",
+      "subpath": "apps/mcp",
+      "subpathNote": "Manual: the registry entry gives no repository.subfolder. apps/mcp declares the registry npm package @demotime/mcp.",
       "license": "Apache-2.0",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 00ec37a3538b, verified Apache-2.0 license); plain-text sinks: child_process, readFile, writeFile, process.env, fetch, exec, unlink",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 00ec37a3538b, verified Apache-2.0 license); plain-text sinks: readFile, writeFile",
       "matchedSinks": [
-        "child_process",
         "readFile",
-        "writeFile",
-        "process.env",
-        "fetch",
-        "exec",
-        "unlink"
+        "writeFile"
       ],
       "stratum": "sink-enriched",
       "split": "dev"
@@ -470,33 +441,19 @@
       "split": "dev"
     },
     {
-      "id": "domdomegg-openfoodfacts-mcp-io-github-domdomegg-openfoodfacts-mc",
-      "url": "https://github.com/domdomegg/openfoodfacts-mcp.git",
-      "commit": "ceebbbd6174fa992a7a825af617c4ec6d1de8e58",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 00fe6115c5c3, verified MIT license); plain-text sinks: process.env, readFile, fetch",
-      "matchedSinks": [
-        "process.env",
-        "readFile",
-        "fetch"
-      ],
-      "stratum": "sink-enriched",
-      "split": "dev"
-    },
-    {
       "id": "agentvms-files-direct-cli-com-tnyforge-files-direct",
       "url": "https://github.com/agentvms/files-direct-cli.git",
-      "commit": "430f64c46b03ddcb577c0228c06d58c2b2bbe0b9",
+      "commit": "7afd4e15e79c1e224471b7ba29bc0c35ec3f6eb3",
       "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 00ffc30ba271, verified MIT license); plain-text sinks: readFile, process.env, child_process, exec, fetch, unlink, writeFile",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 00ffc30ba271, verified MIT license); plain-text sinks: exec, child_process, readFile, writeFile, fetch, process.env, unlink",
       "matchedSinks": [
-        "readFile",
-        "process.env",
-        "child_process",
         "exec",
+        "child_process",
+        "readFile",
+        "writeFile",
         "fetch",
-        "unlink",
-        "writeFile"
+        "process.env",
+        "unlink"
       ],
       "stratum": "sink-enriched",
       "split": "dev"
@@ -528,61 +485,7 @@
         "writeFile"
       ],
       "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "pipeworx-io-mcp-crossref-io-github-pipeworx-io-crossref",
-      "url": "https://github.com/pipeworx-io/mcp-crossref.git",
-      "commit": "1ecbcdc72b5c044264b80f15d80a154f155815f9",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 0111bcaea206, verified MIT license); plain-text sinks: readFile, fetch, process.env",
-      "matchedSinks": [
-        "readFile",
-        "fetch",
-        "process.env"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "pipeworx-io-mcp-spdx-license-io-github-pipeworx-io-spdx-license",
-      "url": "https://github.com/pipeworx-io/mcp-spdx-license.git",
-      "commit": "0c65ae02114ed6aa28a58b4ef70f432fbc93c20d",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 01140bebe89c, verified MIT license); plain-text sinks: readFile, fetch, process.env",
-      "matchedSinks": [
-        "readFile",
-        "fetch",
-        "process.env"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "microsoft-mcp-com-microsoft-template-server-name",
-      "url": "https://github.com/microsoft/mcp.git",
-      "commit": "d7f62fda4a5a52495c45ec71ac662ac34560cec2",
-      "subpath": "servers/Template.Mcp.Server",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 01147859c776, verified MIT license); plain-text sinks: process.env",
-      "matchedSinks": [
-        "process.env"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
-    },
-    {
-      "id": "formatixai-mcp-server-io-github-formatixai-mcp-server",
-      "url": "https://github.com/FormatixAI/mcp-server.git",
-      "commit": "0fa59456d0c0c84ce7af12ceeede7ec681bab6d8",
-      "license": "MIT",
-      "selectionReason": "MCP Registry (ts) seeded sample (rank 0120666b14c5, verified MIT license); plain-text sinks: fetch, process.env",
-      "matchedSinks": [
-        "fetch",
-        "process.env"
-      ],
-      "stratum": "sink-enriched",
-      "split": "test"
+      "split": "dev"
     },
     {
       "id": "ottonic-review-mcp-server-io-github-ottonic-review-mcp-server",
@@ -592,6 +495,126 @@
       "selectionReason": "MCP Registry (ts) seeded sample (rank 0121533bd25d, verified MIT license); plain-text sinks: exec, process.env, readFile, writeFile",
       "matchedSinks": [
         "exec",
+        "process.env",
+        "readFile",
+        "writeFile"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "sarveshsea-m-moire-io-github-sarveshsea-memoire",
+      "url": "https://github.com/sarveshsea/m-moire.git",
+      "commit": "0317aca532012c127518dc567c5a787fda298d85",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 012533b435b7, verified MIT license); plain-text sinks: child_process, readFile, writeFile, fetch, exec, process.env, unlink, spawn_shell, axios",
+      "matchedSinks": [
+        "child_process",
+        "readFile",
+        "writeFile",
+        "fetch",
+        "exec",
+        "process.env",
+        "unlink",
+        "spawn_shell",
+        "axios"
+      ],
+      "stratum": "sink-enriched",
+      "split": "dev"
+    },
+    {
+      "id": "vitalytolstik-janosik-io-github-vitalytolstik-janosik",
+      "url": "https://github.com/VitalyTolstik/janosik.git",
+      "commit": "0b1fb58acac73ed7459a0d5258d889bb0973a20e",
+      "subpath": "mcp",
+      "subpathNote": "Manual: the registry entry gives no repository.subfolder. mcp declares the registry npm package @janosik/mcp.",
+      "license": "AGPL-3.0",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 0133363d89cd, verified AGPL-3.0 license); plain-text sinks: fetch, process.env, exec, readFile, child_process, writeFile",
+      "matchedSinks": [
+        "fetch",
+        "process.env",
+        "exec",
+        "readFile",
+        "child_process",
+        "writeFile"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "jakcmencz-sentinel-ir-mcp-io-github-jakcmencz-sentinel-ir-mcp",
+      "url": "https://github.com/jakcmencz/sentinel-ir-mcp.git",
+      "commit": "f8c286c697e92ab4b7bc00c8a439c2218a9108fb",
+      "license": "Apache-2.0",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 013fe11831e9, verified Apache-2.0 license); plain-text sinks: exec, execSync, child_process, readFile, writeFile, process.env, fetch, unlink",
+      "matchedSinks": [
+        "exec",
+        "execSync",
+        "child_process",
+        "readFile",
+        "writeFile",
+        "process.env",
+        "fetch",
+        "unlink"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "pulsemcp-mcp-servers-com-pulsemcp-proctor",
+      "url": "https://github.com/pulsemcp/mcp-servers.git",
+      "commit": "cca9d523e4ea48906df65c487b6389d8d692da28",
+      "subpath": "experimental/proctor",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 01480f245c5c, verified MIT license); plain-text sinks: execSync, child_process, unlink, readFile, process.env, writeFile, fetch",
+      "matchedSinks": [
+        "execSync",
+        "child_process",
+        "unlink",
+        "readFile",
+        "process.env",
+        "writeFile",
+        "fetch"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "onurgumus-3dpacking-mcp-ing-3dpack-container-loading",
+      "url": "https://github.com/OnurGumus/3dpacking-mcp.git",
+      "commit": "1f4515cfb49ff38d4b86b4e19cf94958f4111d37",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 014fd13646dc, verified MIT license); plain-text sinks: exec, process.env, readFile",
+      "matchedSinks": [
+        "exec",
+        "process.env",
+        "readFile"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "cloudcorprecords-safesignal-io-github-cloudcorprecords-safesigna",
+      "url": "https://github.com/CloudCorpRecords/safesignal.git",
+      "commit": "1a0efcc4833e7a10f819a67315b512e006378e1b",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 0153b4e079f4, verified MIT license); plain-text sinks: fetch, process.env, child_process, readFile",
+      "matchedSinks": [
+        "fetch",
+        "process.env",
+        "child_process",
+        "readFile"
+      ],
+      "stratum": "sink-enriched",
+      "split": "test"
+    },
+    {
+      "id": "tolenonetwork-toleno-mcp-io-github-tolenonetwork-toleno-mcp",
+      "url": "https://github.com/tolenonetwork/toleno-mcp.git",
+      "commit": "e59957317987086303676364d18fdb5a8ef945f3",
+      "license": "MIT",
+      "selectionReason": "MCP Registry (ts) seeded sample (rank 0153eaaefa5d, verified MIT license); plain-text sinks: process.env, readFile, writeFile",
+      "matchedSinks": [
         "process.env",
         "readFile",
         "writeFile"

@@ -7,7 +7,7 @@ All external benchmark servers are sampled by `bench/select.mjs` from a snapshot
 - **The sample is frozen in the manifests**, not in the snapshot. `bench/manifest.json` and `bench/python-manifest.json` pin each server's repository URL, commit SHA, license, stratum and split. Benchmark runs and labeling sheets read only these.
 - **The registry snapshot is not committed.** `bench/registry-snapshot.json` (about 86 MB) is git-ignored. Each manifest records its `snapshotSha256`, `snapshotBytes` and `snapshotFetchedAt` so a kept copy can be checked against it.
 - **Re-running the selector does not reproduce the sample**, even with `--from-snapshot`. Eligibility checks resolve each repository's current `HEAD` and fetch license files over the network at run time, so qualifying servers and pinned commits drift. Treat a re-run as a new sample, not a re-check of this one.
-- **Manual scoping.** `mcparmory-registry-com-mcparmory-mailersend` carries a hand-set `subpath` (`servers/mailersend`) with a `subpathNote`. Its registry entry gives no `repository.subfolder`, and the repository holds 76 servers, so without the subpath the sheet would list every server's tools. A re-run of the selector drops this override.
+- **Manual scoping.** `mcparmory-registry-com-mcparmory-mailersend` carries a hand-set `subpath` (`servers/mailersend`) with a `subpathNote`. Its registry entry gives no `repository.subfolder`, and the repository holds 76 servers, so without the subpath the sheet would list every server's tools. The selector also carries this manual override. Demo Time (`apps/mcp`) and Janosik (`mcp`) are scoped to their matching registry npm packages, since their registry entries omit subfolders. Other monorepos with a declared registry subfolder use that scope.
 
 ## Eligibility Criteria
 
@@ -28,12 +28,18 @@ Qualifying servers are ordered deterministically per language by `sha256("202611
 
 2. **Stratum 2 — `sink-enriched` (sink-bearing servers)**
    - Drawn strictly from qualifying servers **not already sampled in Stratum 1**, continuing in the same seeded order (`seed: 20261123`).
-   - Targets up to **15 TypeScript/JavaScript** and **10 Python** servers whose source files match at least one sink token via **plain-text search** (never using the Vambrace analyzer):
-     - **TypeScript/JavaScript fixed list**: `exec`, `execSync`, `spawn` with `shell`, `child_process`, `readFile`, `writeFile`, `unlink`, `fetch`, `axios`, `http.request`, `process.env`.
-     - **Python fixed list**: `subprocess`, `os.system`, `open`, `requests`, `httpx`, `os.environ`.
+   - Takes the first **15 TypeScript/JavaScript** and **10 Python** eligible servers whose source files match at least one **strong** token via plain-text search (never using the Vambrace analyzer).
+   - **TypeScript/JavaScript strong tokens:** `exec`, `execSync`, `child_process`, `spawn` with an explicitly enabled `shell` option, `writeFile`, `unlink`.
+   - **Python strong tokens:** `subprocess`, `os.system`.
+   - Other tracked tokens (e.g. `fetch`, `process.env`, `readFile`, `open`, `requests`, `httpx`) can be recorded in `matchedSinks` but cannot qualify a server on their own. A textual match is an enrichment signal, not a finding or human label.
+   - Resume against the original verified snapshot with `node bench/select.mjs --from-snapshot --refresh-sink-enriched`: keep both pinned Stratum 1 lists unchanged, start after each final Stratum 1 rank, verify each candidate lazily, and stop at the quota. License recognition reads license blobs from the pinned shallow Git repository without checking out or executing candidate code. The optional source scan reads only plain text under the selected scope. This command refreshes Stratum 2; it is not a reproducibility check for its newly pinned commits.
 
 ## Split and Reporting Discipline
 
 - Each stratum is partitioned independently **by server** into `dev` (60%) and `test` (40%). No server appears in both splits or both strata.
 - Blank dev worksheets record `stratum` on every row (`bench/labels/todo/typescript-dev.csv`, `bench/labels/todo/python-dev.csv`).
 - `bench/score.mjs` and `bench/run.mjs` report metrics **separately per stratum** (`by_stratum`) as well as in aggregate, so improvements on sink-bearing servers never obscure registry-wide coverage or vice versa.
+
+## Sampling log
+
+- **2026-11-24 (UTC):** Stratum 2 re-picked from the original snapshot under the strong-token rule. All pinned Stratum 1 records, including the manual MailerSend scope, were kept unchanged.
