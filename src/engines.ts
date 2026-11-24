@@ -79,6 +79,7 @@ export async function runCiscoYaraEngine(
       : []);
 
   const findings: Finding[] = [];
+  const diagnostics: Diagnostic[] = [];
   for (const item of rawFindings) {
     if (!item || typeof item !== 'object') continue;
     const rec = item as Record<string, unknown>;
@@ -90,6 +91,19 @@ export async function runCiscoYaraEngine(
     const yaraObj = findingsObj?.yara_analyzer && typeof findingsObj.yara_analyzer === 'object'
       ? findingsObj.yara_analyzer as Record<string, unknown>
       : undefined;
+    const carriesError = (value: unknown) =>
+      typeof value === 'string' ? value.trim().length > 0 : Boolean(value);
+    const perToolRecord = 'status' in rec || findingsObj !== undefined ||
+      (typeof rec.tool_name === 'string' && !('rule' in rec || 'rule_name' in rec || 'id' in rec));
+    const hasError = carriesError(rec.error) || carriesError(yaraObj?.error);
+    if (hasError || (perToolRecord && rec.status !== 'completed')) {
+      diagnostics.push({
+        code: 'CISCO_YARA_TOOL_INCOMPLETE',
+        file: inventoryPath,
+        message: `Cisco mcp-scanner did not complete YARA coverage for tool "${toolName ?? '<unnamed>'}": ${hasError ? 'the tool reported a scan error' : 'its status was not completed'}.`
+      });
+      continue;
+    }
     if (yaraObj) {
       const total = Number(yaraObj.total_findings ?? 0);
       if (rec.is_safe === true || total <= 0) continue;
@@ -136,7 +150,7 @@ export async function runCiscoYaraEngine(
       limitations: ['External YARA engine match; verify signature context manually.']
     }));
   }
-  return { findings, diagnostics: [], incomplete: false };
+  return { findings, diagnostics, incomplete: diagnostics.length > 0 };
 }
 
 export async function runPromptGuardEngine(
