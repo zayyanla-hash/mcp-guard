@@ -65,10 +65,14 @@ export function fetchManifest({ manifestFile = manifestPath, targetCache = cache
     const dest = path.join(targetCache, server.id);
     try {
       if (!existsSync(path.join(dest, '.git'))) {
-        execImpl('git', ['clone', '--no-checkout', server.url, dest], { stdio: 'pipe', timeout: 60000 });
+        execImpl('git', ['clone', '--no-checkout', '--depth', '1', server.url, dest], { stdio: 'pipe', timeout: 60000 });
       }
-      execImpl('git', ['-C', dest, 'fetch', '--depth', '1', 'origin', server.commit], { stdio: 'pipe', timeout: 60000 });
-      execImpl('git', ['-C', dest, 'checkout', '--detach', server.commit], { stdio: 'pipe', timeout: 30000 });
+      try {
+        execImpl('git', ['-C', dest, 'cat-file', '-e', `${server.commit}^{commit}`], { stdio: 'pipe', timeout: 15000 });
+      } catch {
+        execImpl('git', ['-C', dest, 'fetch', '--depth', '1', 'origin', server.commit], { stdio: 'pipe', timeout: 60000 });
+      }
+      execImpl('git', ['-C', dest, '-c', 'core.hooksPath=/dev/null', 'checkout', '--detach', server.commit], { stdio: 'pipe', timeout: 30000 });
       const head = execImpl('git', ['-C', dest, 'rev-parse', 'HEAD'], { encoding: 'utf8', timeout: 15000 }).trim();
       if (head !== server.commit) {
         throw new Error(`Pinned SHA mismatch for ${server.id}: expected ${server.commit}, got ${head}`);

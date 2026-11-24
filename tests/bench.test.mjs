@@ -14,6 +14,7 @@ import { runEvasionSuite } from '../bench/evasion/run.mjs';
 import { generateLabelingSheet, generatePythonLabelingSheet, extractTsToolNames, extractPythonToolNames, UNENUMERATED_TOOL } from '../bench/sheet.mjs';
 import { measurePerf } from '../bench/perf.mjs';
 import { runBenchmark, serverCoverageMarkdown } from '../bench/run.mjs';
+import { hasStrongSink } from '../bench/select.mjs';
 
 test('wilsonInterval computes bounded 95% confidence intervals', () => {
   const full = wilsonInterval(10, 10);
@@ -41,6 +42,15 @@ test('scoreRows computes TP, FP, FN, TN, silent misses, coverage, and F1', () =>
   assert.equal(s.per_rule.MG002.fp, 1);
   assert.equal(s.per_rule.MG002.tn, 2);
   assert.equal(s.by_stratum.unassigned.total_handlers, 4);
+});
+
+test('sink enrichment accepts strong language-specific tokens but not weak-only matches', () => {
+  assert.equal(hasStrongSink(['fetch', 'process.env', 'readFile', 'axios'], 'ts'), false);
+  assert.equal(hasStrongSink(['fetch', 'writeFile'], 'ts'), true);
+  assert.equal(hasStrongSink(['open', 'requests', 'httpx', 'os.environ'], 'py'), false);
+  assert.equal(hasStrongSink(['open', 'subprocess'], 'py'), true);
+  assert.equal(hasStrongSink(['os.system'], 'py'), true);
+  assert.equal(hasStrongSink(['subprocess'], 'ts'), false);
 });
 
 test('server coverage keeps every row and weights servers equally in the macro', () => {
